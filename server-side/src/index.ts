@@ -1,3 +1,3 @@
-import apiServer from "./api_server";
+import apiServer from "./api";
 
 apiServer.start();
