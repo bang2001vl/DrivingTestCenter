@@ -1,5 +1,7 @@
 import { createPool, ResultSetHeader, FieldPacket, Pool, RowDataPacket } from "mysql2/promise";
+import helper from "../helper";
 import AccountRepository from "./account";
+
 export class BasicRepository{
     pool: Pool;
     tableName: string;
@@ -8,9 +10,9 @@ export class BasicRepository{
         this.tableName = tableName;
     }
 
-    protected async rawSelectById<T extends RowDataPacket>(id: number){
+    protected async rawSelectById(id: number | string){
         const sql = `SELECT * FROM ${this.tableName} WHERE id=?`;
-        const reader = await this.pool.query<T[]>(sql, [id]);
+        const reader = await this.pool.query<RowDataPacket[]>(sql, [id]);
         if(reader !== undefined && reader[0].length === 1){
             const rows = reader[0]
             return rows[0];
@@ -18,7 +20,7 @@ export class BasicRepository{
         return null;
     }
 
-    async insert(data: any, selectedFields: string[] | undefined){
+    async insert(data: any, selectedFields?: string[]){
         const props = Object.getOwnPropertyNames(data);
     
         const columns : string[] = [];
@@ -26,9 +28,10 @@ export class BasicRepository{
         const values : Array<any> = [];
     
         props.forEach((propName) => {
-            if(selectedFields !== undefined && selectedFields.indexOf(propName) < 0){
+            if(selectedFields && selectedFields.indexOf(propName) < 0){
                 return; // Exclude property if not being selected
             }
+
             columns.push(propName);
             keys.push("?");
             values.push(data[propName]);
@@ -38,14 +41,14 @@ export class BasicRepository{
         return this.pool.execute(sql, values);
     }
     
-    async updateById(id: any, data: any, selectedFields: string[] | undefined)  : Promise<[ResultSetHeader, FieldPacket[]]>{
+    async updateById(id: any, data: any, selectedFields?: string[])  : Promise<[ResultSetHeader, FieldPacket[]]>{
         const props = Object.getOwnPropertyNames(data);
     
         const columns : string[] = [];
         const values : Array<any> = [];
     
         props.forEach((propName) =>{
-            if(selectedFields !== undefined && selectedFields.indexOf(propName) < 0){
+            if(selectedFields && selectedFields.indexOf(propName) < 0){
                 return; // Exclude property if not being selected
             }
             columns.push(propName + "=?"); // ColumnA=?

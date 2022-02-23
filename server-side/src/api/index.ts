@@ -1,16 +1,16 @@
 import * as express from "express";
 import { createServer as createServerHttp } from "http2";
 import { createServer as createServerHttps } from "https";
-import { config } from "../helper/config";
-import logger from "../helper/log_helper";
+import appConfig from "../config";
+import helper from "../helper";
 
 const app = express();
 
 function start() {
 
     // Start HTTP server
-    app.listen(config.port_http, () => {
-        logger.traceWithTag("Listening on port = " + config.port_http, "HTTP");
+    app.listen(appConfig.port_http, () => {
+        helper.logger.traceWithTag("Listening on port = " + appConfig.port_http, "HTTP");
     });
 
     // Start HTTPs server
