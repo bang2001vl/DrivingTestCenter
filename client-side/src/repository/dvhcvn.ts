@@ -34,24 +34,26 @@ export class DVHCVN {
         return lv2.level3s;
     }
 
-    getLv2ById(lv1_id: string): DVHCVN_Lv2[] | null {
-        this.data.forEach((lv1)=>{
+    getLv2ById(lv1_id: string){
+        for(let i = 0; i<this.data.length; i++){
+            const lv1 = this.data[i];
             if(lv1.level1_id === lv1_id){
                 return this.getLv2(lv1);
             }
-        });
+        }
         return null;
     }
 
-    getLv3ById(lv1_id: string, lv2_id: string): DVHCVN_Lv2[] | null {
+    getLv3ById(lv1_id: string, lv2_id: string){
         let lv2_list = this.getLv2ById(lv1_id);
         if(lv2_list == null) return null;
 
-        lv2_list.forEach((lv2)=>{
+        for(let i = 0; i<lv2_list.length; i++){
+            const lv2 = lv2_list[i];
             if(lv2.level2_id === lv2_id){
                 return this.getLv3(lv2);
             }
-        });
+        }
         return null;
     }
 }
