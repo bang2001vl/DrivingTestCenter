@@ -30,73 +30,34 @@ import DataListToolbar from './user/DataListToolbar';
 import DataListHead from './user/DataListHead';
 import { RecoilState, useRecoilValue } from 'recoil';
 import { IListAction } from '../recoil/actions/_defaultListActions';
+import { ISearchOptions } from './DataTable';
+import { IOrderOptions, IPagingOption, ISearchOption, ISelectOption } from '../api/_deafaultCRUD';
+import { styled } from '@mui/styles';
 
 // ----------------------------------------------------------------------
-
-function descendingComparator(a: any, b: any, orderBy: any) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
-
-function getComparator(order: any, orderBy: any) {
-    return order === 'desc'
-        ? (a: any, b: any) => descendingComparator(a, b, orderBy)
-        : (a: any, b: any) => -descendingComparator(a, b, orderBy);
-}
-
-function applySortFilter(array: any[], comparator: any, query: any) {
-    const stabilizedThis: any[] = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-        const order = comparator(a[0], b[0]);
-        if (order !== 0) return order;
-        return a[1] - b[1];
-    });
-    if (query) {
-        return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-    }
-    return stabilizedThis.map((el) => el[0]);
-}
-
-interface DataItem {
-    name: string;
-}
 
 export interface ISearchProperty {
     key: string,
     label: string,
 }
 
-export interface IOrderOption {
-    key: string,
-    direction: string;
-    label: string,
-}
+// export interface ISearchOptions {
+//     orderType: string; // "ASC" | "DESC" ...
+//     orderBy: string; // "name" | "id" ...
 
-export interface ISearchOptions {
-    orderType: string; // "ASC" | "DESC" ...
-    orderBy: string; // "name" | "id" ...
+//     searchProperty: ISearchProperty; // "name" | "id" ...
+//     searchValue: string;
 
-    searchProperty: ISearchProperty; // "name" | "id" ...
-    searchValue: string;
-
-    filterOptions?: any;
-}
+//     filterOptions?: any;
+// }
 
 interface TypeProps {
     title: string,
-    atom: RecoilState<any[]>,
-    actionListHook: () => IListAction,
 
-    menuItems: {
-        iconURI: string,
-        label: string,
-        onClick: (item: any) => void,
-    }[],
+    list: any[],
+    maxRow: number,
+
+    onChangedSearch: (options: ISelectOption) => void,
 
     onClickCreate: any,
 
@@ -106,22 +67,28 @@ interface TypeProps {
         row: any,
         isItemSelected: boolean
     }) => any,
+
+    initSelectOption: ISelectOption,
 }
 
+const MyPage = styled(Page)(({ theme }) => ({
+    fontFamily: "Arial"
+  }));
+
 export default function DataTable2(props: TypeProps) {
-    const dataList = useRecoilValue(props.atom);
-    const actions = props.actionListHook();
-    const maxRow = 100;
+    const dataList = props.list;
+    const maxRow = props.maxRow;
 
     const [selected, setSelected] = useState<string[]>([]);
 
     const [pageNumber, setPageNumber] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [searchProperty, setSearchProperty] = useState<string>('name');
-    const [searchValue, setSearchValue] = useState('');
+    const [rowsPerPage, setRowsPerPage] = useState(props.initSelectOption.count);
 
-    const [orderType, setOrderType] = useState('asc');
-    const [orderBy, setOrderBy] = useState('name');
+    const [searchProperty, setSearchProperty] = useState(props.initSelectOption.searchby);
+    const [searchValue, setSearchValue] = useState(props.initSelectOption.searchvalue);
+
+    const [orderBy, setOrderBy] = useState(props.initSelectOption.orderby);
+    const [orderType, setOrderType] = useState(props.initSelectOption.orderdirection);
 
     const searchProperties = [
         {
@@ -134,13 +101,44 @@ export default function DataTable2(props: TypeProps) {
         }
     ];
 
+    const getOptions = (presets: {
+        searchProperty?: string
+        , searchValue?: string
+        , orderProperty?: string
+        , orderDirection?: string
+        , pageNumber?: number
+        , rowsPerPage?: number
+    }
+    ) => {
+        const _searchProperty = presets.searchProperty !== undefined ? presets.searchProperty : searchProperty;
+        const _searchValue = presets.searchValue !== undefined ? presets.searchValue : searchValue;
+        const _orderProperty = presets.orderProperty !== undefined ? presets.orderProperty : orderBy;
+        const _orderDirection = presets.orderDirection !== undefined ? presets.orderDirection : orderType;
+        const _pageNumber = presets.pageNumber !== undefined ? presets.pageNumber : pageNumber;
+        const _rowsPerPage = presets.rowsPerPage !== undefined ? presets.rowsPerPage : rowsPerPage;
+        return {
+            searchby: _searchProperty,
+            searchvalue: _searchValue,
+            orderby: _orderProperty,
+            orderdirection: _orderDirection,
+            start: _pageNumber > 0 ? (_pageNumber - 1) * _rowsPerPage : 0,
+            count: _rowsPerPage,
+        }
+    }
+
     const handleRequestSort = (event: any, property: any) => {
         const isAsc = orderBy === property && orderType === 'asc';
         const direction = isAsc ? 'desc' : 'asc';
         console.log(`Order by ${property}, direction ${direction}`);
 
+        // Change UI
         setOrderType(direction);
         setOrderBy(property);
+
+        props.onChangedSearch(getOptions({
+            orderDirection: direction,
+            orderProperty: property,
+        }));
     };
 
     const handleSelectAllClick = (event: any) => {
@@ -161,7 +159,6 @@ export default function DataTable2(props: TypeProps) {
         } else {
             // deselect if already selected
             if (selectedIndex === 0) {
-
                 newSelected = newSelected.concat(selected.slice(1));
             } else if (selectedIndex === selected.length - 1) {
                 newSelected = newSelected.concat(selected.slice(0, -1));
@@ -177,45 +174,51 @@ export default function DataTable2(props: TypeProps) {
 
     const handleChangePage = (event: any, newPage: any) => {
         setPageNumber(newPage);
+
+        props.onChangedSearch(getOptions({
+            pageNumber: newPage,
+        }));
     };
 
     const handleChangeRowsPerPage = (event: any) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPageNumber(0);
+        const newPageNumber = 0;
+        const newRowsPerPage = parseInt(event.target.value, 10);
+        setRowsPerPage(newRowsPerPage);
+        setPageNumber(newPageNumber);
+        props.onChangedSearch(getOptions({
+            pageNumber: newPageNumber,
+            rowsPerPage: newRowsPerPage,
+        }));
     };
 
     const handleSearchValueChanged = (event: any) => {
         const value = event.target.value;
-        //console.log("Search value = " + value);
+        if(value)
+        console.log("Search value = " + value);
 
         setSearchValue(value);
-        actions.select({
-            property: searchProperty,
-            value: value
-        }, {
-            property: orderBy,
-            direction: orderType,
-        }, {
-            start: pageNumber > 0 ? (pageNumber - 1) * rowsPerPage : 0,
-            count: rowsPerPage
-        }, undefined);
+
+        props.onChangedSearch(getOptions({
+            searchValue: value,
+        }));
     };
 
     const handleSearchPropertyChanged = (value: string) => {
         console.log("Search property = " + value);
 
         setSearchProperty(value);
+
+        props.onChangedSearch(getOptions({
+            searchProperty: value,
+        }));
     }
 
     const emptyRows = pageNumber > 0 ? Math.max(0, (1 + pageNumber) * rowsPerPage - dataList.length) : 0;
     console.log("Empty rows = " + emptyRows);
 
     // const filteredUsers = applySortFilter(dataList, getComparator(orderType, orderBy), searchValue);
-    const filteredUsers = dataList;
-    console.log("filteredUsers = ");
-    console.log(filteredUsers);
 
-    const isUserNotFound = filteredUsers.length === 0;
+    const isUserNotFound = dataList.length === 0;
     console.log("isUserNotFound = " + isUserNotFound);
 
     return (
@@ -261,9 +264,9 @@ export default function DataTable2(props: TypeProps) {
                                 />
 
                                 <TableBody>
-                                    {filteredUsers
+                                    {dataList
                                         .map((row) => {
-                                            const { id, name} = row;
+                                            const { id, name } = row;
                                             const isItemSelected = selected.indexOf(name) !== -1;
 
                                             return (
@@ -286,13 +289,6 @@ export default function DataTable2(props: TypeProps) {
                                                         row: row,
                                                         isItemSelected: isItemSelected,
                                                     })}
-
-                                                    <TableCell align="right">
-                                                        <ItemMoreMenu
-                                                            items={props.menuItems}
-                                                            data={row}
-                                                        ></ItemMoreMenu>
-                                                    </TableCell>
                                                 </TableRow>
                                             );
                                         })}

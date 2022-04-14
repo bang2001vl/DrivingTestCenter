@@ -8,22 +8,25 @@ import Iconify from '../../components/Iconify';
 // ----------------------------------------------------------------------
 
 interface PropType {
+  iconURI?: string,
   items: {
     iconURI: string,
     label: string,
     onClick: (data: any)=>void,
   }[],
-  data: any
+  data: any,
 }
 
 export default function ItemMoreMenu(props: PropType) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
+  const iconURI = props.iconURI ? props.iconURI : "eva:more-vertical-fill";
+
   return (
     <>
       <IconButton ref={ref} onClick={() => setIsOpen(true)}>
-        <Iconify icon="eva:more-vertical-fill" width={20} height={20} sx={undefined} />
+        <Iconify icon={iconURI} width={20} height={20} sx={undefined} />
       </IconButton>
 
       {ref && <Menu

@@ -22,7 +22,7 @@ export default function ThemeConfig({ children }) {
       shape: { borderRadius: 8 },
       typography,
       shadows,
-      customShadows
+      customShadows,
     }),
     []
   );

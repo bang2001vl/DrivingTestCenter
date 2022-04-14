@@ -1,6 +1,11 @@
 import { appConfig } from "../configs";
 
-export async function fetchAPI(method: string, apiPath: string, body: any, token?: string) {
+interface IErrorResponse {
+    errorCode: number,
+    errorMessage: string,
+}
+
+export async function fetchAPI(method: string, apiPath: string, body: any, token?: string): Promise<[IErrorResponse | null, any | null]> {
     const url = `${appConfig.backendUri}/${apiPath}`;
     const headers: any = {
         'Content-Type': 'application/json',
@@ -11,7 +16,7 @@ export async function fetchAPI(method: string, apiPath: string, body: any, token
     }
     const response = await fetch(url, {
         method: method,
-        body: JSON.stringify(body),
+        body: body ? JSON.stringify(body) : undefined,
         headers: headers,
     });
   

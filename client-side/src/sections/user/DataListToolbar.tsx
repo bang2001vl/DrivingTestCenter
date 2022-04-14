@@ -17,7 +17,6 @@ import {
 // component
 import Iconify from '../../components/Iconify';
 import { useState } from 'react';
-import { IOrderOption, ISearchProperty } from '../DataTable';
 import { string } from 'yup';
 
 // ----------------------------------------------------------------------
@@ -43,6 +42,11 @@ const SearchStyle = styled<any>(OutlinedInput)(({ theme }) => ({
 }));
 
 // ----------------------------------------------------------------------
+
+export interface ISearchProperty {
+  key: string,
+  label: string,
+}
 
 interface IPropTypes {
   numSelected: number,
@@ -106,7 +110,7 @@ export default function DataListToolbar(props: IPropTypes) {
             >
               {props.searchProperties.map((v, index) => {
                 return <MenuItem
-                key={v.label}
+                  key={v.label}
                   value={v.key}
                 >
                   {v.label}
