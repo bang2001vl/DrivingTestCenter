@@ -5,7 +5,7 @@ import { APIFetcher } from "../../_helper/fetchAPI";
 import { authAtom } from "../model/auth";
 
 function saveAuthToLocalStorage(auth: any){
-  localStorage.setItem("auth", auth);
+  localStorage.setItem("auth", JSON.stringify(auth));
 }
 
 export function loadAuthFromStorage(){

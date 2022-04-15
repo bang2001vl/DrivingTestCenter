@@ -49,7 +49,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
   const isDesktop = useResponsive('up', 'lg');
   const currentUser = useRecoilValue(userAtom);
 
-  const userFullname = currentUser ? currentUser : "Chưa đăng nhập";
+  const userFullname = currentUser ? currentUser.fullname : "Chưa đăng nhập";
   const userSecondText = currentUser ? `SecondText` : 'SecondText';
   const userImageURI = currentUser ? currentUser.imageURI : '/static/mock-images/avatars/avatar_default.jpg';
 

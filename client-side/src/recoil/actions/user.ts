@@ -13,11 +13,14 @@ const useUserActions = () => {
                 // Success received data
                 if (data.student) {
                     data.student.imageURI = '/static/mock-images/avatars/avatar_default.jpg';
+                    console.log(data);
+                    
                     setUser(data.student);
                     return;
                 }
                 if (data.employee) {
                     data.employee.imageURI = '/static/mock-images/avatars/avatar_default.jpg';
+                    console.log(data);
                     setUser(data.employee);
                     return;
                 }

@@ -29,7 +29,7 @@ export function useAPIResultHandler() {
             }
         },
         catchFatalError(error: IErrorResponse){
-            return (this.catchConnectionError(error) && this.catchAuthError(error));
+            return (this.catchConnectionError(error) || this.catchAuthError(error));
         }
     }
 }

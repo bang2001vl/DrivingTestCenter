@@ -4,6 +4,12 @@ import { db } from "../../database";
 import helper from "../../helper";
 import { buildResponseError } from "../route/utilities";
 
+export const ROLE_IDS = {
+    admin: 1,
+    student: 2,
+    employee: 3,
+}
+
 export interface ISession {
     accountId: any,
     token: any,
@@ -43,7 +49,7 @@ const SessionHandler = {
         }
     },
 
-    async roleChecker(roles: any[]) {
+    roleChecker(roles: any[]) {
         return async (req: Request, res: Response, nxt: NextFunction) => {
             const token = req.headers["token"];
             console.log("Start: Checking token");
