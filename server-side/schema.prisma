@@ -1,5 +1,6 @@
 datasource db {
-    url      = "mysql://sa:HackDuocThi%21%40%23NhatBanRoi%24%25%5E@localhost:3306/doan2"
+    //url      = "mysql://sa:HackDuocThi%21%40%23NhatBanRoi%24%25%5E@localhost:3306/doan2"
+    url      = "mysql://remote:Ak47manhvler@thunderv.southeastasia.cloudapp.azure.com:3306/doan2"
     provider = "mysql"
 }
 

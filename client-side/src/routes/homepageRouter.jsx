@@ -13,7 +13,6 @@ export default function RootRouter() {
         element: <DashboardLayout />,
         children: [
           { path: 'home', element: <HomePage /> },
-          { path: 'user', element: <UserPage /> },
           { path: 'exam', element: <ExamPage /> },
         ]
       },
