@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 // material
 import { alpha } from '@mui/material/styles';
 import { Button, Box, Divider, MenuItem, Typography, Avatar, IconButton } from '@mui/material';
@@ -10,7 +10,7 @@ import MenuPopover from '../../components/MenuPopover';
 import { useRecoilValue } from 'recoil';
 import { userAtom } from '../../recoil/model/user';
 import { differenceInCalendarYears } from 'date-fns';
-import { authAtom } from '../../recoil/model/auth';
+import { authAtom, roleSelector } from '../../recoil/model/auth';
 
 // ----------------------------------------------------------------------
 
@@ -36,7 +36,11 @@ const MENU_OPTIONS = [
 
 export default function AccountPopover() {
   const anchorRef = useRef(null);
+
   const currentUser = useRecoilValue(userAtom);
+  const currentRole = useRecoilValue(roleSelector);
+
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
   console.log("Current user: ");
@@ -48,16 +52,19 @@ export default function AccountPopover() {
   const handleClose = () => {
     setOpen(false);
   };
+  const gotoLogin = () => {
+    navigate("/login", {replace: true});
+  };
 
-  const userFullname = currentUser ? currentUser : "Chưa đăng nhập";
-  const userAge = currentUser ? `Age: ${differenceInCalendarYears(Date.now(), new Date(currentUser.birthday))}` : 'Vui lòng đăng nhập';
+  const userFullname = currentUser ? currentUser.fullname : "Chưa đăng nhập";
+  const userSecondText = currentRole;
   const userImageURI = currentUser ? currentUser.imageURI : '/static/mock-images/avatars/avatar_default.jpg';
 
   return (
     <>
       <IconButton
         ref={anchorRef}
-        onClick={handleOpen}
+        onClick={currentUser ? handleOpen : gotoLogin}
         sx={{
           padding: 0,
           width: 44,
@@ -89,7 +96,7 @@ export default function AccountPopover() {
             {userFullname}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {userAge}
+            {userSecondText}
           </Typography>
         </Box>
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { my_little_txt } from './test';
@@ -9,8 +9,12 @@ import ThemeConfig from './theme';
 import GlobalStyles from './theme/globalStyles';
 import ScrollToTop from './components/ScrollToTop';
 import { RecoilRoot } from 'recoil';
+import FirstLaunch from './components/FirstLaunch';
 
 function App() {
+  useEffect(() => {
+
+  }, []);
   return (
     // <div className="App">
     //   <header className="App-header">
@@ -39,7 +43,10 @@ function App() {
 
 
     // </div>
+
     <RecoilRoot>
+      <FirstLaunch />
+      
       <ThemeConfig>
         <ScrollToTop />
         <GlobalStyles />

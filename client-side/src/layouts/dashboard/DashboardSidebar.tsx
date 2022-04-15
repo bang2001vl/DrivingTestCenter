@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 // material
 import { styled } from '@mui/material/styles';
-import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
+import { Box, Link, Button, Drawer, Typography, Avatar, Stack, Card } from '@mui/material';
 // mocks_
 import account from '../../_mocks_/account';
 // hooks
@@ -16,6 +16,7 @@ import NavSection from '../../components/NavSection';
 import sidebarConfig from './SidebarConfig';
 import { userAtom } from '../../recoil/model/user';
 import { useRecoilValue } from 'recoil';
+import { authAtom, roleSelector } from '../../recoil/model/auth';
 
 // ----------------------------------------------------------------------
 
@@ -28,7 +29,7 @@ const RootStyle = styled('div')(({ theme }) => ({
   }
 }));
 
-const AccountStyle = styled('div')(({ theme }) => ({
+const AccountStyle = styled<any>('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: theme.spacing(2, 2.5),
@@ -38,24 +39,30 @@ const AccountStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
+interface IProps {
+  isOpenSidebar: boolean,
+  onCloseSidebar: any
+}
+
 DashboardSidebar.propTypes = {
-  isOpenSidebar: PropTypes.bool,
-  onCloseSidebar: PropTypes.func
 };
 
-export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
+export default function DashboardSidebar(props: IProps) {
   const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');
+
   const currentUser = useRecoilValue(userAtom);
+  const currentRole = useRecoilValue(roleSelector);
+  const navigate = useNavigate();
 
   const userFullname = currentUser ? currentUser.fullname : "Chưa đăng nhập";
-  const userSecondText = currentUser ? `SecondText` : 'SecondText';
+  const userSecondText = currentRole;
   const userImageURI = currentUser ? currentUser.imageURI : '/static/mock-images/avatars/avatar_default.jpg';
 
   useEffect(() => {
-    if (isOpenSidebar) {
-      onCloseSidebar();
+    if (props.isOpenSidebar) {
+      props.onCloseSidebar();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
@@ -71,8 +78,8 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         <Logo />
       </Box>
 
-      <Box sx={{ mb: 5, mx: 2.5 }}>
-        <Link underline="none" component={RouterLink} to="#">
+      <Box sx={{ mb: 5, mx: 2.5 }} >
+        <div onClick={currentUser ? undefined : () => navigate("/login", { replace: true })} >
           <AccountStyle>
             <Avatar src={userImageURI} alt="photoURL" />
             <Box sx={{ ml: 2 }}>
@@ -84,7 +91,8 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
               </Typography>
             </Box>
           </AccountStyle>
-        </Link>
+        </div>
+
       </Box>
 
       <NavSection navConfig={sidebarConfig} />
@@ -128,8 +136,8 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
     <RootStyle>
       {!isDesktop && (
         <Drawer
-          open={isOpenSidebar}
-          onClose={onCloseSidebar}
+          open={props.isOpenSidebar}
+          onClose={props.onCloseSidebar}
           PaperProps={{
             sx: { width: DRAWER_WIDTH }
           }}
