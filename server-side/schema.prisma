@@ -27,8 +27,10 @@ model Account {
     student Student?
 
     @@index([username, password])
+    @@map("account")
 }
 model Session {
+    @@map("session")
     id         Int      @id @default(autoincrement())
     accountId  Int
 
@@ -44,14 +46,17 @@ model Session {
     @@index([accountId])
 }
 model CONST_ROLE {
+    @@map("const_role")
     id         Int      @id @default(autoincrement())
     name      String   @db.VarChar(255)
+
 }
 
 //
 // Data system
 //
 model Exam {
+    @@map("exam")
     id Int @id @default(autoincrement())
 
     name      String   @db.VarChar(255)
@@ -69,6 +74,7 @@ model Exam {
 }
 
 model ExamTest {
+    @@map("examtest")
     id     Int  @id @default(autoincrement())
     examId Int?
 
@@ -86,6 +92,7 @@ model ExamTest {
 }
 
 model Class {
+    @@map("class")
     id     Int  @id @default(autoincrement())
     examId Int?
 
@@ -105,6 +112,7 @@ model Class {
 }
 
 model Student {
+    @@map("student")
     id Int @id @default(autoincrement())
     accountId Int
 
@@ -122,6 +130,7 @@ model Student {
 }
 
 model Employee {
+    @@map("employee")
     id Int @id @default(autoincrement())
     accountId Int
 
@@ -138,6 +147,7 @@ model Employee {
 }
 
 model Payment {
+    @@map("payment")
     id Int @id @default(autoincrement())
     studentId Int?
 
@@ -153,6 +163,7 @@ model Payment {
 }
 
 model BillDetail {
+    @@map("billdetail")
     id Int @id @default(autoincrement())
     paymentId Int?
 
@@ -165,6 +176,7 @@ model BillDetail {
 }
 
 model CONN_Student_ExamTest {
+    @@map("conn_student_examtest")
     id Int @id @default(autoincrement())
     studentId Int
     examTestId Int
@@ -176,6 +188,7 @@ model CONN_Student_ExamTest {
 }
 
 model CONN_Student_Class {
+    @@map("conn_student_class")
     id Int @id @default(autoincrement())
     studentId Int
     classId Int
@@ -187,6 +200,7 @@ model CONN_Student_Class {
 }
 
 model CONN_Employee_ExamTest {
+    @@map("conn_employee_examtest")
     id Int @id @default(autoincrement())
     employeeId Int
     examTestId Int
@@ -196,6 +210,7 @@ model CONN_Employee_ExamTest {
 }
 
 model CONN_Employee_Class {
+    @@map("conn_employee_class")
     id Int @id @default(autoincrement())
     employeeId Int
     classId Int
