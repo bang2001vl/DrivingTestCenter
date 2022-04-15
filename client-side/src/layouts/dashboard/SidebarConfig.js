@@ -1,8 +1,10 @@
 // component
+import { Box } from '@mui/material';
 import Iconify from '../../components/Iconify';
 
 // ----------------------------------------------------------------------
 
+const getIconByURI = (uri) => <Box component="img" src={uri} width={22} height={22} />;
 const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
 
 const sidebarConfig = [
@@ -14,7 +16,7 @@ const sidebarConfig = [
   {
     title: 'exam',
     path: '/dashboard/exam',
-    icon: getIcon('eva:shopping-bag-fill')
+    icon: getIconByURI('/static/icons/nav/exam.svg')
   },
   {
     title: 'session',
@@ -24,7 +26,7 @@ const sidebarConfig = [
   {
     title: 'class',
     path: '/dashboard/class',
-    icon: getIcon('eva:shopping-bag-fill')
+    icon: getIconByURI('/static/icons/nav/exam.svg')
   },
   {
     title: 'lecture',
@@ -34,17 +36,17 @@ const sidebarConfig = [
   {
     title: 'student',
     path: '/dashboard/student',
-    icon: getIcon('eva:shopping-bag-fill')
+    icon: getIconByURI('/static/icons/nav/student.svg')
   },
   {
     title: 'receipt',
     path: '/dashboard/receipt',
-    icon: getIcon('eva:shopping-bag-fill')
+    icon: getIconByURI('/static/icons/nav/receipt.svg')
   },
   {
     title: 'report',
     path: '/dashboard/report',
-    icon: getIcon('eva:shopping-bag-fill')
+    icon: getIconByURI('/static/icons/nav/report.svg')
   },
 ];
 
