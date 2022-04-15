@@ -45,6 +45,7 @@ const SessionHandler = {
         }
         catch (ex) {
             // System crashed
+            console.log(ex);
             res.json(buildResponseError(500, "Server error: We catched some unexpected exception X.X"));
         }
     },
@@ -84,6 +85,7 @@ const SessionHandler = {
             }
             catch (ex) {
                 // System crashed
+            console.log(ex);
                 res.json(buildResponseError(500, "Server error: We catched some unexpected exception X.X"));
             }
         }
