@@ -73,11 +73,10 @@ interface TypeProps {
 
 const MyPage = styled(Page)(({ theme }) => ({
     fontFamily: "Arial"
-  }));
+}));
 
 export default function DataTable2(props: TypeProps) {
     const dataList = props.list;
-    const maxRow = props.maxRow;
 
     const [selected, setSelected] = useState<string[]>([]);
 
@@ -89,6 +88,9 @@ export default function DataTable2(props: TypeProps) {
 
     const [orderBy, setOrderBy] = useState(props.initSelectOption.orderby);
     const [orderType, setOrderType] = useState(props.initSelectOption.orderdirection);
+
+    const maxPage = props.maxRow <= rowsPerPage ? 1 
+                    : (props.maxRow % rowsPerPage === 0 ? props.maxRow / rowsPerPage : props.maxRow / rowsPerPage + 1);
 
     const searchProperties = [
         {
@@ -193,8 +195,8 @@ export default function DataTable2(props: TypeProps) {
 
     const handleSearchValueChanged = (event: any) => {
         const value = event.target.value;
-        if(value)
-        console.log("Search value = " + value);
+        if (value)
+            console.log("Search value = " + value);
 
         setSearchValue(value);
 
@@ -260,7 +262,7 @@ export default function DataTable2(props: TypeProps) {
                                     numSelected={selected.length}
                                     onRequestSort={handleRequestSort}
                                     onSelectAllClick={handleSelectAllClick}
-                                    rowCount={maxRow}
+                                    rowCount={maxPage}
                                 />
 
                                 <TableBody>
@@ -314,7 +316,7 @@ export default function DataTable2(props: TypeProps) {
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
-                        count={maxRow}
+                        count={maxPage}
                         rowsPerPage={rowsPerPage}
                         page={pageNumber}
                         onPageChange={handleChangePage}

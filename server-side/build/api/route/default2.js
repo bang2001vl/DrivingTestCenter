@@ -12,145 +12,95 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RouteBuilder = exports.InputSource = void 0;
+exports.RouteHandleWrapper = exports.RouteBuilder = exports.InputSource = void 0;
 const helper_1 = __importDefault(require("../../helper"));
 const utilities_1 = require("./utilities");
 var InputSource;
 (function (InputSource) {
     InputSource[InputSource["body"] = 0] = "body";
     InputSource[InputSource["query"] = 1] = "query";
+    InputSource[InputSource["locals"] = 2] = "locals";
 })(InputSource = exports.InputSource || (exports.InputSource = {}));
-function getInput(req, source) {
+function getInput(req, res, source) {
     if (source === InputSource.body) {
         return req.body;
     }
     if (source === InputSource.query) {
         return req.query;
     }
+    if (source === InputSource.locals) {
+        return res.locals.input;
+    }
 }
 exports.RouteBuilder = {
     buildInsertRoute(repo, tag) {
-        return (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            const input = res.locals.input;
-            try {
-                const result = yield repo.create({
-                    data: input.data
-                });
-                res.json((0, utilities_1.buildResponseSuccess)());
-            }
-            catch (ex) {
-                helper_1.default.logger.errorWithTag(tag, ex);
-                res.json((0, utilities_1.buildResponseError)(2, "Unexpected error on server"));
-            }
-        });
+        return exports.RouteHandleWrapper.wrapHandle((input) => __awaiter(this, void 0, void 0, function* () {
+            const result = yield repo.create({
+                data: input.data
+            });
+        }), tag);
     },
     buildUpdateRoute(repo, tag, primarykeyName = "id") {
-        return (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            const input = res.locals.input;
-            try {
-                const result = yield repo.update({
-                    where: {
-                        [primarykeyName]: input.key
-                    },
-                    data: input.data
-                });
-                res.json((0, utilities_1.buildResponseSuccess)());
-            }
-            catch (ex) {
-                helper_1.default.logger.errorWithTag(tag, ex);
-                res.json((0, utilities_1.buildResponseError)(2, "Unexpected error on server"));
-            }
-        });
+        return exports.RouteHandleWrapper.wrapHandle((input) => __awaiter(this, void 0, void 0, function* () {
+            const result = yield repo.update({
+                where: {
+                    [primarykeyName]: input.key
+                },
+                data: input.data
+            });
+        }), tag);
     },
     buildDeleteRoute(repo, tag, primarykeyName = "id") {
-        return (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            const input = res.locals.input;
-            try {
-                const result = yield repo.delete({
-                    where: {
-                        [primarykeyName]: {
-                            in: input.keys
-                        }
-                    },
-                });
-                res.json((0, utilities_1.buildResponseSuccess)());
-            }
-            catch (ex) {
-                helper_1.default.logger.errorWithTag(tag, ex);
-                res.json((0, utilities_1.buildResponseError)(2, "Unexpected error on server"));
-            }
-        });
+        return exports.RouteHandleWrapper.wrapHandle((input) => __awaiter(this, void 0, void 0, function* () {
+            const result = yield repo.deleteMany({
+                where: {
+                    [primarykeyName]: {
+                        in: input.keys
+                    }
+                },
+            });
+        }), tag);
     },
     buildSelectRoute(repo, tag) {
-        return (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            const input = res.locals.input;
-            try {
-                const { searchby, searchvalue, orderby, orderdirection, start, count } = input;
-                const result = yield repo.findMany({
-                    where: {
-                        [searchby]: {
-                            contains: searchvalue
-                        },
+        return exports.RouteHandleWrapper.wrapHandle((input) => __awaiter(this, void 0, void 0, function* () {
+            const { searchby, searchvalue, orderby, orderdirection, start, count } = input;
+            const result = yield repo.findMany({
+                where: {
+                    [searchby]: {
+                        contains: searchvalue
                     },
-                    orderBy: [
-                        {
-                            [orderby]: orderdirection,
-                        },
-                    ],
-                    skip: start,
-                    take: count,
-                });
-                res.json((0, utilities_1.buildResponseSuccess)(result));
-            }
-            catch (ex) {
-                helper_1.default.logger.errorWithTag(tag, ex);
-                res.json((0, utilities_1.buildResponseError)(2, "Unexpected error on server"));
-            }
-        });
+                },
+                orderBy: [
+                    {
+                        [orderby]: orderdirection,
+                    },
+                ],
+                skip: start,
+                take: count,
+            });
+            return result;
+        }), tag);
     },
     buildCountRoute(repo, tag) {
-        return (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            const input = res.locals.input;
-            try {
-                const { searchby, searchvalue, orderby, orderdirection, start, count } = input;
-                const result = yield repo.count({
-                    where: {
-                        [searchby]: {
-                            contains: searchvalue
-                        },
+        return exports.RouteHandleWrapper.wrapHandle((input) => __awaiter(this, void 0, void 0, function* () {
+            const { searchby, searchvalue, orderby, orderdirection } = input;
+            const result = yield repo.count({
+                where: {
+                    [searchby]: {
+                        contains: searchvalue
                     },
-                    orderBy: [
-                        {
-                            [orderby]: orderdirection,
-                        },
-                    ],
-                    skip: start,
-                    take: count,
-                });
-                res.json((0, utilities_1.buildResponseSuccess)(result));
-            }
-            catch (ex) {
-                helper_1.default.logger.errorWithTag(tag, ex);
-                res.json((0, utilities_1.buildResponseError)(2, "Unexpected error on server"));
-            }
-        });
-    },
-    buildInputParser(parseFunction, inputSource = InputSource.body) {
-        return (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            const input = getInput(req, inputSource);
-            const inputParsed = parseFunction(input);
-            // Check input
-            if (!inputParsed) {
-                res.json((0, utilities_1.buildResponseError)(1, "Invalid input"));
-                return;
-            }
-            // Pass input to locals
-            res.locals.input = inputParsed;
-            next();
-        });
+                },
+                orderBy: [
+                    {
+                        [orderby]: orderdirection,
+                    },
+                ]
+            });
+            return result;
+        }), tag);
     },
     buildCountInputParser(searchProperties, orderProperties, tag) {
-        return this.buildInputParser((input) => {
+        return exports.RouteHandleWrapper.wrapCheckInput((input) => {
             if (input
                 && typeof input.searchby === "string"
                 && typeof input.searchvalue === "string"
@@ -167,10 +117,10 @@ exports.RouteBuilder = {
                 };
             }
             return undefined;
-        }, InputSource.query);
+        }, tag, InputSource.query);
     },
     buildSelectInputParser(searchProperties, orderProperties, tag) {
-        return this.buildInputParser((input) => {
+        return exports.RouteHandleWrapper.wrapCheckInput((input) => {
             if (input
                 && typeof input.searchby === "string"
                 && typeof input.searchvalue === "string"
@@ -191,10 +141,10 @@ exports.RouteBuilder = {
                 };
             }
             return undefined;
-        }, InputSource.query);
+        }, tag, InputSource.query);
     },
-    buildDeleteInputParser(primarykeyType = "string") {
-        return this.buildInputParser((input) => {
+    buildDeleteInputParser(tag, primarykeyType = "string") {
+        return exports.RouteHandleWrapper.wrapCheckInput((input) => {
             if (input
                 && input.keys
                 && Array.isArray(input.keys)) {
@@ -204,6 +154,43 @@ exports.RouteBuilder = {
                 }
             }
             return undefined;
-        }, InputSource.query);
+        }, tag, InputSource.query);
+    },
+};
+exports.RouteHandleWrapper = {
+    wrapCheckInput(parseFunction, tag, inputSource = InputSource.body) {
+        return (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            const input = getInput(req, res, inputSource);
+            const inputParsed = parseFunction(input);
+            try {
+                // Check input
+                if (!inputParsed) {
+                    res.json((0, utilities_1.buildResponseError)(1, "Invalid input"));
+                    return;
+                }
+                // Pass input to locals
+                res.locals.input = inputParsed;
+                next();
+            }
+            catch (ex) {
+                helper_1.default.logger.errorWithTag(tag, ex);
+                const { errorCode = 2, errorMsg = "Unexpected error on server" } = ex;
+                res.json((0, utilities_1.buildResponseError)(errorCode, errorMsg));
+            }
+        });
+    },
+    wrapHandle(handle, tag, inputSource = InputSource.locals) {
+        return (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            const input = getInput(req, res, inputSource);
+            try {
+                const result = yield handle(input);
+                res.json((0, utilities_1.buildResponseSuccess)(result));
+            }
+            catch (ex) {
+                helper_1.default.logger.errorWithTag(tag, ex);
+                const { errorCode = 2, errorMsg = "Unexpected error on server" } = ex;
+                res.json((0, utilities_1.buildResponseError)(errorCode, errorMsg));
+            }
+        });
     }
 };

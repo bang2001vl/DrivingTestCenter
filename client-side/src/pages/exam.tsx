@@ -1,4 +1,5 @@
 import { Avatar, Stack, TableCell, Typography } from "@mui/material";
+import { format, parse } from "date-fns";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
@@ -15,10 +16,10 @@ import { DialogHelper } from "../singleton/dialogHelper";
 import { useAPIResultHandler } from "../_helper/responseHandle";
 
 const EXAM_HEAD_LABEL = [
-    { id: 'name', label: 'Tên', alignRight: false },
-    { id: 'type', label: 'Thể loại', alignRight: false },
-    { id: 'dateStart', label: 'Ngày bắt đầu', alignRight: false },
-    { id: 'maxMember', label: 'Tối đa', alignRight: false },
+    { id: 'name', label: 'Name', alignRight: false },
+    { id: 'type', label: 'Category', alignRight: false },
+    { id: 'dateStart', label: 'Start Time', alignRight: false },
+    { id: 'maxMember', label: 'Member', alignRight: false },
     { id: '' }
 ]
 
@@ -27,6 +28,8 @@ const ExamPage = () => {
     const [list, setList] = useState<any[]>([]);
     const auth = useRecoilValue(authAtom);
     const apiResultHandler = useAPIResultHandler();
+    const navigate = useNavigate();
+
     const initSelectOption = {
         searchby: "name",
         searchvalue: "",
@@ -44,10 +47,10 @@ const ExamPage = () => {
     const onSelectChanged = async (option: ISelectOption) => {
         console.log("OnSelectChanged");
         console.log(option);
-        
+
         const [error1, newList] = await APIExam.select(option, auth?.token);
         if (error1) {
-            if(!apiResultHandler.catchFatalError(error1)){
+            if (!apiResultHandler.catchFatalError(error1)) {
                 DialogHelper.showAlert(error1.errorMessage);
             }
             return;
@@ -55,7 +58,7 @@ const ExamPage = () => {
 
         const [error2, newMaxRow] = await APIExam.count(option, auth?.token);
         if (error2) {
-            if(!apiResultHandler.catchFatalError(error2)){
+            if (!apiResultHandler.catchFatalError(error2)) {
                 DialogHelper.showAlert(error2.errorMessage);
             }
             return;
@@ -68,13 +71,29 @@ const ExamPage = () => {
     }
 
     const onClickCreate = () => {
-        window.alert("Clicked create");
+        //window.alert("Clicked create");
+        navigate("create", { replace: true });
     }
     const onClickEdit = (item: any) => {
-        window.alert("Clicked edit on item = " + JSON.stringify(item, undefined, 4));
+        //window.alert("Clicked edit on item = " + JSON.stringify(item, undefined, 4));
+        const params = new URLSearchParams(item);
+        navigate(`update?${params}`, { replace: true });
     }
-    const onClickDelete = (item: any) => {
-        window.alert("Clicked delete on item = " + JSON.stringify(item, undefined, 4));
+    const onClickDelete = async (item: any) => {
+        //window.alert("Clicked delete on item = " + JSON.stringify(item, undefined, 4));
+        const result = DialogHelper.showConfirm("Are you sure?");
+        if (result) {
+            const [error, newMaxRow] = await APIExam.delete([item.id], auth?.token);
+            if (error) {
+                if (!apiResultHandler.catchFatalError(error)) {
+                    DialogHelper.showAlert(error.errorMessage);
+                }
+                return;
+            }
+        }
+        else{
+            onSelectChanged(initSelectOption);
+        }
     }
 
     return (
@@ -106,7 +125,7 @@ const ExamPage = () => {
                 );
                 cells.push(
                     <TableCell align="left">
-                        {dateStart}
+                        {format(new Date(dateStart), "yyyy-MM-dd hh:mm:ss")}
                     </TableCell>
                 );
                 cells.push(

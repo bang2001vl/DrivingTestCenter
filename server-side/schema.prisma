@@ -1,6 +1,5 @@
 datasource db {
-    //url      = "mysql://sa:HackDuocThi%21%40%23NhatBanRoi%24%25%5E@localhost:3306/doan2"
-    url      = "mysql://remote:Ak47manhvler@thunderv.southeastasia.cloudapp.azure.com:3306/doan2"
+    url      = "mysql://sa:HackDuocThi%21%40%23NhatBanRoi%24%25%5E@localhost:3306/doan2"
     provider = "mysql"
 }
 
@@ -12,56 +11,60 @@ generator client {
 // Account system
 //
 model Account {
-    id        Int      @id @default(autoincrement())
-    roleId  Int   
+    id     Int @id @default(autoincrement())
+    roleId Int
 
-    username  String   @db.VarChar(256)
-    password  String   @db.VarChar(256)
-    status    Int      @default(0)
+    username String @db.VarChar(256)
+    password String @db.VarChar(256)
+    status   Int    @default(0)
 
-    createdAt DateTime @db.DateTime(0) @default(now())
-    updatedAt DateTime @db.DateTime(0) @default(now()) 
+    createdAt DateTime @default(now()) @db.DateTime(0)
+    updatedAt DateTime @default(now()) @db.DateTime(0)
 
-    session   Session[]
+    session  Session[]
     employee Employee?
-    student Student?
+    student  Student?
 
     @@index([username, password])
     @@map("account")
 }
-model Session {
-    @@map("session")
-    id         Int      @id @default(autoincrement())
-    accountId  Int
 
-    token      String   @unique(map: "token") @db.VarChar(50)
-    deviceInfo String   @db.VarChar(5000)
+model Session {
+    id        Int @id @default(autoincrement())
+    accountId Int
+
+    token       String @unique(map: "token") @db.VarChar(50)
+    deviceInfo  String @db.VarChar(5000)
     sessionData String @db.VarChar(5000)
 
-    createdAt  DateTime @db.DateTime(0) @default(now())
-    updatedAt  DateTime @db.DateTime(0) @default(now())
+    createdAt DateTime @default(now()) @db.DateTime(0)
+    updatedAt DateTime @default(now()) @db.DateTime(0)
 
-    account    Account @relation(fields: [accountId], references: [id], map: "session_ibfk_1")
+    account Account @relation(fields: [accountId], references: [id], map: "session_ibfk_1")
 
     @@index([accountId])
+    @@map("session")
 }
-model CONST_ROLE {
-    @@map("const_role")
-    id         Int      @id @default(autoincrement())
-    name      String   @db.VarChar(255)
 
+model CONST_ROLE {
+    id   Int    @id @default(autoincrement())
+    name String @db.VarChar(255)
+
+    @@map("const_role")
 }
 
 //
 // Data system
 //
 model Exam {
-    @@map("exam")
     id Int @id @default(autoincrement())
 
     name      String   @db.VarChar(255)
     type      String   @db.VarChar(255)
     dateStart DateTime
+    dateEnd   DateTime
+    dateOpen  DateTime
+    dateClose DateTime
     maxMember Int
     rules     String   @db.VarChar(3000)
     price     Int
@@ -71,34 +74,36 @@ model Exam {
 
     examTests ExamTest[]
     classes   Class[]
+    @@map("exam")
 }
 
 model ExamTest {
-    @@map("examtest")
     id     Int  @id @default(autoincrement())
     examId Int?
 
     name          String   @db.VarChar(255)
     location      String   @db.VarChar(255)
     dateTimeStart DateTime
+    dateTimeEnd DateTime
     maxMember     Int
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    exam Exam? @relation(fields: [examId], references: [id])
-    studentCNNs CONN_Student_ExamTest[]
+    exam         Exam?                    @relation(fields: [examId], references: [id])
+    studentCNNs  CONN_Student_ExamTest[]
     employeeCNNs CONN_Employee_ExamTest[]
+    @@map("examtest")
 }
 
 model Class {
-    @@map("class")
     id     Int  @id @default(autoincrement())
     examId Int?
 
     name      String   @db.VarChar(255)
     location  String   @db.VarChar(255)
     dateStart DateTime
+    dateEnd DateTime
     maxMember Int
     rules     String   @db.VarChar(3000)
     price     Int
@@ -106,121 +111,124 @@ model Class {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    exam Exam? @relation(fields: [examId], references: [id])
-    studentCNNs CONN_Student_Class[]
+    exam         Exam?                 @relation(fields: [examId], references: [id])
+    studentCNNs  CONN_Student_Class[]
     employeeCNNs CONN_Employee_Class[]
+    @@map("class")
 }
 
 model Student {
-    @@map("student")
-    id Int @id @default(autoincrement())
-    accountId Int
+    id        Int @id @default(autoincrement())
+    accountId Int @unique
 
     fullname String   @db.VarChar(255)
     birthday DateTime
     gender   Int
+    address String  @db.VarChar(1000)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    account Account @relation(fields: [accountId], references: [id])
-    payments Payment[]
-    classCNNs CONN_Student_Class[]
+    account      Account                 @relation(fields: [accountId], references: [id])
+    payments     Payment[]
+    classCNNs    CONN_Student_Class[]
     examTestCNNs CONN_Student_ExamTest[]
+    @@map("student")
 }
 
 model Employee {
-    @@map("employee")
-    id Int @id @default(autoincrement())
-    accountId Int
+    id        Int @id @default(autoincrement())
+    accountId Int @unique
 
     fullname String   @db.VarChar(255)
     birthday DateTime
     gender   Int
+    address String  @db.VarChar(1000)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    
-    account Account @relation(fields: [accountId], references: [id])
-    classCNNs CONN_Employee_Class[]
+
+    account      Account                  @relation(fields: [accountId], references: [id])
+    classCNNs    CONN_Employee_Class[]
     examTestCNNs CONN_Employee_ExamTest[]
+    @@map("employee")
 }
 
 model Payment {
-    @@map("payment")
-    id Int @id @default(autoincrement())
+    id        Int  @id @default(autoincrement())
     studentId Int?
 
     totalPrice Int
-    reason String @db.VarChar(255)
-    status Int @default(0)
+    reason     String @db.VarChar(255)
+    status     Int    @default(0)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    student Student? @relation(fields: [studentId], references: [id])
+    student Student?     @relation(fields: [studentId], references: [id])
     details BillDetail[]
+    @@map("payment")
 }
 
 model BillDetail {
-    @@map("billdetail")
-    id Int @id @default(autoincrement())
+    id        Int  @id @default(autoincrement())
     paymentId Int?
 
-    price Int @default(0)
+    price  Int    @default(0)
     reason String @db.VarChar(255)
 
-    payment Payment? @relation(fields: [paymentId], references: [id])
-    classCNN CONN_Student_Class?
+    payment     Payment?               @relation(fields: [paymentId], references: [id])
+    classCNN    CONN_Student_Class?
     examTestCNN CONN_Student_ExamTest?
+    @@map("billdetail")
 }
 
 model CONN_Student_ExamTest {
-    @@map("conn_student_examtest")
-    id Int @id @default(autoincrement())
-    studentId Int
-    examTestId Int
-    billDetailId Int
+    id           Int @id @default(autoincrement())
+    studentId    Int
+    examTestId   Int
+    billDetailId Int @unique
 
     billDetail BillDetail @relation(fields: [billDetailId], references: [id])
-    examTest ExamTest @relation(fields: [examTestId], references: [id])
-    student Student @relation(fields: [studentId], references: [id])
+    examTest   ExamTest   @relation(fields: [examTestId], references: [id])
+    student    Student    @relation(fields: [studentId], references: [id])
+    @@map("conn_student_examtest")
 }
 
 model CONN_Student_Class {
-    @@map("conn_student_class")
-    id Int @id @default(autoincrement())
-    studentId Int
-    classId Int
-    billDetailId Int
+    id           Int @id @default(autoincrement())
+    studentId    Int
+    classId      Int
+    billDetailId Int @unique
 
     billDetail BillDetail @relation(fields: [billDetailId], references: [id])
-    student Student @relation(fields: [studentId], references: [id])
-    class Class @relation(fields: [classId], references: [id])
+    student    Student    @relation(fields: [studentId], references: [id])
+    class      Class      @relation(fields: [classId], references: [id])
+    @@map("conn_student_class")
 }
 
 model CONN_Employee_ExamTest {
-    @@map("conn_employee_examtest")
-    id Int @id @default(autoincrement())
+    id         Int @id @default(autoincrement())
     employeeId Int
     examTestId Int
 
     employee Employee @relation(fields: [employeeId], references: [id])
     examTest ExamTest @relation(fields: [examTestId], references: [id])
+    @@map("conn_employee_examtest")
 }
 
 model CONN_Employee_Class {
-    @@map("conn_employee_class")
-    id Int @id @default(autoincrement())
+    id         Int @id @default(autoincrement())
     employeeId Int
-    classId Int
+    classId    Int
 
     employee Employee @relation(fields: [employeeId], references: [id])
-    class Class @relation(fields: [classId], references: [id])
+    class    Class    @relation(fields: [classId], references: [id])
+    @@map("conn_employee_class")
 }
 
 // Khi Student đăng kí 1 khóa học thì
-//      + Tạo 1 BillDetail 
+//      + Tạo 1 BillDetail
 //      + Tạo 1 Connection gắn với khóa học và student
 //      + Liên kết BillDetail với Connection qua connection.billDetailId
 // Khi Student thanh toán n BillDetail thì

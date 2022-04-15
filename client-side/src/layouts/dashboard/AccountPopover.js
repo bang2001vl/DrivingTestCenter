@@ -53,7 +53,7 @@ export default function AccountPopover() {
     setOpen(false);
   };
   const gotoLogin = () => {
-    navigate("/login", {replace: true});
+    navigate("/login", { replace: true });
   };
 
   const userFullname = currentUser ? currentUser.fullname : "Chưa đăng nhập";
@@ -64,7 +64,7 @@ export default function AccountPopover() {
     <>
       <IconButton
         ref={anchorRef}
-        onClick={currentUser ? handleOpen : gotoLogin}
+        onClick={handleOpen}
         sx={{
           padding: 0,
           width: 44,
@@ -85,14 +85,21 @@ export default function AccountPopover() {
         <Avatar src={userImageURI} alt="photoURL" />
       </IconButton>
 
-      <MenuPopover
+      {buildItem()}
+
+    </>
+  );
+
+  function buildItem(){
+    if(currentUser){
+      return (<MenuPopover
         open={open}
         onClose={handleClose}
         anchorEl={anchorRef.current}
         sx={{ width: 220 }}
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
-          <Typography variant="subtitle1" noWrap>
+          <Typography variant="subtitle1" noWrap >
             {userFullname}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
@@ -128,7 +135,28 @@ export default function AccountPopover() {
             Logout
           </Button>
         </Box>
+      </MenuPopover>)
+    }
+    else {
+      return (
+        <MenuPopover
+        open={open}
+        onClose={handleClose}
+        anchorEl={anchorRef.current}
+        sx={{ width: 220 }}
+      >
+      <Box sx={{ p: 2, pt: 1.5 }}>
+        <Button fullWidth color="inherit" variant="outlined" href='/signup'>
+          Signup
+        </Button>
+      </Box>
+        <Box sx={{ p: 2, pt: 1.5 }}>
+          <Button fullWidth color="inherit" variant="outlined" href='/login'>
+            Login/Signup
+          </Button>
+        </Box>
       </MenuPopover>
-    </>
-  );
+      )
+    }
+  }
 }

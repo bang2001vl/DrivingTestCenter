@@ -35,13 +35,42 @@ const orderProperties = [
     "name", "type", "dateStart", "maxMember"
 ];
 function parseInputCreate(input) {
-    if (input) {
-        return input;
+    if (input
+        && input.data) {
+        const data = input.data;
+        return {
+            data: {
+                name: data.name,
+                type: data.type,
+                dateOpen: data.dateOpen,
+                dateClose: data.dateClose,
+                dateStart: data.dateStart,
+                dateEnd: data.dateEnd,
+                maxMember: parseInt(data.maxMember),
+                rules: data.rules,
+                price: parseInt(data.price),
+            }
+        };
     }
 }
 function parseInputUpdate(input) {
-    if (input) {
-        return input;
+    if (input
+        && input.data) {
+        const data = input.data;
+        return {
+            key: parseInt(input.key),
+            data: {
+                name: data.name,
+                type: data.type,
+                dateOpen: data.dateOpen,
+                dateClose: data.dateClose,
+                dateStart: data.dateStart,
+                dateEnd: data.dateEnd,
+                maxMember: parseInt(data.maxMember),
+                rules: data.rules,
+                price: parseInt(data.price),
+            }
+        };
     }
 }
 function parseInputDelete(input) {
@@ -53,16 +82,17 @@ const ExamRouter = () => {
     const tag = "Exam";
     const model = database_1.db.prisma.exam;
     let router = (0, express_1.Router)();
+    router.use((0, express_1.json)());
     router.use(session_1.default.roleChecker([session_1.ROLE_IDS.admin, session_1.ROLE_IDS.employee]));
     router.get("/select", default2_1.RouteBuilder.buildSelectInputParser(searchProperties, orderProperties, tag));
     router.get("/select", default2_1.RouteBuilder.buildSelectRoute(model, tag));
     router.get("/count", default2_1.RouteBuilder.buildCountInputParser(searchProperties, orderProperties, tag));
     router.get("/count", default2_1.RouteBuilder.buildCountRoute(model, tag));
-    router.post("/create", default2_1.RouteBuilder.buildInputParser(parseInputCreate));
+    router.post("/create", default2_1.RouteHandleWrapper.wrapCheckInput(parseInputCreate, tag));
     router.post("/create", default2_1.RouteBuilder.buildInsertRoute(model, tag));
-    router.put("/update", default2_1.RouteBuilder.buildInputParser(parseInputUpdate));
+    router.put("/update", default2_1.RouteHandleWrapper.wrapCheckInput(parseInputUpdate, tag));
     router.put("/update", default2_1.RouteBuilder.buildUpdateRoute(model, tag));
-    router.delete("/delete", default2_1.RouteBuilder.buildInputParser(parseInputDelete));
+    router.delete("/delete", default2_1.RouteHandleWrapper.wrapCheckInput(parseInputDelete, tag));
     router.delete("/delete", default2_1.RouteBuilder.buildDeleteRoute(model, tag));
     return router;
 };

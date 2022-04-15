@@ -6,6 +6,7 @@ import { buildResponseError, buildResponseSuccess } from "./utilities";
 
 const AccountRouter = () => {
     const router = Router();
+
     router.get("/detail", SessionHandler.sessionMiddleware);
     router.get("/detail", async (req, res) => {
         console.log("[Access] /account/detail with body : ");

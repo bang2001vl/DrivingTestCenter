@@ -74,7 +74,7 @@ export default function DashboardSidebar(props: IProps) {
         '& .simplebar-content': { height: 1, display: 'flex', flexDirection: 'column' }
       }}
     >
-      <Box sx={{ px: 2.5, py: 3, display: 'inline-flex' }}>
+      <Box sx={{ px: 2.5, py: 3, display: 'inline-flex' }} alignSelf='center'>
         <Logo />
       </Box>
 
