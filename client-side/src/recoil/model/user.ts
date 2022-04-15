@@ -6,6 +6,7 @@ interface IUserState {
     fullname: string,
     birthday: string,
     gender: number,
+    imageURI: string,
 }
 
 export const userAtom = atom<IUserState | null>({

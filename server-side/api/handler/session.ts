@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { v1 } from "uuid";
 import { db } from "../../database";
 import helper from "../../helper";
+import { buildResponseError } from "../route/utilities";
 
 export interface ISession {
     accountId: any,
@@ -27,7 +28,7 @@ const SessionHandler = {
                 },
             });
             if (!session) {
-                res.status(401).send("Unathourized");
+                res.json(buildResponseError(401, "Unathourized"));
                 return;
             }
     
@@ -38,7 +39,7 @@ const SessionHandler = {
         }
         catch (ex) {
             // System crashed
-            res.status(500).send("Server error: We catched some unexpected exception X.X");
+            res.json(buildResponseError(500, "Server error: We catched some unexpected exception X.X"));
         }
     },
 
@@ -48,7 +49,7 @@ const SessionHandler = {
             console.log("Start: Checking token");
     
             if (!token || typeof token !== "string") {
-                res.status(401).send("Unathourized");
+                res.json(buildResponseError(401, "Unathourized"));
                 return;
             }
     
@@ -66,7 +67,7 @@ const SessionHandler = {
                     }
                 });
                 if (!session || !session.account || !roles.includes(session.account.roleId)) {
-                    res.status(401).send("Unathourized");
+                    res.json(buildResponseError(401, "Unathourized"));
                     return;
                 }
     
@@ -77,7 +78,7 @@ const SessionHandler = {
             }
             catch (ex) {
                 // System crashed
-                res.status(500).send("Server error: We catched some unexpected exception X.X");
+                res.json(buildResponseError(500, "Server error: We catched some unexpected exception X.X"));
             }
         }
     },

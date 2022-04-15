@@ -14,6 +14,8 @@ import Scrollbar from '../../components/Scrollbar';
 import NavSection from '../../components/NavSection';
 //
 import sidebarConfig from './SidebarConfig';
+import { userAtom } from '../../recoil/model/user';
+import { useRecoilValue } from 'recoil';
 
 // ----------------------------------------------------------------------
 
@@ -45,6 +47,11 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
   const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');
+  const currentUser = useRecoilValue(userAtom);
+
+  const userFullname = currentUser ? currentUser : "Chưa đăng nhập";
+  const userSecondText = currentUser ? `SecondText` : 'SecondText';
+  const userImageURI = currentUser ? currentUser.imageURI : '/static/mock-images/avatars/avatar_default.jpg';
 
   useEffect(() => {
     if (isOpenSidebar) {
@@ -67,13 +74,13 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
       <Box sx={{ mb: 5, mx: 2.5 }}>
         <Link underline="none" component={RouterLink} to="#">
           <AccountStyle>
-            <Avatar src={account.photoURL} alt="photoURL" />
+            <Avatar src={userImageURI} alt="photoURL" />
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {account.displayName}
+                {userFullname}
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {account.role}
+                {userSecondText}
               </Typography>
             </Box>
           </AccountStyle>
@@ -85,7 +92,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
       <Box sx={{ flexGrow: 1 }} />
 
       <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
-        <Stack
+        {/* <Stack
           alignItems="center"
           spacing={3}
           sx={{ pt: 5, borderRadius: 2, position: 'relative' }}
@@ -112,7 +119,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
           >
             Upgrade to Pro
           </Button>
-        </Stack>
+        </Stack> */}
       </Box>
     </Scrollbar>
   );

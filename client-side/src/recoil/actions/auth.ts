@@ -4,6 +4,22 @@ import getDeviceInfo from "../../_helper/deviceInfo";
 import { APIFetcher } from "../../_helper/fetchAPI";
 import { authAtom } from "../model/auth";
 
+function saveAuthToLocalStorage(auth: any){
+  localStorage.setItem("auth", auth);
+}
+
+export function loadAuthFromStorage(){
+    const old = localStorage.getItem('auth');
+    if(old){
+        return JSON.parse(old);
+    }
+    return null;
+}
+
+export function logoutSession(){
+
+}
+
 const useAuthActions = () => {
   const [auth, setAuth] = useRecoilState(authAtom);
   
@@ -25,15 +41,22 @@ const useAuthActions = () => {
           token: session.token,
           roleId: session.roleId,
         }
+        // Login successfull
         setAuth(newAuth);
-
+        saveAuthToLocalStorage(newAuth);
         return [null, newAuth];
       }
 
       // Invalid response
       setAuth(null);
+      saveAuthToLocalStorage(null);
       return [error, null];
     },
+
+    logoutSession(){
+      setAuth(null);
+      saveAuthToLocalStorage(null);
+    }
   };
 
 

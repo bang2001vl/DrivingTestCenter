@@ -1,7 +1,5 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { appConfig } from "../../configs";
+import { useRecoilState,} from "recoil";
 import { APIFetcher } from "../../_helper/fetchAPI";
-import { useFetchWrapper } from "../../_helper/fetchWrapper";
 import { userAtom } from "../model/user";
 
 const useUserActions = () => {
@@ -14,10 +12,12 @@ const useUserActions = () => {
             if (!error) {
                 // Success received data
                 if (data.student) {
+                    data.student.imageURI = '/static/mock-images/avatars/avatar_default.jpg';
                     setUser(data.student);
                     return;
                 }
                 if (data.employee) {
+                    data.employee.imageURI = '/static/mock-images/avatars/avatar_default.jpg';
                     setUser(data.employee);
                     return;
                 }

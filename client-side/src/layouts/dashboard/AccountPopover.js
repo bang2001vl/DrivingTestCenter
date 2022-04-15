@@ -10,6 +10,7 @@ import MenuPopover from '../../components/MenuPopover';
 import { useRecoilValue } from 'recoil';
 import { userAtom } from '../../recoil/model/user';
 import { differenceInCalendarYears } from 'date-fns';
+import { authAtom } from '../../recoil/model/auth';
 
 // ----------------------------------------------------------------------
 
@@ -48,6 +49,10 @@ export default function AccountPopover() {
     setOpen(false);
   };
 
+  const userFullname = currentUser ? currentUser : "Chưa đăng nhập";
+  const userAge = currentUser ? `Age: ${differenceInCalendarYears(Date.now(), new Date(currentUser.birthday))}` : 'Vui lòng đăng nhập';
+  const userImageURI = currentUser ? currentUser.imageURI : '/static/mock-images/avatars/avatar_default.jpg';
+
   return (
     <>
       <IconButton
@@ -70,7 +75,7 @@ export default function AccountPopover() {
           })
         }}
       >
-        <Avatar src={currentUser ? '/static/mock-images/avatars/avatar_default.jpg' : '/static/mock-images/avatars/avatar_default.jpg'} alt="photoURL" />
+        <Avatar src={userImageURI} alt="photoURL" />
       </IconButton>
 
       <MenuPopover
@@ -81,10 +86,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle1" noWrap>
-            {currentUser ? currentUser.fullname : "Login" }
+            {userFullname}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {currentUser ? `Age: ${differenceInCalendarYears(Date.now(), new Date(currentUser.birthday))}` : 'demo@minimals.cc'}
+            {userAge}
           </Typography>
         </Box>
 

@@ -12,6 +12,7 @@ import DataTable2 from "../sections/DataTable2";
 import DataListHead from "../sections/user/DataListHead";
 import ItemMoreMenu from "../sections/user/ItemMoreMenu";
 import { DialogHelper } from "../singleton/dialogHelper";
+import { useAPIResultHandler } from "../_helper/responseHandle";
 
 const EXAM_HEAD_LABEL = [
     { id: 'name', label: 'Tên', alignRight: false },
@@ -25,7 +26,7 @@ const ExamPage = () => {
     const [maxRow, setMaxRow] = useState(0);
     const [list, setList] = useState<any[]>([]);
     const auth = useRecoilValue(authAtom);
-    const navigator = useNavigate();
+    const apiResultHandler = useAPIResultHandler();
     const initSelectOption = {
         searchby: "name",
         searchvalue: "",
@@ -36,12 +37,7 @@ const ExamPage = () => {
     }
 
     useEffect(() => {
-        if (auth === null || auth.token === null) {
-            navigator("/login", { replace: true });
-        }
-        else{
-            onSelectChanged(initSelectOption);
-        }
+        onSelectChanged(initSelectOption);
     }, []);
 
 
@@ -51,13 +47,17 @@ const ExamPage = () => {
         
         const [error1, newList] = await APIExam.select(option, auth?.token);
         if (error1) {
-            DialogHelper.showAlert(error1.errorMessage);
+            if(!apiResultHandler.catchFatalError(error1)){
+                DialogHelper.showAlert(error1.errorMessage);
+            }
             return;
         }
 
         const [error2, newMaxRow] = await APIExam.count(option, auth?.token);
         if (error2) {
-            DialogHelper.showAlert(error2.errorMessage);
+            if(!apiResultHandler.catchFatalError(error2)){
+                DialogHelper.showAlert(error2.errorMessage);
+            }
             return;
         }
         console.log(newList);
