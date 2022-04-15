@@ -229,7 +229,7 @@ export default function DataTable2(props: TypeProps) {
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        User
+                        {props.title}
                     </Typography>
                     <Button
                         variant="contained"

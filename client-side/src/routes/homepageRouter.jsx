@@ -2,9 +2,15 @@ import { Navigate, useRoutes } from "react-router-dom";
 import DashboardLayout from "../layouts/dashboard";
 import LogoOnlyLayout from "../layouts/logoOnlyLayout";
 import HomePage from "../pages";
+import ClassesPage from "../pages/class";
 import ExamPage from "../pages/exam";
 import ExamCreate, { EDIT_METHOD } from "../pages/examCreate";
+import LecturesPage from "../pages/lecture";
 import Login from "../pages/login"
+import ReceiptsPage from "../pages/receipt";
+import ReportsPage from "../pages/report";
+import SessionsPage from "../pages/session";
+import StudentsPage from "../pages/student";
 import UserPage from "../pages/user";
 
 export default function RootRouter() {
@@ -17,6 +23,12 @@ export default function RootRouter() {
         { path: 'exam', element: <ExamPage /> },
         { path: 'exam/create', element: <ExamCreate method={EDIT_METHOD.create}/> },
         { path: 'exam/update', element: <ExamCreate method={EDIT_METHOD.update}/> },
+        { path: 'session', element: <SessionsPage /> },
+        { path: 'class', element: <ClassesPage /> },
+        { path: 'lecture', element: <LecturesPage /> },
+        { path: 'student', element: <StudentsPage /> },
+        { path: 'receipt', element: <ReceiptsPage /> },
+        { path: 'report', element: <ReportsPage /> },
       ]
     },
     {

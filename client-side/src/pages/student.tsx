@@ -1,13 +1,13 @@
 import Page from "../components/Page";
 
-const HomePage = () =>{
+const StudentsPage = () =>{
 
     return (
         //@ts-ignore
-        <Page title="Homepage">
+        <Page title="Students">
             This is index page
         </Page>
     )
 }
 
-export default HomePage;
+export default StudentsPage;

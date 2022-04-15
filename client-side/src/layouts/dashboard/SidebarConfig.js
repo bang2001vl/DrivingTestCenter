@@ -11,36 +11,41 @@ const sidebarConfig = [
     path: '/dashboard/home',
     icon: getIcon('eva:pie-chart-2-fill')
   },
-  // {
-  //   title: 'user',
-  //   path: '/dashboard/user',
-  //   icon: getIcon('eva:people-fill')
-  // },
   {
     title: 'exam',
     path: '/dashboard/exam',
     icon: getIcon('eva:shopping-bag-fill')
   },
-  // {
-  //   title: 'blog',
-  //   path: '/dashboard/blog',
-  //   icon: getIcon('eva:file-text-fill')
-  // },
-  // {
-  //   title: 'login',
-  //   path: '/login',
-  //   icon: getIcon('eva:lock-fill')
-  // },
-  // {
-  //   title: 'register',
-  //   path: '/register',
-  //   icon: getIcon('eva:person-add-fill')
-  // },
-  // {
-  //   title: 'Not found',
-  //   path: '/404',
-  //   icon: getIcon('eva:alert-triangle-fill')
-  // }
+  {
+    title: 'session',
+    path: '/dashboard/session',
+    icon: getIcon('eva:shopping-bag-fill')
+  },
+  {
+    title: 'class',
+    path: '/dashboard/class',
+    icon: getIcon('eva:shopping-bag-fill')
+  },
+  {
+    title: 'lecture',
+    path: '/dashboard/lecture',
+    icon: getIcon('eva:shopping-bag-fill')
+  },
+  {
+    title: 'student',
+    path: '/dashboard/student',
+    icon: getIcon('eva:shopping-bag-fill')
+  },
+  {
+    title: 'receipt',
+    path: '/dashboard/receipt',
+    icon: getIcon('eva:shopping-bag-fill')
+  },
+  {
+    title: 'report',
+    path: '/dashboard/report',
+    icon: getIcon('eva:shopping-bag-fill')
+  },
 ];
 
 export default sidebarConfig;
