@@ -98,7 +98,9 @@ const ExamPage = () => {
 
     return (
         <DataTable2
-            title="Exam | Homepage"
+            title="Exam | Search"
+            textLabel="Exam"
+
             maxRow={maxRow}
             list={list}
             initSelectOption={initSelectOption}
@@ -114,27 +116,27 @@ const ExamPage = () => {
 
                 const cells = [];
                 cells.push(
-                    <TableCell component="th" scope="row" padding="none">
+                    <TableCell key={1} component="th" scope="row" padding="none">
                         {name}
                     </TableCell>
                 );
                 cells.push(
-                    <TableCell align="left">
+                    <TableCell key={2} align="left">
                         {type}
                     </TableCell>
                 );
                 cells.push(
-                    <TableCell align="left">
+                    <TableCell key={3} align="left">
                         {format(new Date(dateStart), "yyyy-MM-dd hh:mm:ss")}
                     </TableCell>
                 );
                 cells.push(
-                    <TableCell align="left">
+                    <TableCell key={4} align="left">
                         {maxMember}
                     </TableCell>
                 );
                 cells.push(
-                    <TableCell align="right">
+                    <TableCell key={5} align="right">
                         <ItemMoreMenu
                             items={[
                                 {

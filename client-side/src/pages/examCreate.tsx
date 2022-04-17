@@ -111,7 +111,7 @@ export default function ExamCreate(props: IProps) {
     return (
         // @ts-ignore
         <Page title={getTitle(props.method)} sx={{ display: "flex", "flex-direction":"column" }}>
-            <Box sx={{ width: 600 }} alignSelf="center">
+            <Box sx={{ width: "70%" }} alignSelf="center">
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <FormControl >
                         <Box sx={{ p: 1, width: "100%" }}>

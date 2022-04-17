@@ -1,7 +1,4 @@
-import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
 import React, { useEffect, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
 // material
 import {
     Card,
@@ -21,18 +18,12 @@ import {
 } from '@mui/material';
 // components
 import Page from '../components/Page';
-import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
 import Iconify from '../components/Iconify';
 import SearchNotFound from '../components/SearchNotFound';
-import ItemMoreMenu from './user/ItemMoreMenu';
 import DataListToolbar from './user/DataListToolbar';
 import DataListHead from './user/DataListHead';
-import { RecoilState, useRecoilValue } from 'recoil';
-import { IListAction } from '../recoil/actions/_defaultListActions';
-import { ISearchOptions } from './DataTable';
-import { IOrderOptions, IPagingOption, ISearchOption, ISelectOption } from '../api/_deafaultCRUD';
-import { styled } from '@mui/styles';
+import { ISelectOption } from '../api/_deafaultCRUD';
 
 // ----------------------------------------------------------------------
 
@@ -41,18 +32,10 @@ export interface ISearchProperty {
     label: string,
 }
 
-// export interface ISearchOptions {
-//     orderType: string; // "ASC" | "DESC" ...
-//     orderBy: string; // "name" | "id" ...
-
-//     searchProperty: ISearchProperty; // "name" | "id" ...
-//     searchValue: string;
-
-//     filterOptions?: any;
-// }
-
 interface TypeProps {
     title: string,
+    textLabel: string,
+    searchbarText?: string,
 
     list: any[],
     maxRow: number,
@@ -71,10 +54,6 @@ interface TypeProps {
     initSelectOption: ISelectOption,
 }
 
-const MyPage = styled(Page)(({ theme }) => ({
-    fontFamily: "Arial"
-}));
-
 export default function DataTable2(props: TypeProps) {
     const dataList = props.list;
 
@@ -89,8 +68,8 @@ export default function DataTable2(props: TypeProps) {
     const [orderBy, setOrderBy] = useState(props.initSelectOption.orderby);
     const [orderType, setOrderType] = useState(props.initSelectOption.orderdirection);
 
-    const maxPage = props.maxRow <= rowsPerPage ? 1 
-                    : (props.maxRow % rowsPerPage === 0 ? props.maxRow / rowsPerPage : props.maxRow / rowsPerPage + 1);
+    const maxPage = props.maxRow <= rowsPerPage ? 1
+        : (props.maxRow % rowsPerPage === 0 ? props.maxRow / rowsPerPage : props.maxRow / rowsPerPage + 1);
 
     const searchProperties = [
         {
@@ -215,7 +194,8 @@ export default function DataTable2(props: TypeProps) {
         }));
     }
 
-    const emptyRows = pageNumber > 0 ? Math.max(0, (1 + pageNumber) * rowsPerPage - dataList.length) : 0;
+    //const emptyRows = pageNumber > 0 ? Math.max(0, (1 + pageNumber) * rowsPerPage - dataList.length) : 0;
+    const emptyRows = rowsPerPage - dataList.length;
     console.log("Empty rows = " + emptyRows);
 
     // const filteredUsers = applySortFilter(dataList, getComparator(orderType, orderBy), searchValue);
@@ -229,7 +209,7 @@ export default function DataTable2(props: TypeProps) {
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h4" gutterBottom>
-                        {props.title}
+                        {props.textLabel}
                     </Typography>
                     <Button
                         variant="contained"
@@ -241,18 +221,19 @@ export default function DataTable2(props: TypeProps) {
                 </Stack>
 
                 <Card>
-                    {DataListToolbar({
-                        numSelected: selected.length,
+                    <DataListToolbar
+                        numSelected={selected.length}
+                        hintText={props.searchbarText}
 
-                        searchValue: searchValue,
-                        onSearchValueChanged: handleSearchValueChanged,
+                        searchValue={searchValue}
+                        onSearchValueChanged={handleSearchValueChanged}
 
-                        searchProperties: searchProperties,
-                        searchProperty: searchProperty,
-                        onSearchPropertyChanged: handleSearchPropertyChanged,
-                    })}
-
-                    <Scrollbar sx={undefined}>
+                        searchProperties={searchProperties}
+                        searchProperty={searchProperty}
+                        onSearchPropertyChanged={handleSearchPropertyChanged}
+                    />
+                    {/*@ts-ignore*/}
+                    <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
                             <Table>
                                 <DataListHead

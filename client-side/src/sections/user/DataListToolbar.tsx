@@ -50,6 +50,7 @@ export interface ISearchProperty {
 
 interface IPropTypes {
   numSelected: number,
+  hintText?: string,
 
   searchValue: string,
   onSearchValueChanged: Function,
@@ -79,7 +80,7 @@ export default function DataListToolbar(props: IPropTypes) {
             value={props.searchValue}
             onChange={props.onSearchValueChanged}
 
-            placeholder="Search user..."
+            placeholder={props.hintText ? props.hintText : "Search..."}
             startAdornment={
               <InputAdornment position="start">
                 <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
