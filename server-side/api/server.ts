@@ -13,6 +13,10 @@ const APIServer = ()=>{
     app.use("/login", LoginRouter());
     app.use("/exam", ExamRouter());
 
+    app.use((req,res)=>{
+        console.log("Default hanle response with data: " + JSON.stringify(res.locals.responseData, null, 4));
+        res.json(res.locals.responseData)
+    });
     return app;
 }
 

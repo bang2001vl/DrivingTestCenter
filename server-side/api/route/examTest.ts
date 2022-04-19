@@ -61,9 +61,9 @@ function parseInputDelete(input: any) {
     }
 }
 
-export const ExamRouter = () => {
-    const tag = "Exam";
-    const model = db.prisma.exam;
+export const ExamTestRouter = () => {
+    const tag = "ExamTest";
+    const model = db.prisma.examTest;
     let router = Router();
 
     router.use(json());

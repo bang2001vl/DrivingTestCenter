@@ -8,51 +8,20 @@ import RootRouter from './routes/homepageRouter';
 import ThemeConfig from './theme';
 import GlobalStyles from './theme/globalStyles';
 import ScrollToTop from './components/ScrollToTop';
-import { RecoilRoot } from 'recoil';
+import { RecoilRoot, useRecoilValue } from 'recoil';
 import FirstLaunch from './components/FirstLaunch';
+import { rootDialogSelector } from './_helper/rootDialog';
 
 function App() {
-  useEffect(() => {
-
-  }, []);
+  const rootDialog = useRecoilValue(rootDialogSelector);
   return (
-    // <div className="App">
-    //   <header className="App-header">
-    //     <img src={logo} className="App-logo" alt="logo" />
-    //     <p>
-    //       Edit <code>src/App.tsx</code> and save to reload.
-    //     </p>
-    //     <a
-    //       className="App-link"
-    //       href="https://reactjs.org"
-    //       target="_blank"
-    //       rel="noopener noreferrer"
-    //       // Test print toàn bộ các tỉnh kèm số lượng các huyện
-    //       onClick={async (e)=>{
-    //         e.preventDefault();
-    //         console.log("TRACE: Clicked test");
-    //         var data = (new DVHCVN()).data;
-    //         data.forEach((lv1)=>{
-    //           console.log(`Name = ${lv1.name}, childCount = ${lv1.level2s.length}`);
-    //         });
-    //       }}
-    //     >
-    //       {my_little_txt.smg}
-    //     </a>
-    //   </header>
+    <ThemeConfig>
+      <ScrollToTop />
+      <GlobalStyles />
 
-
-    // </div>
-
-    <RecoilRoot>
-      <FirstLaunch />
-      
-      <ThemeConfig>
-        <ScrollToTop />
-        <GlobalStyles />
-        <RootRouter />
-      </ThemeConfig>
-    </RecoilRoot>
+      <RootRouter />
+      {rootDialog}
+    </ThemeConfig>
   );
 }
 

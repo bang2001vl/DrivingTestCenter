@@ -5,11 +5,17 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
+import { RecoilRoot } from 'recoil';
+import FirstLaunch from './components/FirstLaunch';
 
 ReactDOM.render(
   <HelmetProvider>
     <BrowserRouter>
-      <App />
+    <RecoilRoot>
+      <FirstLaunch />
+  
+      <App/>
+    </RecoilRoot>
     </BrowserRouter>
   </HelmetProvider>,
   document.getElementById('root')

@@ -1,8 +1,9 @@
-import { Avatar, Stack, TableCell, Typography } from "@mui/material";
+import { Avatar, Dialog, DialogTitle, Stack, TableCell, Typography } from "@mui/material";
 import { format, parse } from "date-fns";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
+import { boolean } from "yup";
 import { APIExam } from "../api/exam";
 import { ISelectOption } from "../api/_deafaultCRUD";
 import { useExamActions } from "../recoil/actions/exam";
@@ -14,6 +15,9 @@ import DataListHead from "../sections/user/DataListHead";
 import ItemMoreMenu from "../sections/user/ItemMoreMenu";
 import { DialogHelper } from "../singleton/dialogHelper";
 import { useAPIResultHandler } from "../_helper/responseHandle";
+import { useRootDialog } from "../_helper/rootDialog";
+import ExamCreate from "./examCreate";
+import { EDIT_METHOD, ExamDialogCreate } from "./examCreateDialog";
 
 const EXAM_HEAD_LABEL = [
     { id: 'name', label: 'Name', alignRight: false },
@@ -21,7 +25,7 @@ const EXAM_HEAD_LABEL = [
     { id: 'dateStart', label: 'Start Time', alignRight: false },
     { id: 'maxMember', label: 'Member', alignRight: false },
     { id: '' }
-]
+];
 
 const ExamPage = () => {
     const [maxRow, setMaxRow] = useState(0);
@@ -29,6 +33,15 @@ const ExamPage = () => {
     const auth = useRecoilValue(authAtom);
     const apiResultHandler = useAPIResultHandler();
     const navigate = useNavigate();
+
+    let selectController = new AbortController();
+    selectController.signal.onabort = (ev) => {
+        console.log("abort search");
+    };
+    let countController = new AbortController();
+    countController.signal.onabort = () => {
+        console.log("abort count");
+    };
 
     const initSelectOption = {
         searchby: "name",
@@ -48,7 +61,9 @@ const ExamPage = () => {
         console.log("OnSelectChanged");
         console.log(option);
 
-        const [error1, newList] = await APIExam.select(option, auth?.token);
+        selectController.abort();
+        selectController = new AbortController();
+        const [error1, newList] = await APIExam.select(option, auth?.token, selectController);
         if (error1) {
             if (!apiResultHandler.catchFatalError(error1)) {
                 DialogHelper.showAlert(error1.errorMessage);
@@ -56,23 +71,35 @@ const ExamPage = () => {
             return;
         }
 
-        const [error2, newMaxRow] = await APIExam.count(option, auth?.token);
+        countController.abort();
+        countController = new AbortController();
+        const [error2, newMaxRow] = await APIExam.count(option, auth?.token, countController);
         if (error2) {
             if (!apiResultHandler.catchFatalError(error2)) {
                 DialogHelper.showAlert(error2.errorMessage);
             }
             return;
         }
+        console.log("Select completed");
         console.log(newList);
         console.log(newMaxRow);
 
         setList(newList);
         setMaxRow(newMaxRow);
     }
-
+    const rootDialog = useRootDialog();
+    const handleCloseDialog = (ev: any, reason: any)=>{
+        // console.log("On close dialog with reason = " + reason);
+        // ev.
+    }
     const onClickCreate = () => {
         //window.alert("Clicked create");
-        navigate("create", { replace: true });
+        //navigate("create", { replace: true });
+        const setIsOpen = rootDialog.openDialog({
+            title: "title",
+            open: true,
+            children: <h3>Hello</h3>
+        })
     }
     const onClickEdit = (item: any) => {
         //window.alert("Clicked edit on item = " + JSON.stringify(item, undefined, 4));
@@ -91,13 +118,13 @@ const ExamPage = () => {
                 return;
             }
         }
-        else{
+        else {
             onSelectChanged(initSelectOption);
         }
     }
-
     return (
-        <DataTable2
+        <div>
+            <DataTable2
             title="Exam | Search"
             textLabel="Exam"
 
@@ -157,6 +184,7 @@ const ExamPage = () => {
                 return cells;
             }}
         ></DataTable2>
+        </div>
     )
 }
 
