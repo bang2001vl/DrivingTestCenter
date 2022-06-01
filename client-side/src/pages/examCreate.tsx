@@ -1,31 +1,42 @@
 import { DatePicker, DateRangePicker, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { Box, Button, FormControl, Stack, TextField } from "@mui/material";
-import { vi, enUS } from "date-fns/locale";
+import { addDays } from "date-fns";
 import { useFormik } from "formik";
 import React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useRecoilValue } from "recoil";
 import * as yup from 'yup';
-import Label from "../components/Label";
+import { MyResponse } from "../api/service";
 import Page from "../components/Page";
-import { authAtom } from "../recoil/model/auth";
+import { appConfig } from "../configs";
+import useAPI from "../hooks/useApi";
 import { DialogHelper } from "../singleton/dialogHelper";
-import { APIFetcher } from "../_helper/fetchAPI";
-import { useAPIResultHandler } from "../_helper/responseHandle";
 
 export enum EDIT_METHOD {
     create, update
 }
 
+
 interface IProps {
     method: EDIT_METHOD,
+    oldData?: any,
+}
+
+interface IOutput {
+    name: string,
+    type: string,
+    dateOpen: string,
+    dateClose: string,
+    dateStart: string,
+    dateEnd: string,
+    maxMember: number,
+    rules: string,
+    price: number,
 }
 
 export default function ExamCreate(props: IProps) {
-    const auth = useRecoilValue(authAtom);
-    const resultHandler = useAPIResultHandler();
     const navigate = useNavigate();
+    const api = useAPI();
     const [searchParams, setSearchParams] = useSearchParams();
 
     const validSchema = yup.object({
@@ -36,59 +47,65 @@ export default function ExamCreate(props: IProps) {
             .string()
             .required(),
         dateOpen: yup
-            .date()
+            .date().typeError("Must be date-time format")
             .required(),
         dateClose: yup
-            .date()
+            .date().typeError("Must be date-time format")
             .required(),
         dateStart: yup
-            .date()
+            .date().typeError("Must be date-time format")
             .required(),
         dateEnd: yup
-            .date()
+            .date().typeError("Must be date-time format")
             .required(),
         maxMember: yup
-            .number()
+            .number().typeError("Must be number")
             .required(),
         rules: yup
             .string()
             .required(),
         price: yup
-            .number()
+            .number().typeError("Must be number")
             .required(),
     });
 
     const formik = useFormik({
-        initialValues: {
-            name: searchParams.get('name') ? searchParams.get('name') : "",
-            type: searchParams.get('type') ? searchParams.get('type') : "",
-            dateOpen: searchParams.get('dateOpen') ? searchParams.get('dateOpen') : new Date(),
-            dateClose: searchParams.get('dateClose') ? searchParams.get('dateClose') : new Date(),
-            dateStart: searchParams.get('dateStart') ? searchParams.get('dateStart') : new Date(),
-            dateEnd: searchParams.get('dateEnd') ? searchParams.get('dateEnd') : new Date(),
-            maxMember: searchParams.get('maxMember') ? searchParams.get('maxMember') :0,
-            rules: searchParams.get('rules') ? searchParams.get('rules') :"",
-            price: searchParams.get('price') ? searchParams.get('price') :0,
+        initialValues: props.oldData ? {
+            name: props.oldData.name,
+            type: props.oldData.type,
+            dateOpen: props.oldData.dateOpen,
+            dateClose: props.oldData.dateClose,
+            dateStart: props.oldData.dateStart,
+            dateEnd: props.oldData.dateEnd,
+            maxMember: props.oldData.maxMember,
+            rules: props.oldData.rules,
+            price: props.oldData.price,
+        } : {
+            name: undefined,
+            type: "",
+            dateOpen: new Date(),
+            dateClose: addDays(new Date(), 1),
+            dateStart: addDays(new Date(), 2),
+            dateEnd: addDays(new Date(), 3),
+            maxMember: 0,
+            rules: "",
+            price: 0,
         },
         validationSchema: validSchema,
         onSubmit: async (values) => {
             //window.alert(JSON.stringify(values, null, 2));
             console.log(values);
 
-            let result;
+            let result: MyResponse;
             if (props.method === EDIT_METHOD.create) {
-                result = await APIFetcher.post("exam/create", { data: values }, auth?.token);
+                result = await api.post(appConfig.backendUri + "/exam/create", { data: values });
             }
             else {
-                result = await APIFetcher.put("exam/update", { key: dataKey, data: values }, auth?.token);
+                result = await api.put(appConfig.backendUri + "/exam/update", { key: props.oldData!.id, data: values });
             }
 
-            const [error, data] = result;
-
-            if (error) {
-                if (!resultHandler.catchFatalError(error)) {
-                    DialogHelper.showAlert(error.errorMessage);
-                }
+            if (result.errorCode) {
+                DialogHelper.showAlert(result.errorMessage);
             }
             else {
                 DialogHelper.showAlert("Success");
@@ -96,8 +113,6 @@ export default function ExamCreate(props: IProps) {
             }
         }
     });
-
-    const dataKey = searchParams.get("id");
 
     function getTitle(method: EDIT_METHOD) {
         return method === EDIT_METHOD.create ? "Exam | Create" : "Exam | Update";

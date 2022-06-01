@@ -10,7 +10,7 @@ import GlobalStyles from './theme/globalStyles';
 import ScrollToTop from './components/ScrollToTop';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import FirstLaunch from './components/FirstLaunch';
-import { rootDialogSelector } from './_helper/rootDialog';
+import { rootDialogSelector } from './hooks/rootDialog';
 
 function App() {
   const rootDialog = useRecoilValue(rootDialogSelector);

@@ -14,9 +14,9 @@ import Scrollbar from '../../components/Scrollbar';
 import NavSection from '../../components/NavSection';
 //
 import sidebarConfig from './SidebarConfig';
-import { userAtom } from '../../recoil/model/user';
 import { useRecoilValue } from 'recoil';
-import { authAtom, roleSelector } from '../../recoil/model/auth';
+import { AccountSingleton } from '../../singleton/account';
+import { createBEPublicURI } from '../../_helper/helper';
 
 // ----------------------------------------------------------------------
 
@@ -51,14 +51,13 @@ export default function DashboardSidebar(props: IProps) {
   const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');
-
-  const currentUser = useRecoilValue(userAtom);
-  const currentRole = useRecoilValue(roleSelector);
   const navigate = useNavigate();
 
-  const userFullname = currentUser ? currentUser.fullname : "Chưa đăng nhập";
-  const userSecondText = currentRole;
-  const userImageURI = currentUser ? currentUser.imageURI : '/static/mock-images/avatars/avatar_default.jpg';
+  const userInfo = AccountSingleton.instance.userInfo;
+  const session = AccountSingleton.instance.session;
+  const userFullname = userInfo ? userInfo.fullname : "Login";
+  const userSecondText = session ? session.roleId : "";
+  const userImageURI = userInfo && userInfo.avatarURI ? createBEPublicURI(userInfo.avatarURI) : '/static/mock-images/avatars/avatar_default.jpg';
 
   useEffect(() => {
     if (props.isOpenSidebar) {
@@ -79,7 +78,7 @@ export default function DashboardSidebar(props: IProps) {
       </Box>
 
       <Box sx={{ mb: 5, mx: 2.5 }} >
-        <div onClick={currentUser ? undefined : () => navigate("/login", { replace: true })} >
+        <div onClick={AccountSingleton.instance.isLogined ? undefined : () => navigate("/login", { replace: true })} >
           <AccountStyle>
             <Avatar src={userImageURI} alt="photoURL" />
             <Box sx={{ ml: 2 }}>

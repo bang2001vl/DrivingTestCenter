@@ -4,6 +4,7 @@ import LogoOnlyLayout from "../layouts/logoOnlyLayout";
 import HomePage from "../pages";
 import ClassesPage from "../pages/class";
 import ExamPage from "../pages/exam";
+import ExamPageUI from "../pages/exam/examPageUI";
 import ExamCreate, { EDIT_METHOD } from "../pages/examCreate";
 import LecturesPage from "../pages/lecture";
 import Login from "../pages/login"
@@ -20,7 +21,7 @@ export default function RootRouter() {
       element: <DashboardLayout />,
       children: [
         { path: 'home', element: <HomePage /> },
-        { path: 'exam', element: <ExamPage /> },
+        { path: 'exam', element: <ExamPageUI /> },
         { path: 'exam/create', element: <ExamCreate method={EDIT_METHOD.create}/> },
         { path: 'exam/update', element: <ExamCreate method={EDIT_METHOD.update}/> },
         { path: 'session', element: <SessionsPage /> },
@@ -38,6 +39,9 @@ export default function RootRouter() {
         { path: '/', element: <Navigate to="/dashboard/home" /> },
         { path: 'login', element: <Login /> },
       ]
+    },
+    {
+      path: "/test", element: <ExamPageUI/>
     },
     { path: '*', element: <Navigate to="/404" replace /> }
   ]);
