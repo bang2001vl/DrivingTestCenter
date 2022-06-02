@@ -1,6 +1,6 @@
 import { DatePicker, DateRangePicker, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { Box, Button, Container, FormControl, Stack, TextField, TextFieldProps } from "@mui/material";
+import { Box, Button, FormControl, Stack, TextField, TextFieldProps } from "@mui/material";
 import { addDays, isBefore } from "date-fns";
 import { FormikConfig, useFormik, validateYupSchema } from "formik";
 import React, { FC, useState } from "react";
@@ -10,7 +10,9 @@ import { MyResponse } from "../../api/service";
 import { CommonButton } from "../../components/Buttons/common";
 import { LoadingButton } from "../../components/Buttons/loading";
 import { FormIkDatePicker } from "../../components/FormIK/DatePicker";
+import { FormIkDateTimePicker } from "../../components/FormIK/DateTimePicker";
 import { FormIkNumberField } from "../../components/FormIK/NumberField";
+import { FormIKExamSelector } from "../../components/FormIK/Selectors/examSelectors";
 import { FormIkTextField } from "../../components/FormIK/TextField";
 import Page from "../../components/Page";
 import { appConfig } from "../../configs";
@@ -20,25 +22,24 @@ import { EDIT_METHOD } from "../../_enums";
 
 interface IProps {
     method: EDIT_METHOD,
-    oldData?: {
-        id: number,
-        name: string,
-        type: string,
-        dateOpen: string,
-        dateClose: string,
-        dateStart: string,
-        dateEnd: string,
-        maxMember: number,
-        rules: string,
-        price: number,
-    },
+    oldData?: { id: number, exam: any } & IData,
     onSuccess?: () => void,
     onClose?: () => void,
 }
 
-const routeName = "exam";
+interface IData {
+    id?: number,
+    examOption?: any,
+    name: string,
+    location: string,
+    dateTimeStart: string,
+    dateTimeEnd: string,
+    maxMember: number | string,
+}
 
-export const ExamCreateUI: FC<IProps> = (props: IProps) => {
+const routeName = "examtest";
+
+export const ExamTestCreate: FC<IProps> = (props: IProps) => {
     const api = useAPI();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -46,72 +47,62 @@ export const ExamCreateUI: FC<IProps> = (props: IProps) => {
         name: yup
             .string()
             .required("Name must not be null"),
-        type: yup
+        location: yup
             .string()
             .required(),
-        dateOpen: yup
+        dateTimeStart: yup
             .string()
             .required(),
-        dateClose: yup
-            .string()
-            .required(),
-        dateStart: yup
-            .string()
-            .required(),
-        dateEnd: yup
+        dateTimeEnd: yup
             .string()
             .required(),
         maxMember: yup
             .number().typeError("Must be number")
             .required(),
-        rules: yup
-            .string()
-            .required(),
-        price: yup
-            .number().typeError("Must be number")
-            .required(),
     });
 
-    const formik = useFormik({
+    const formik = useFormik<IData>({
         initialValues: props.oldData ? {
+            examOption: {label: props.oldData.exam.name, value: props.oldData.exam},
             name: props.oldData.name,
-            type: props.oldData.type,
-            dateOpen: props.oldData.dateOpen,
-            dateClose: props.oldData.dateClose,
-            dateStart: props.oldData.dateStart,
-            dateEnd: props.oldData.dateEnd,
+            location: props.oldData.location,
+            dateTimeStart: props.oldData.dateTimeStart,
+            dateTimeEnd: props.oldData.dateTimeEnd,
             maxMember: props.oldData.maxMember,
-            rules: props.oldData.rules,
-            price: props.oldData.price,
         } : {
+            examOption: null,
             name: "",
-            type: "",
-            dateOpen: new Date().toISOString(),
-            dateClose: addDays(new Date(), 1).toISOString(),
-            dateStart: addDays(new Date(), 2).toISOString(),
-            dateEnd: addDays(new Date(), 3).toISOString(),
+            location: "",
+            dateTimeStart: new Date().toISOString(),
+            dateTimeEnd: addDays(new Date(), 1).toISOString(),
             maxMember: "",
-            rules: "",
-            price: "",
         },
         validationSchema: validSchema,
         onSubmit: async (values) => {
-            console.log("Create Exam with", values);
+            console.log("Create ExamTest with", values);
             console.log("Valid", validSchema.validateSync(values));
-            const errors = customValid(values);
+            const errors = customValid(values as IData);
             if (Object.keys(errors).length > 0) {
                 console.log("Custom errors", errors);
                 formik.setErrors(errors);
                 return;
             }
+
+            let examId = Number(values.examOption.value.id);
+            delete values.examOption;
+            // OK
+            let data = {
+                ...values,
+                examId,
+            }
             setIsLoading(true);
             let result: MyResponse;
             if (props.method === EDIT_METHOD.create) {
-                result = await api.postWithToken(`${appConfig.backendUri}/${routeName}/insert`, values);
+                result = await api.postWithToken(`${appConfig.backendUri}/${routeName}/insert`, data);
             }
             else {
                 result = await api.putWithToken(`${appConfig.backendUri}/${routeName}/update`, {
-                    ...values,
+                    ...data,
                     key: props.oldData!.id,
                 });
             }
@@ -128,10 +119,13 @@ export const ExamCreateUI: FC<IProps> = (props: IProps) => {
         }
     });
 
-    function customValid(vals: any) {
+    function customValid(vals: IData) {
         let errors: any = {}
-        if (!isBefore(new Date(vals.dateOpen), new Date(vals.dateClose))) {
-            errors.dateClose = "Date close must bigger than date open";
+        if (!isBefore(new Date(vals.dateTimeStart), new Date(vals.dateTimeEnd))) {
+            errors.dateClose = "Date time start must bigger than date time end";
+        }
+        if (!vals.examOption) {
+            errors.examOption = "This field is required";
         }
         return errors;
     }
@@ -145,81 +139,58 @@ export const ExamCreateUI: FC<IProps> = (props: IProps) => {
         return (<h1 style={{ "textAlign": "center" }} >{label}</h1>)
     }
 
-    const marginTop = 1;
+    const marginTop = 2;
     return (
         <Stack>
-            <Box sx={{ width: "70%" }} alignSelf="center">
+            <Box alignSelf="center">
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
-
                     <Box sx={{ width: "100%" }}>
                         {renderHeader(props.method)}
                     </Box>
+                    <FormIKExamSelector formik={formik} fieldName="examOption"
+                        placeholder="Exam"
+                        propFormControl={{
+                            fullWidth: true,
+                            sx:{marginTop, zIndex: 100000 }
+                        }}
+                    />
 
                     <FormIkTextField formik={formik} fieldName="name"
                         fullWidth
                         label="Name"
-                        style={{ marginTop}}
+                        sx={{ marginTop}}
                     />
 
-                    <FormIkTextField formik={formik} fieldName="type"
+                    <FormIkTextField formik={formik} fieldName="location"
                         fullWidth
-                        label="Type"
-                        style={{ marginTop}}
+                        label="Location"
+                        sx={{ marginTop}}
                     />
+                    <Stack direction="row" justifyContent={"space-between"} sx={{ marginTop}}>
+                        <Box sx={{ width: "48%" }}>
+                            <FormIkDateTimePicker formik={formik} fieldName="dateTimeStart"
+                                label="Date Time Start"
+                            />
+                        </Box>
+
+                        <Box sx={{ width: "48%" }}>
+                            <FormIkDateTimePicker formik={formik} fieldName="dateTimeEnd"
+                                label="Date Time End"
+                            />
+                        </Box>
+                    </Stack>
 
                     <FormIkNumberField formik={formik} fieldName="maxMember"
                         fullWidth
                         label="Max Member"
-                        style={{ marginTop}}
-                    />
-
-                    <FormIkNumberField formik={formik} fieldName="price"
-                        fullWidth
-                        label="Price"
-                        style={{ marginTop: 1 }}
-                    />
-
-                    <Stack direction="row" justifyContent={"space-between"} sx={{ marginTop: 1 }}>
-                        <Box sx={{ width: "48%" }}>
-                            <FormIkDatePicker formik={formik} fieldName="dateOpen"
-                                label="Date Open"
-                            />
-                        </Box>
-
-                        <Box sx={{ width: "48%" }}>
-                            <FormIkDatePicker formik={formik} fieldName="dateClose"
-                                label="Date Close"
-                            />
-                        </Box>
-                    </Stack>
-
-                    <Stack direction="row" justifyContent={"space-between"} sx={{ marginTop: 1 }}>
-                        <Box sx={{width: "48%" }}>
-                            <FormIkDatePicker formik={formik} fieldName="dateStart"
-                                label="Date Start"
-                            />
-                        </Box>
-
-                        <Box sx={{width: "48%" }}>
-                            <FormIkDatePicker formik={formik} fieldName="dateEnd"
-                                label="Date End"
-                            />
-                        </Box>
-                    </Stack>
-
-                    <FormIkTextField formik={formik} fieldName="rules"
-                        label="Description"
-                        fullWidth
-                        multiline
-                        minRows={3}
-                        style={{ marginTop: 1 }}
+                        sx={{ marginTop}}
                     />
 
                     <Stack direction="row" justifyContent={"space-between"} margin={2}>
                         <Box sx={{ width: "45%" }}>
                             <LoadingButton
                                 loading={isLoading}
-                                style={{ width: "100%", fontSize: 20 }}
+                                sx={{ width: "100%", fontSize: 20 }}
                                 onClick={() => formik.handleSubmit()}
                             >
                                 Submit
@@ -228,7 +199,7 @@ export const ExamCreateUI: FC<IProps> = (props: IProps) => {
 
                         <Box sx={{ width: "45%" }}>
                             <CommonButton
-                                style={{ width: "100%", fontSize: 20 }}
+                                sx={{ width: "100%", fontSize: 20 }}
                                 onClick={() => {
                                     if (props.onClose) {
                                         props.onClose();

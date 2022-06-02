@@ -1,40 +1,25 @@
 import { json, Router, urlencoded } from "express";
-import { myPrisma } from "../../prisma";
-import SessionHandler from "../handler/session";
-import { buildResponseError, parseInputDeleted } from "./utilities";
-import { RouteBuilder } from "./_default";
-import { InputSource, RouteHandleWrapper } from "./_wrapper";
+import { myPrisma } from "../../../prisma";
+import SessionHandler from "../../handler/session";
+import { parseInputDeleted } from "../utilities";
+import { RouteBuilder } from "../_default";
+import { InputSource, RouteHandleWrapper } from "../_wrapper";
 
-const repo = myPrisma.account;
-const tag = "User";
+const repo = myPrisma.exam;
+const tag = "Exam";
 
-const userSelectBasic = {
-    username: true,
-    roleId: true,
-
-    fullname: true,
-    birthday: true,
-    gender: true,
-    email: true,
-    phoneNumber: true,
-    address: true,
-    avatarURI: true,
-}
-
-export const UserRoute = () => {
+export const ExamRoute = () => {
     const route = Router();
     route.use(json());
 
     route.get("/select",
-        RouteBuilder.buildSelectInputParser(["fullname"], ["fullname"], tag),
-        RouteBuilder.buildSelectRoute(repo, tag, undefined, userSelectBasic),
+        RouteBuilder.buildSelectInputParser(["name"], ["name", "dateStart", "dateEnd"], tag),
+        RouteBuilder.buildSelectRoute(repo, tag),
     );
 
-    route.get("/select/student",
-        RouteBuilder.buildSelectInputParser(["fullname"], ["fullname"], tag),
-        RouteBuilder.buildSelectRoute(repo, tag, (input) => ({
-            roleId: 1
-        }), userSelectBasic),
+    route.get("/count",
+        RouteBuilder.buildCountInputParser(["name"], tag),
+        RouteBuilder.buildCountRoute(repo, tag),
     );
 
     route.post("/insert",

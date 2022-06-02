@@ -1,20 +1,30 @@
 import { json, Router, urlencoded } from "express";
-import { myPrisma } from "../../prisma";
-import SessionHandler from "../handler/session";
-import { parseInputDeleted } from "./utilities";
-import { RouteBuilder } from "./_default";
-import { InputSource, RouteHandleWrapper } from "./_wrapper";
+import { myPrisma } from "../../../prisma";
+import SessionHandler from "../../handler/session";
+import { parseInputDeleted } from "../utilities";
+import { RouteBuilder } from "../_default";
+import { InputSource, RouteHandleWrapper } from "../_wrapper";
 
-const repo = myPrisma.exam;
-const tag = "Exam";
+const repo = myPrisma.examTest;
+const tag = "ExamTest";
 
-export const ExamRoute = () => {
+export const ExamTestRoute = () => {
     const route = Router();
     route.use(json());
 
     route.get("/select",
         RouteBuilder.buildSelectInputParser(["name"], ["name", "dateStart", "dateEnd"], tag),
         RouteBuilder.buildSelectRoute(repo, tag),
+    );
+
+    route.get("/select/include/exam",
+        RouteBuilder.buildSelectInputParser(["name"], ["name", "dateStart", "dateEnd"], tag),
+        RouteBuilder.buildSelectRoute(repo, tag, undefined, undefined, { exam: true }),
+    );
+
+    route.get("/count",
+        RouteBuilder.buildCountInputParser(["name"], tag),
+        RouteBuilder.buildCountRoute(repo, tag),
     );
 
     route.post("/insert",

@@ -6,6 +6,7 @@ import ClassesPage from "../pages/class";
 import ExamPage from "../pages/exam";
 import ExamPageUI from "../pages/exam/examPageUI";
 import ExamCreate, { EDIT_METHOD } from "../pages/examCreate";
+import ExamTestPage from "../pages/examTest/examTestPage";
 import LecturesPage from "../pages/lecture";
 import Login from "../pages/login"
 import ReceiptsPage from "../pages/receipt";
@@ -22,9 +23,7 @@ export default function RootRouter() {
       children: [
         { path: 'home', element: <HomePage /> },
         { path: 'exam', element: <ExamPageUI /> },
-        { path: 'exam/create', element: <ExamCreate method={EDIT_METHOD.create}/> },
-        { path: 'exam/update', element: <ExamCreate method={EDIT_METHOD.update}/> },
-        { path: 'session', element: <SessionsPage /> },
+        { path: 'session', element: <ExamTestPage /> },
         { path: 'class', element: <ClassesPage /> },
         { path: 'lecture', element: <LecturesPage /> },
         { path: 'student', element: <StudentsPage /> },

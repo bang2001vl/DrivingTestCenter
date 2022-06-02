@@ -100,7 +100,10 @@ interface IProps {
 
 export const DialogLayout: React.FC<IProps> = (props) => {
     return (
-        <Dialog onClose={props.handleClose} open={props.open} PaperProps={{ style: { overflowY: 'visible' } }}>
+        <Dialog 
+        onClose={props.handleClose} open={props.open} 
+        PaperProps={{ style: { overflowY: 'visible' } }}
+        >
             <DialogTitle>
                 <Stack>
                     <Box alignSelf={"center"}>
@@ -109,7 +112,9 @@ export const DialogLayout: React.FC<IProps> = (props) => {
                 </Stack>
             </DialogTitle>
 
-            <DialogContent style={{ overflowY: 'visible' }}>
+            <DialogContent 
+            style={{ overflowY: 'visible' }}
+            >
                 {props.children}
             </DialogContent>
         </Dialog>

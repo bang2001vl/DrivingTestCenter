@@ -9,11 +9,10 @@ import { appConfig } from "../../configs";
 import useAPI from "../../hooks/useApi";
 import { DialogHelper } from "../../singleton/dialogHelper";
 import { useRootDialog } from "../../hooks/rootDialog";
-import { ExamCreateUI } from "./examCreateUI";
-import { ExamTable } from "./examTable";
 import { ExamController } from "../../api/controllers/examController";
-import { ExamSelector } from "./examSelector";
 import { EDIT_METHOD } from "../../_enums";
+import { ExamTestCreate } from "./examTestCreate";
+import { ExamTestTable } from "./examTestTable";
 
 const searchOptionList = [{
     label: "Name",
@@ -39,9 +38,9 @@ const orderOptionList = [
     }
 ];
 
-const routeName = "exam";
+const routeName = "examtest";
 
-export default function ExamPageUI() {
+export default function ExamTestPage() {
     const [isLoading, setIsLoading] = useState(false);
     const api = useAPI();
     const rootDialog = useRootDialog();
@@ -74,7 +73,7 @@ export default function ExamPageUI() {
             count: rowPerPage,
         } as any).toString();
 
-        const url = `${appConfig.backendUri}/${routeName}/select?${queryParams}`
+        const url = `${appConfig.backendUri}/${routeName}/select/include/exam?${queryParams}`
         setIsLoading(true);
         api.get(url)
             .then(res => {
@@ -113,7 +112,7 @@ export default function ExamPageUI() {
 
     const handleCreate = () => {
         rootDialog.openDialog({
-            children: <ExamCreateUI
+            children: <ExamTestCreate
                 method={EDIT_METHOD.create}
                 onSuccess={() => {
                     rootDialog.closeDialog();
@@ -126,7 +125,7 @@ export default function ExamPageUI() {
 
     const handleEdit = (data: any) => {
         rootDialog.openDialog({
-            children: <ExamCreateUI
+            children: <ExamTestCreate
                 method={EDIT_METHOD.update}
                 oldData={data}
                 onSuccess={() => {
@@ -143,7 +142,7 @@ export default function ExamPageUI() {
         setIsLoading(true);
         const res = await api.deleteWithToken(
             `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
-        );;
+        );
         setIsLoading(false);
         if (res.result) {
             DialogHelper.showAlert("Success");
@@ -155,23 +154,15 @@ export default function ExamPageUI() {
     }
 
     const renderTable = () => {
-        return <ExamTable
+        return <ExamTestTable
             dataList={dataList.map(e => ({
                 ...e,
-                id: Number(e.id),
-                countStudent: Number(e.countStudent),
-                dateClose: new Date(e.dateClose),
-                dateEnd: new Date(e.dateEnd),
-                dateOpen: new Date(e.dateOpen),
-                dateStart: new Date(e.dateStart),
-                maxMember: Number(e.maxMember),
-                name: e.name,
-                price: Number(e.price),
-                type: e.type,
+                dateTimeStart: new Date(e.dateTimeStart),
+                dateTimeEnd: new Date(e.dateTimeEnd),
             }))}
             onEdit={handleEdit}
             onDelete={handleDelete}
-        />
+            />
     }
 
     return (
@@ -182,19 +173,6 @@ export default function ExamPageUI() {
                     <label>&gt;</label>
                 </Stack>
                 <Stack direction={"row"}>
-                    <CommonButton
-                        onClick={() => {
-                            rootDialog.openDialog({
-                                title: <h2>Select Exam</h2>,
-                                children: <ExamSelector
-                                    onSubmit={(val) => {
-                                        console.log("On select success", val);
-                                    }}
-                                    onClose={() => rootDialog.closeDialog()}
-                                ></ExamSelector>,
-                            });
-                        }}
-                    >Test</CommonButton>
                     <CommonButton
                         startIcon={<Icon icon="ant-design:plus-outlined" />}
                         onClick={handleCreate}

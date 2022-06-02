@@ -5,8 +5,8 @@ import helper from "../helper";
 import { AccountRoute } from "./route/account";
 import { AuthRoute } from "./route/auth";
 import { ExamRoute } from "./route/exam";
-import { ExamTestRoute } from "./route/examTest";
-import { UserRoute } from "./route/user";
+import { ExamTestRoute } from "./route/examTest/examTest";
+import { AccountManagerRoute } from "./route/account/manager";
 
 export function ApiServer() {
     const app = express();
@@ -19,7 +19,7 @@ export function ApiServer() {
 
     app.use("/exam", ExamRoute());
     app.use("/examtest", ExamTestRoute());
-    app.use("/user", UserRoute());
+    app.use("/user", AccountManagerRoute());
 
     app.use((req, res, next) => {
         if (res.locals.error) {

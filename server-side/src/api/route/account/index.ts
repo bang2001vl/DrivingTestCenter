@@ -13,7 +13,7 @@ import { RouteHandleWrapper } from "../_wrapper";
 const repo = myPrisma.account;
 const tag = "Account";
 
-const DEFAULT_UPLOAD_FOLDER = path.resolve(appConfig.publicFolder, "uploads", "voucher");
+const DEFAULT_UPLOAD_FOLDER = path.resolve(appConfig.publicFolder, "uploads", "avatar");
 const upload = multer({
     storage: multer.diskStorage({
         destination: (req, file, cb) => {
