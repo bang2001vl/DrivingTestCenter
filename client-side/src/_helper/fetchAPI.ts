@@ -5,7 +5,7 @@ export interface IErrorResponse {
     errorMessage: string,
 }
 
-export async function fetchAPI(method: string, apiPath: string, body: any, token?: string): Promise<[IErrorResponse | null, any | null]> {
+export async function fetchAPI(method: string, apiPath: string, body: any, token?: string, abortController?: AbortController): Promise<[IErrorResponse | null, any | null]> {
     const url = `${appConfig.backendUri}/${apiPath}`;
     const headers: any = {
         'Content-Type': 'application/json',
@@ -19,6 +19,7 @@ export async function fetchAPI(method: string, apiPath: string, body: any, token
             method: method,
             body: body ? JSON.stringify(body) : undefined,
             headers: headers,
+            signal: abortController ? abortController.signal : undefined,
         });
 
         let err = {
@@ -68,8 +69,8 @@ export async function fetchAPI(method: string, apiPath: string, body: any, token
 }
 
 export const APIFetcher = {
-    get: (apiPath: string, body: any, token?: string) => fetchAPI("GET", apiPath, body, token),
-    post: (apiPath: string, body: any, token?: string) => fetchAPI("POST", apiPath, body, token),
-    delete: (apiPath: string, body: any, token?: string) => fetchAPI("DELETE", apiPath, body, token),
-    put: (apiPath: string, body: any, token?: string) => fetchAPI("PUT", apiPath, body, token),
+    get: (apiPath: string, body: any, token?: string, abortController?: AbortController) => fetchAPI("GET", apiPath, body, token, abortController),
+    post: (apiPath: string, body: any, token?: string, abortController?: AbortController) => fetchAPI("POST", apiPath, body, token, abortController),
+    delete: (apiPath: string, body: any, token?: string, abortController?: AbortController) => fetchAPI("DELETE", apiPath, body, token, abortController),
+    put: (apiPath: string, body: any, token?: string, abortController?: AbortController) => fetchAPI("PUT", apiPath, body, token, abortController),
 }

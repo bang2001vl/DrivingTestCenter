@@ -12,9 +12,9 @@ interface PropType {
   items: {
     iconURI: string,
     label: string,
-    onClick: (data: any)=>void,
+    onClick?: (data?: any)=>void,
   }[],
-  data: any,
+  data?: any,
 }
 
 export default function ItemMoreMenu(props: PropType) {
@@ -43,7 +43,11 @@ export default function ItemMoreMenu(props: PropType) {
           return (
             <MenuItem
               key={i.label}
-              onClick={() => i.onClick(props.data)}
+              onClick={() => {
+                if(i.onClick){
+                  i.onClick(props.data)
+                }
+              }}
               sx={{ color: 'text.secondary' }}
             >
               <ListItemIcon>

@@ -1,0 +1,15 @@
+.searchbar {
+    width: 240;
+    box-shadow: 0;
+    transition-timing-function: ease-in-out;
+    transition: 0.25s;
+
+}    
+.searchbar .Mui-focused {
+    width: 320;
+    box-shadow: 2;
+}
+.searchbar fieldset {
+    border-width: 1px !important;
+      border-color: #D5D8B5 !important;
+}

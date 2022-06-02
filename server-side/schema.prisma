@@ -1,6 +1,6 @@
 datasource db {
-    url      = "mysql://sa:HackDuocThi%21%40%23NhatBanRoi%24%25%5E@localhost:3306/doan2"
     provider = "mysql"
+    url      = env("DATABASE_URL_WITH_SCHEMA")
 }
 
 generator client {
@@ -12,18 +12,25 @@ generator client {
 //
 model Account {
     id     Int @id @default(autoincrement())
-    roleId Int
 
     username String @db.VarChar(256)
     password String @db.VarChar(256)
+    // 0 is admin, 1 is student, 2 is employee (teacher)
+    roleId Int @default(1)
     status   Int    @default(0)
+
+    fullname  String   @db.VarChar(255)
+    birthday  DateTime
+    gender    Int
+    email   String @db.VarChar(256)
+    phoneNumber String  @db.VarChar(20)
+    address   String   @db.VarChar(1000)
+    avatarURI String?  @db.VarChar(256)
 
     createdAt DateTime @default(now()) @db.DateTime(0)
     updatedAt DateTime @default(now()) @db.DateTime(0)
 
     session  Session[]
-    employee Employee?
-    student  Student?
 
     @@index([username, password])
     @@map("account")
@@ -31,26 +38,20 @@ model Account {
 
 model Session {
     id        Int @id @default(autoincrement())
-    accountId Int
+    accountId  Int
 
     token       String @unique(map: "token") @db.VarChar(50)
     deviceInfo  String @db.VarChar(5000)
-    sessionData String @db.VarChar(5000)
+    // 0 is admin, 1 is student, 2 is employee (teacher)
+    roleId Int @default(1)
 
     createdAt DateTime @default(now()) @db.DateTime(0)
     updatedAt DateTime @default(now()) @db.DateTime(0)
 
-    account Account @relation(fields: [accountId], references: [id], map: "session_ibfk_1")
+    account Account @relation(fields: [accountId], references: [id])
 
     @@index([accountId])
     @@map("session")
-}
-
-model CONST_ROLE {
-    id   Int    @id @default(autoincrement())
-    name String @db.VarChar(255)
-
-    @@map("const_role")
 }
 
 //
@@ -69,8 +70,9 @@ model Exam {
     rules     String   @db.VarChar(3000)
     price     Int
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    countStudent Int      @default(0)
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
 
     examTests ExamTest[]
     classes   Class[]
@@ -84,11 +86,12 @@ model ExamTest {
     name          String   @db.VarChar(255)
     location      String   @db.VarChar(255)
     dateTimeStart DateTime
-    dateTimeEnd DateTime
+    dateTimeEnd   DateTime
     maxMember     Int
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    countStudent Int      @default(0)
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
 
     exam         Exam?                    @relation(fields: [examId], references: [id])
     studentCNNs  CONN_Student_ExamTest[]
@@ -103,34 +106,43 @@ model Class {
     name      String   @db.VarChar(255)
     location  String   @db.VarChar(255)
     dateStart DateTime
-    dateEnd DateTime
+    dateEnd   DateTime
     maxMember Int
     rules     String   @db.VarChar(3000)
     price     Int
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    countStudent Int      @default(0)
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
 
     exam         Exam?                 @relation(fields: [examId], references: [id])
+    schedules    ClassSchedule[]
     studentCNNs  CONN_Student_Class[]
     employeeCNNs CONN_Employee_Class[]
     @@map("class")
 }
 
-model Student {
-    id        Int @id @default(autoincrement())
-    accountId Int @unique
+model ClassSchedule {
+    id      Int  @id @default(autoincrement())
+    classId Int?
 
-    fullname String   @db.VarChar(255)
-    birthday DateTime
-    gender   Int
-    address String  @db.VarChar(1000)
+    location  String   @db.VarChar(255)
+    dateStart DateTime
+    dateEnd   DateTime
+    notes     String?   @db.VarChar(3000)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    account      Account                 @relation(fields: [accountId], references: [id])
-    payments     Payment[]
+    classes Class? @relation(fields: [classId], references: [id])
+    @@map("classschedule")
+}
+
+model Student {
+    id        Int @id @default(autoincrement())
+    accountId  Int 
+
+    //account      Account                 @relation(fields: [accountId], references: [id])
     classCNNs    CONN_Student_Class[]
     examTestCNNs CONN_Student_ExamTest[]
     @@map("student")
@@ -138,49 +150,33 @@ model Student {
 
 model Employee {
     id        Int @id @default(autoincrement())
-    accountId Int @unique
+    accountId Int 
 
-    fullname String   @db.VarChar(255)
-    birthday DateTime
-    gender   Int
-    address String  @db.VarChar(1000)
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    account      Account                  @relation(fields: [accountId], references: [id])
+    //account      Account                  @relation(fields: [accountId], references: [id])
     classCNNs    CONN_Employee_Class[]
     examTestCNNs CONN_Employee_ExamTest[]
     @@map("employee")
 }
 
-model Payment {
+model Bill {
     id        Int  @id @default(autoincrement())
     studentId Int?
+    classId  Int?
+    testId Int?
 
     totalPrice Int
-    reason     String @db.VarChar(255)
+    reason     String @db.VarChar(255) @default("")
+    notes String @db.VarChar(3000) @default("")
     status     Int    @default(0)
 
+    beginAt DateTime @default(now())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    student Student?     @relation(fields: [studentId], references: [id])
-    details BillDetail[]
+    // depositorStudent Student?     @relation(fields: [depositorId], references: [id])
+    // recipientClass Class?     @relation(fields: [recipientId], references: [id], map: "fk_bill_class")
+    // recipientExamTest ExamTest?     @relation(fields: [recipientId], references: [id], map: "fk_bill_examtest")
     @@map("payment")
-}
-
-model BillDetail {
-    id        Int  @id @default(autoincrement())
-    paymentId Int?
-
-    price  Int    @default(0)
-    reason String @db.VarChar(255)
-
-    payment     Payment?               @relation(fields: [paymentId], references: [id])
-    classCNN    CONN_Student_Class?
-    examTestCNN CONN_Student_ExamTest?
-    @@map("billdetail")
 }
 
 model CONN_Student_ExamTest {
@@ -189,7 +185,6 @@ model CONN_Student_ExamTest {
     examTestId   Int
     billDetailId Int @unique
 
-    billDetail BillDetail @relation(fields: [billDetailId], references: [id])
     examTest   ExamTest   @relation(fields: [examTestId], references: [id])
     student    Student    @relation(fields: [studentId], references: [id])
     @@map("conn_student_examtest")
@@ -201,7 +196,6 @@ model CONN_Student_Class {
     classId      Int
     billDetailId Int @unique
 
-    billDetail BillDetail @relation(fields: [billDetailId], references: [id])
     student    Student    @relation(fields: [studentId], references: [id])
     class      Class      @relation(fields: [classId], references: [id])
     @@map("conn_student_class")
@@ -227,16 +221,28 @@ model CONN_Employee_Class {
     @@map("conn_employee_class")
 }
 
-// Khi Student đăng kí 1 khóa học thì
-//      + Tạo 1 BillDetail
-//      + Tạo 1 Connection gắn với khóa học và student
-//      + Liên kết BillDetail với Connection qua connection.billDetailId
-// Khi Student thanh toán n BillDetail thì
-//      + Tạo 1 Payment đại diện cho lần thanh toán
-//      + Nếu thành công thì Liên kết BillDetail với Payment qua BillDetail.paymentId
-//      + Nếu chưa thành công thì vẫn để BillDetail.paymentId = null
+model FullReportMonthly {
+    id      Int  @id @default(autoincrement())
+    month Int
+    year Int
 
-// Xem danh sách hóa đơn của student:
-//      + Lấy các BillDetail CNN_Student_*** bằng studentId
-//      + Nếu chưa thanh toán thì BillDetail.payment = null
-//      + Lấy trạng thái thanh toán qua BillDetail.payment.status
+    totalRevenue  BigInt   @default(0)
+    newStudent  Int @default(0)
+    classInProgress  Int @default(0)
+    openingExam  Int @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    revenueDaily    RevenueReportDaily[]
+}
+
+model RevenueReportDaily {
+    id      Int  @id @default(autoincrement())
+    rpMonthId   Int
+    dayInMonth  Int
+
+    totalRevenue  BigInt   @default(0)
+    
+    monthReport FullReportMonthly @relation(fields: [rpMonthId], references: [id]) 
+}

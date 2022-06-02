@@ -34,7 +34,7 @@ export interface IPagingOption {
 
 export const buildAPI_CRUD = (path: string) => {
     return {
-        async select(option: ISelectOption, token: string | undefined) {
+        async select(option: ISelectOption, token: string | undefined, abortController?: AbortController) {
             const optionParsed : any = option;
             optionParsed.start = String(option.start);
             optionParsed.count = String(option.count);
@@ -43,27 +43,27 @@ export const buildAPI_CRUD = (path: string) => {
             console.log("Select with Params = ");
             console.log(params.toString());
 
-            return APIFetcher.get(`${path}/select?${params.toString()}`, undefined, token);
+            return APIFetcher.get(`${path}/select?${params.toString()}`, undefined, token, abortController);
         },
         
-        async count(option: ICountOption, token: string | undefined) {
+        async count(option: ICountOption, token: string | undefined, abortController?: AbortController) {
             const optionParsed : any = option;
 
             const params = new URLSearchParams(optionParsed);
             console.log("Count with Params = ");
             console.log(params.toString());
 
-            return APIFetcher.get(`${path}/count?${params.toString()}`, undefined, token);
+            return APIFetcher.get(`${path}/count?${params.toString()}`, undefined, token, abortController);
         },
 
-        async create(data: any, token: string | undefined) {
+        async create(data: any, token: string | undefined, abortController?: AbortController) {
             const body = {
                 data: data
             }
-            return APIFetcher.post(`${path}/create`, body, token);
+            return APIFetcher.post(`${path}/create`, body, token, abortController);
         },
 
-        async update(key: any, data: any, token: string | undefined) {
+        async update(key: any, data: any, token: string | undefined, abortController?: AbortController) {
             const body = {
                 key: key,
                 data: data
@@ -71,11 +71,11 @@ export const buildAPI_CRUD = (path: string) => {
             return APIFetcher.put(`${path}/update`, body, token);
         },
 
-        async delete(keys: any[], token: string | undefined) {
+        async delete(keys: any[], token: string | undefined, abortController?: AbortController) {
             const body = {
                 keys: keys,
             }
-            return await APIFetcher.delete(`${path}/delete`, body, token);
+            return await APIFetcher.delete(`${path}/delete`, body, token, abortController);
         },
     }
 }
