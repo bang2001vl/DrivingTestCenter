@@ -21,7 +21,7 @@ import Page from '../components/Page';
 import Scrollbar from '../components/Scrollbar';
 import Iconify from '../components/Iconify';
 import SearchNotFound from '../components/SearchNotFound';
-import DataListToolbar from './user/DataListToolbar';
+import DataListToolbar3 from './user/DataListToolBar3';
 import DataListHead from './user/DataListHead';
 import { ISelectOption } from '../api/_deafaultCRUD';
 
@@ -33,8 +33,6 @@ export interface ISearchProperty {
 }
 
 interface TypeProps {
-    title: string,
-    textLabel: string,
     searchbarText?: string,
 
     list: any[],
@@ -205,29 +203,17 @@ export default function DataTable2(props: TypeProps) {
 
     return (
         // @ts-ignore
-        <Page title={props.title} >
-            <Container>
-                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1.5}>
-                    <Typography variant="h3" gutterBottom style={{color: "#3C557A" }}>
-                        {props.textLabel}
-                    </Typography>
-                    <Button
-                        variant="contained"
-                        onClick={() => props.onClickCreate()}
-                        startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
-                    >
-                        Create new
-                    </Button>
-                </Stack>
 
+            <Container style={{marginTop: '15px'}} >
                 <Card>
-                    <DataListToolbar
+                    <DataListToolbar3
                         numSelected={selected.length}
                         hintText={props.searchbarText}
 
                         searchValue={searchValue}
                         onSearchValueChanged={handleSearchValueChanged}
-
+                        
+                        createClick={()=>{}}
                         searchProperties={searchProperties}
                         searchProperty={searchProperty}
                         onSearchPropertyChanged={handleSearchPropertyChanged}
@@ -306,6 +292,5 @@ export default function DataTable2(props: TypeProps) {
                     />
                 </Card>
             </Container>
-        </Page>
     );
 }

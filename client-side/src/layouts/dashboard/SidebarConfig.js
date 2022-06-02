@@ -16,7 +16,7 @@ const sidebarConfig = [
   {
     title: 'exam',
     path: '/dashboard/exam',
-    icon: getIconByURI('/static/icons/nav/exam.svg')
+    icon: getIcon('ph:exam-fill')
   },
   {
     title: 'session',
@@ -26,27 +26,27 @@ const sidebarConfig = [
   {
     title: 'class',
     path: '/dashboard/class',
-    icon: getIconByURI('/static/icons/nav/exam.svg')
+    icon: getIcon('eos-icons:storage-class')
   },
   {
     title: 'lecture',
     path: '/dashboard/lecture',
-    icon: getIcon('eva:shopping-bag-fill')
+    icon: getIcon('fa-solid:chalkboard-teacher')
   },
   {
     title: 'student',
     path: '/dashboard/student',
-    icon: getIconByURI('/static/icons/nav/student.svg')
+    icon: getIcon('bxs:user-account')
   },
   {
     title: 'receipt',
     path: '/dashboard/receipt',
-    icon: getIconByURI('/static/icons/nav/receipt.svg')
+    icon: getIcon('bxs:receipt')
   },
   {
     title: 'report',
     path: '/dashboard/report',
-    icon: getIconByURI('/static/icons/nav/report.svg')
+    icon: getIcon('heroicons-solid:document-report')
   },
 ];
 
