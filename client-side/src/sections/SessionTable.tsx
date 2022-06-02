@@ -7,24 +7,15 @@ import { APIExam } from "../api/exam";
 import { ISelectOption } from "../api/_deafaultCRUD";
 import { BorderLinearProgress } from "../components/LinearProgress";
 import { authAtom } from "../recoil/model/auth";
-import DataTable2 from "../sections/DataTable2";
 import ItemMoreMenu from "../sections/user/ItemMoreMenu";
 import { DialogHelper } from "../singleton/dialogHelper";
 import { useAPIResultHandler } from "../_helper/responseHandle";
+import DataTable3 from "./DataTable3";
 
 
-const EXAM_HEAD_LABEL = [
-    { id: 'name', label: 'Name', alignRight: false },
-    { id: 'type', label: 'Category', alignRight: false },
-    { id: 'dateRegist', label: 'Registration date', alignRight: false },
-    { id: 'dateExam', label: 'Exam date', alignRight: false },
-    { id: 'candidate', label: 'Candidates', alignRight: false },
-    { id: 'fee', label: 'Fees', alignRight: false },
-    { id: 'examStatus', label: 'Status', alignRight: false },
-    { id: '' }
-]
 
-const ExamPage = () => {
+
+const SessionTable = () => {
     const [maxRow, setMaxRow] = useState(0);
     const [list, setList] = useState<any[]>([]);
     const auth = useRecoilValue(authAtom);
@@ -39,7 +30,16 @@ const ExamPage = () => {
         start: 0,
         count: 5,
     }
-
+    const EXAM_HEAD_LABEL = [
+        { id: 'name', label: 'Name', alignRight: false },
+        { id: 'exam', label: 'Exam', alignRight: false },
+        { id: 'time', label: 'Exam time', alignRight: false },
+        { id: 'date', label: 'Exam date', alignRight: false },
+        { id: 'room', label: 'Room', alignRight: false },
+        { id: 'candidate', label: 'Candidates', alignRight: false },
+        { id: 'sessionStatus', label: 'Status', alignRight: false },
+     
+    ]
     useEffect(() => {
         onSelectChanged(initSelectOption);
     }, []);
@@ -80,17 +80,12 @@ const ExamPage = () => {
         const params = new URLSearchParams(item);
         navigate(`update?${params}`, { replace: true });
     }
-    const checkExamStatus = (dateOpen: any, dateClose: any, dateStart: any, dateEnd: any) => {
+    const checkExamStatus = (examDate: any,) => {
         const currentDate = new Date();
-        if (currentDate.getTime() < (new Date(dateOpen).getTime()))
+        if (currentDate.getTime() < (new Date(examDate).getTime()))
             return 0;
-        if (currentDate.getTime() <= new Date(dateClose).getTime())
-            return 1;
-        if (currentDate.getTime() < new Date(dateStart).getTime())
-            return 2;
-        if (currentDate.getTime() <= new Date(dateEnd).getTime())
-            return 3;
-        return 4;
+        
+        return 1;
 
     }
     const onClickDelete = async (item: any) => {
@@ -111,10 +106,8 @@ const ExamPage = () => {
     }
 
     return (
-        <DataTable2
-            title="Exam | Search"
-            textLabel="Exam"
-
+        <DataTable3
+        
             maxRow={maxRow}
             list={list}
             initSelectOption={initSelectOption}
@@ -124,49 +117,48 @@ const ExamPage = () => {
             headLabels={EXAM_HEAD_LABEL}
 
             onRenderItem={(data) => {
-                var { id, name, type, dateOpen, dateClose, dateStart, dateEnd, maxMember, Member, rules, price, examStatus } = data.row;
+                 var { id, name, exam, examDate, timeStart, timeEnd, room, Member, maxMember } = data.row;
 
                 const isItemSelected = data.isItemSelected;
-                examStatus = checkExamStatus(dateOpen, dateClose, dateStart, dateEnd);
                 const cells = [];
 
+                // const examStatus = checkExamStatus(examDate);
 
                 cells.push(
                     <TableCell key={1} component="th" scope="row" padding="none">
-                        {name}
+                        {/* {name} */}
                     </TableCell>
                 );
+               cells.push(
+                    <TableCell key={2} align="left">
+                        {/* {exam} */}
+                    </TableCell>);
                 cells.push(
                     <TableCell key={2} align="left">
-                        {type}
+                        {/* {timeStart}-{timeEnd} */}
                     </TableCell>
                 );
                 cells.push(
                     <TableCell key={3} component="th" scope="row" padding="normal">
-                        {format(new Date(dateOpen), "dd/MM/yyyy")} - {format(new Date(dateClose), "dd/MM/yyyy")}
+                        {/* {format(new Date(examDate), "dd/MM/yyyy")} */}
                     </TableCell>
                 );
                 cells.push(
-                    <TableCell key={4} component="th" scope="row" padding="normal">
-                        {format(new Date(dateStart), "dd/MM/yyyy")} - {format(new Date(dateEnd), "dd/MM/yyyy")}
+                    <TableCell key={3} component="th" scope="row" padding="normal">
+                        {/* {room} */}
                     </TableCell>
                 );
                 cells.push(
                     <TableCell key={5} align="left">
                         <Box style={{display: "flex"}}>
                         <BorderLinearProgress style={{margin: '3px', marginRight: "5", width: "50px"}} variant="determinate" value={Number(Member / maxMember) * 100}></BorderLinearProgress>
-                         {Member}/{maxMember}
+                         {/* {Member}/{maxMember} */}
                         </Box>
                     </TableCell>
                 );
                 cells.push(
-                    <TableCell key={6} align="left">
-                        {price}
-                    </TableCell>
-                );
-                cells.push(
                     <TableCell key={7} align="left">
-                        {examStatus}
+                        {/* {examStatus} */}
                     </TableCell>
                 );
                 cells.push(
@@ -190,8 +182,8 @@ const ExamPage = () => {
                 );
                 return cells;
             }}
-        ></DataTable2>
+        ></DataTable3>
     )
 }
 
-export default ExamPage;
+export default SessionTable;
