@@ -7,7 +7,7 @@ import { Box } from '@mui/material';
 // ----------------------------------------------------------------------
 
 const Page = forwardRef(({ children, title = 'Homepage', ...other }, ref) => (
-  <Box ref={ref} {...other}>
+  <Box ref={ref} {...other} style={{minHeight:'100%'}}>
     <Helmet>
       <title>{title}</title>
     </Helmet>

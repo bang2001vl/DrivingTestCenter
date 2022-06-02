@@ -1,3 +1,4 @@
+
 import { Avatar, Dialog, DialogTitle, Stack, TableCell, Typography } from "@mui/material";
 import { format, parse } from "date-fns";
 import { useEffect, useState } from "react";
@@ -8,17 +9,20 @@ import { APIExam } from "../api/exam";
 import { ISelectOption } from "../api/_deafaultCRUD";
 import DataTable from "../sections/DataTable";
 import DataTable2 from "../sections/DataTable2";
-import DataListHead from "../sections/user/DataListHead";
 import ItemMoreMenu from "../sections/user/ItemMoreMenu";
 import { DialogHelper } from "../singleton/dialogHelper";
 import { useRootDialog } from "../hooks/rootDialog";
 import ExamCreate from "./examCreate";
 
+
 const EXAM_HEAD_LABEL = [
     { id: 'name', label: 'Name', alignRight: false },
     { id: 'type', label: 'Category', alignRight: false },
-    { id: 'dateStart', label: 'Start Time', alignRight: false },
-    { id: 'maxMember', label: 'Member', alignRight: false },
+    { id: 'dateRegist', label: 'Registration date', alignRight: false },
+    { id: 'dateExam', label: 'Exam date', alignRight: false },
+    { id: 'candidate', label: 'Candidates', alignRight: false },
+    { id: 'fee', label: 'Fees', alignRight: false },
+    { id: 'examStatus', label: 'Status', alignRight: false },
     { id: '' }
 ];
 

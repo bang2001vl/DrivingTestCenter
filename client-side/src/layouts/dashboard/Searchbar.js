@@ -7,8 +7,8 @@ import Iconify from '../../components/Iconify';
 
 // ----------------------------------------------------------------------
 
-const APPBAR_MOBILE = 64;
-const APPBAR_DESKTOP = 92;
+const APPBAR_MOBILE = 50;
+const APPBAR_DESKTOP = 80;
 
 const SearchbarStyle = styled('div')(({ theme }) => ({
   top: 0,

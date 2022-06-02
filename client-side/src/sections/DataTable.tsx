@@ -228,7 +228,7 @@ export default function DataTable(props: TypeProps) {
         // @ts-ignore
         <Page title={props.title} >
             <Container>
-                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2.5}>
                     <Typography variant="h4" gutterBottom>
                         User
                     </Typography>
