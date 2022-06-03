@@ -52,7 +52,7 @@ export const FormIKExamSelector: FC<IProps> = (props) => {
 
     // console.log("Error", props.formik.touched[props.fieldName],Boolean(props.formik.errors[props.fieldName]));
     // console.log("HelperText", props.formik.touched[props.fieldName],props.formik.errors[props.fieldName]);
-
+ 
 
     return <FormControl
         error={Boolean(props.formik.errors[props.fieldName])}
@@ -63,7 +63,7 @@ export const FormIKExamSelector: FC<IProps> = (props) => {
             placeholder={props.placeholder}
             defaultOptions={[]}
             loadOptions={loadOption}
-
+          
             value={props.formik.values[props.fieldName]}
             onChange={(option, action) => {
                 props.formik.setFieldValue([props.fieldName], option)
@@ -72,7 +72,12 @@ export const FormIKExamSelector: FC<IProps> = (props) => {
             styles={{
                 control: (base, state) => ({
                     ...base,
-                    borderColor: state.isFocused ? "green" : undefined,
+                    borderRadius: "8px",
+                    height: "56px",
+                    minWidth: "100%",
+                    textAlign: "left",
+                    paddingLeft: "8px",
+                    borderColor: state.isFocused ? "green" : "lightGray",
                     boxShadow: state.isFocused ? "none" : "none",
                     '&:hover': {
                         boxShadow: state.isFocused ? "none" : "none"

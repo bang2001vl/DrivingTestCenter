@@ -1,10 +1,7 @@
 import { Icon } from "@iconify/react";
-import { Box, Button, Container, Stack, TableCell, TablePagination } from "@mui/material";
+
 import { useEffect, useState } from "react";
-import { ISelectOption } from "../../api/_deafaultCRUD";
-import { CommonButton } from "../../components/Buttons/common";
-import { MySearchBar } from "../../components/MySearchBar.tsx/MySearchBar";
-import Scrollbar from "../../components/Scrollbar";
+import { useNavigate } from "react-router-dom";
 import { appConfig } from "../../configs";
 import useAPI from "../../hooks/useApi";
 import { DialogHelper } from "../../singleton/dialogHelper";
@@ -13,7 +10,19 @@ import { ExamController } from "../../api/controllers/examController";
 import { EDIT_METHOD } from "../../_enums";
 import { ExamTestCreate } from "./examTestCreate";
 import { ExamTestTable } from "./examTestTable";
+import DataTable4 from "../../sections/DataTable4";
 
+const EXAM_HEAD_LABEL = [
+        { id: 'name', label: 'Tên ca thi', alignRight: false },
+        { id: 'exam', label: 'Kì thi', alignRight: false },
+        { id: 'type', label: 'Loại bằng', alignRight: false },
+        { id: 'time', label: 'Thời gian thi', alignRight: false },
+        { id: 'date', label: 'Ngày thi', alignRight: false },
+        { id: 'room', label: 'Địa chỉ', alignRight: false },
+        { id: 'candidate', label: 'Thí sinh', alignRight: false },
+        { id: 'sessionStatus', label: 'Trạng thái', alignRight: false },
+        { id: '', label: '', alignRight: false },
+]
 const searchOptionList = [{
     label: "Name",
     value: {
@@ -41,6 +50,8 @@ const orderOptionList = [
 const routeName = "examtest";
 
 export default function ExamTestPage() {
+    const navigate = useNavigate();
+
     const [isLoading, setIsLoading] = useState(false);
     const api = useAPI();
     const rootDialog = useRootDialog();
@@ -111,16 +122,17 @@ export default function ExamTestPage() {
     }
 
     const handleCreate = () => {
-        rootDialog.openDialog({
-            children: <ExamTestCreate
-                method={EDIT_METHOD.create}
-                onSuccess={() => {
-                    rootDialog.closeDialog();
-                    select();
-                }}
-                onClose={() => rootDialog.closeDialog()}
-            />,
-        });
+        // rootDialog.openDialog({
+        //     children: <ExamTestCreate
+        //         method={EDIT_METHOD.create}
+        //         onSuccess={() => {
+        //             rootDialog.closeDialog();
+        //             select();
+        //         }}
+        //         onClose={() => rootDialog.closeDialog()}
+        //     />,
+        // });
+        navigate("create", { replace: true });
     }
 
     const handleEdit = (data: any) => {
@@ -166,51 +178,18 @@ export default function ExamTestPage() {
     }
 
     return (
-        <Stack spacing={1}>
-            <Stack direction={"row"} alignItems="center" justifyContent="space-between">
-                <Stack direction={"row"}>
-                    <label>Exam</label>
-                    <label>&gt;</label>
-                </Stack>
-                <Stack direction={"row"}>
-                    <CommonButton
-                        startIcon={<Icon icon="ant-design:plus-outlined" />}
-                        onClick={handleCreate}
-                    >Create</CommonButton>
-                </Stack>
-            </Stack>
-
-            <MySearchBar
-                searchOptionList={searchOptionList}
-                orderOptionList={orderOptionList}
-                onSubmit={(opt) => {
-                    setOptions(opt);
-                }}
-            ></MySearchBar>
-
-            <Box alignSelf={"center"} style={{ display: isLoading ? "inline" : "none" }}>
-                <Icon icon="eos-icons:three-dots-loading" />
-            </Box>
-
-            <Scrollbar sx={undefined}>
-                {renderTable()}
-            </Scrollbar>
-
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={maxCount}
-                rowsPerPage={rowPerPage}
-                page={page}
-                onPageChange={(ev, newPage) => {
-                    setPage(newPage);
-                }}
-                onRowsPerPageChange={(ev) => {
-                    const newRowPerPage = ev.target.value;
-                    setRowPerPage(parseInt(newRowPerPage, 10));
-                    setPage(0);
-                }}
-            />
-        </Stack>
+        <DataTable4 
+        searchOptionList={searchOptionList} 
+        orderOptionList={orderOptionList} 
+        searchbarText='Tìm tên ca thi'
+        title="Dashboard | Session"
+        textLabel="Ca thi"
+        maxRow={10} 
+        urlSelect='select/include/exam'
+        onClickCreate={handleCreate} 
+        headLabels={EXAM_HEAD_LABEL}
+         routeName="examtest" 
+         onRenderItem={renderTable }
+        />
     )
 }
