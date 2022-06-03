@@ -1,20 +1,25 @@
 import { Icon } from "@iconify/react";
-import { Box, Button, Container, Stack, TableCell, TablePagination } from "@mui/material";
 import { useEffect, useState } from "react";
-import { ISelectOption } from "../../api/_deafaultCRUD";
-import { CommonButton } from "../../components/Buttons/common";
-import { MySearchBar } from "../../components/MySearchBar.tsx/MySearchBar";
-import Scrollbar from "../../components/Scrollbar";
+import { useNavigate } from "react-router-dom";
 import { appConfig } from "../../configs";
 import useAPI from "../../hooks/useApi";
 import { DialogHelper } from "../../singleton/dialogHelper";
 import { useRootDialog } from "../../hooks/rootDialog";
 import { ExamCreateUI } from "./examCreateUI";
 import { ExamTable } from "./examTable";
-import { ExamController } from "../../api/controllers/examController";
-import { ExamSelector } from "./examSelector";
 import { EDIT_METHOD } from "../../_enums";
+import DataTable4 from "../../sections/DataTable4";
 
+const EXAM_HEAD_LABEL = [
+    { id: 'name', label: 'Name', alignRight: false },
+    { id: 'type', label: 'Category', alignRight: false },
+    { id: 'dateRegist', label: 'Registration date', alignRight: false },
+    { id: 'dateExam', label: 'Exam date', alignRight: false },
+    { id: 'candidate', label: 'Candidates', alignRight: false },
+    { id: 'fee', label: 'Fees', alignRight: false },
+    { id: 'examStatus', label: 'Status', alignRight: false },
+    { id: '' }
+]
 const searchOptionList = [{
     label: "Name",
     value: {
@@ -42,6 +47,7 @@ const orderOptionList = [
 const routeName = "exam";
 
 export default function ExamPageUI() {
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const api = useAPI();
     const rootDialog = useRootDialog();
@@ -112,16 +118,17 @@ export default function ExamPageUI() {
     }
 
     const handleCreate = () => {
-        rootDialog.openDialog({
-            children: <ExamCreateUI
-                method={EDIT_METHOD.create}
-                onSuccess={() => {
-                    rootDialog.closeDialog();
-                    select();
-                }}
-                onClose={() => rootDialog.closeDialog()}
-            />,
-        });
+        // rootDialog.openDialog({
+        //     children: <ExamCreateUI
+        //         method={EDIT_METHOD.create}
+        //         onSuccess={() => {
+        //             rootDialog.closeDialog();
+        //             select();
+        //         }}
+        //         onClose={() => rootDialog.closeDialog()}
+        //     />,
+        // });
+        navigate("create", { replace: true });
     }
 
     const handleEdit = (data: any) => {
@@ -173,66 +180,24 @@ export default function ExamPageUI() {
             onDelete={handleDelete}
         />
     }
+    
+
+
 
     return (
-        <Stack spacing={1}>
-            <Stack direction={"row"} alignItems="center" justifyContent="space-between">
-                <Stack direction={"row"}>
-                    <label>Exam</label>
-                    <label>&gt;</label>
-                </Stack>
-                <Stack direction={"row"}>
-                    <CommonButton
-                        onClick={() => {
-                            rootDialog.openDialog({
-                                title: <h2>Select Exam</h2>,
-                                children: <ExamSelector
-                                    onSubmit={(val) => {
-                                        console.log("On select success", val);
-                                    }}
-                                    onClose={() => rootDialog.closeDialog()}
-                                ></ExamSelector>,
-                            });
-                        }}
-                    >Test</CommonButton>
-                    <CommonButton
-                        startIcon={<Icon icon="ant-design:plus-outlined" />}
-                        onClick={handleCreate}
-                    >Create</CommonButton>
-                </Stack>
-            </Stack>
+        <DataTable4 
+        searchOptionList={searchOptionList} 
+        orderOptionList={orderOptionList} 
+        searchbarText='Tìm tên kì thi'
+        title="Dashboard | Exam"
+        textLabel="Kì thi"
+        maxRow={10} 
+        urlSelect='select'
+        onClickCreate={handleCreate} 
+        headLabels={EXAM_HEAD_LABEL}
+         routeName="exam" 
+         onRenderItem={renderTable }
+        />
 
-            <MySearchBar
-                searchOptionList={searchOptionList}
-                orderOptionList={orderOptionList}
-                onSubmit={(opt) => {
-                    setOptions(opt);
-                }}
-            ></MySearchBar>
-
-            <Box alignSelf={"center"} style={{ display: isLoading ? "inline" : "none" }}>
-                <Icon icon="eos-icons:three-dots-loading" />
-            </Box>
-
-            <Scrollbar sx={undefined}>
-                {renderTable()}
-            </Scrollbar>
-
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={maxCount}
-                rowsPerPage={rowPerPage}
-                page={page}
-                onPageChange={(ev, newPage) => {
-                    setPage(newPage);
-                }}
-                onRowsPerPageChange={(ev) => {
-                    const newRowPerPage = ev.target.value;
-                    setRowPerPage(parseInt(newRowPerPage, 10));
-                    setPage(0);
-                }}
-            />
-        </Stack>
     )
 }

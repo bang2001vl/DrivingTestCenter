@@ -38,19 +38,16 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-interface ISelectable<T = any> {
-  label: string,
-  value: T
-}
+
 
 interface IProps {
   hintText?: string;
 
-  searchOptionList: ISelectable[]
-  selectedSearchOption?: ISelectable
+  searchOptionList: any[]
+  selectedSearchOption?: any
 
-  orderOptionList: ISelectable[]
-  selectedOrderOption?: ISelectable
+  orderOptionList: any[]
+  selectedOrderOption?: any
 
   onSubmit?: (data: any) => void,
 }
@@ -78,21 +75,25 @@ export const MySearchBar: FC<IProps> = (props) => {
         value={searchValue}
         onChange={(ev) => setSearchValue(ev.currentTarget.value)}
 
-        placeholder={props.hintText ? props.hintText : "Type search content here"}
+        placeholder={props.hintText ? props.hintText : "Search..."}
         startAdornment={
-          <InputAdornment position="start">
-            <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+          <InputAdornment position="start" onClick={(ev) => {
+            if (props.onSubmit) {
+              props.onSubmit(getData());
+            }
+          }}>
+            <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }}/>
           </InputAdornment>
         }
       />
 
-      <CommonButton
+      {/* <CommonButton
         onClick={(ev) => {
           if (props.onSubmit) {
             props.onSubmit(getData());
           }
         }}
-        >Search</CommonButton>
+        >Search</CommonButton> */}
 
     </Stack>
 

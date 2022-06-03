@@ -1,22 +1,22 @@
 import { DatePicker, DateRangePicker, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { Box, Button, Container, FormControl, Stack, TextField, TextFieldProps } from "@mui/material";
+import { Box, Button, Card, Container, FormControl, Grid, Select, Stack, TextField, Typography } from "@mui/material";
 import { addDays, isBefore } from "date-fns";
 import { FormikConfig, useFormik, validateYupSchema } from "formik";
 import React, { FC, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import * as yup from 'yup';
 import { MyResponse } from "../../api/service";
-import { CommonButton } from "../../components/Buttons/common";
-import { LoadingButton } from "../../components/Buttons/loading";
 import { FormIkDatePicker } from "../../components/FormIK/DatePicker";
 import { FormIkNumberField } from "../../components/FormIK/NumberField";
 import { FormIkTextField } from "../../components/FormIK/TextField";
-import Page from "../../components/Page";
+import CustomizedTabs from "../../components/tabs";
 import { appConfig } from "../../configs";
 import useAPI from "../../hooks/useApi";
 import { DialogHelper } from "../../singleton/dialogHelper";
 import { EDIT_METHOD } from "../../_enums";
+import SessionTable from "../../sections/SessionTable";
+import Page from "../../components/Page";
 
 interface IProps {
     method: EDIT_METHOD,
@@ -40,6 +40,7 @@ const routeName = "exam";
 
 export const ExamCreateUI: FC<IProps> = (props: IProps) => {
     const api = useAPI();
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
 
     const validSchema = yup.object({
@@ -141,107 +142,125 @@ export const ExamCreateUI: FC<IProps> = (props: IProps) => {
     }
 
     function renderHeader(method: EDIT_METHOD) {
-        const label = method === EDIT_METHOD.create ? "CREATE EXAM" : "UPDATE EXAM";
-        return (<h1 style={{ "textAlign": "center" }} >{label}</h1>)
+        const label = method === EDIT_METHOD.create ? "Create Exam" : "Create Exam";
+        return label;
     }
-
+    const onClickCancel = () => {
+        //window.alert("Clicked delete on item = " + JSON.stringify(item, undefined, 4));
+        const result = DialogHelper.showConfirm("Are you sure cancel the exam create?");
+        if (result) {
+            navigate("/dashboard/exam");
+        }
+    }
     const marginTop = 1;
-    return (
-        <Stack>
-            <Box sx={{ width: "70%" }} alignSelf="center">
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
+    return(
+         // @ts-ignore
+        <Page title={getTitle(props.method)} >
+        <Container>
+        <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
+                    {renderHeader(props.method)}
+                </Typography>
+            <CustomizedTabs listtab={['Information', "Exam sessions"]} children={[
 
-                    <Box sx={{ width: "100%" }}>
-                        {renderHeader(props.method)}
-                    </Box>
+                <Card style={{ alignItems: "center", justifyContent: 'center', padding: "auto", textAlign: "center", marginTop: '15px' }} >
+                    <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
+                        <FormControl style={{ width: '80%', alignSelf: "center", marginTop: "50px" }} >
+                            <Grid container spacing={2} sx={{ p: 1 }}>
+                                <Grid item md={6}>
+                                    <FormIkTextField formik={formik} fieldName="name"
+                                        fullWidth
+                                        label="Name"
+                                        style={{ marginTop }}
+                                    />
 
-                    <FormIkTextField formik={formik} fieldName="name"
-                        fullWidth
-                        label="Name"
-                        style={{ marginTop}}
-                    />
+                                </Grid>
+                                <Grid item md={3}>
+                                    <FormIkTextField formik={formik} fieldName="type"
+                                        fullWidth
+                                        label="Type"
+                                        style={{ marginTop }}
+                                    />
+                                </Grid>
+                                <Grid item md={3}>
+                                    <FormIkNumberField formik={formik} fieldName="price"
+                                        fullWidth
+                                        label="Fees"
+                                        style={{ marginTop: 1 }}
+                                    />
 
-                    <FormIkTextField formik={formik} fieldName="type"
-                        fullWidth
-                        label="Type"
-                        style={{ marginTop}}
-                    />
 
-                    <FormIkNumberField formik={formik} fieldName="maxMember"
-                        fullWidth
-                        label="Max Member"
-                        style={{ marginTop}}
-                    />
+                                </Grid>
+                            </Grid>
 
-                    <FormIkNumberField formik={formik} fieldName="price"
-                        fullWidth
-                        label="Price"
-                        style={{ marginTop: 1 }}
-                    />
 
-                    <Stack direction="row" justifyContent={"space-between"} sx={{ marginTop: 1 }}>
-                        <Box sx={{ width: "48%" }}>
-                            <FormIkDatePicker formik={formik} fieldName="dateOpen"
-                                label="Date Open"
-                            />
-                        </Box>
+                            <Box>
+                                <Stack direction="row">
+                                    <Box sx={{ p: 1, width: "50%" }}>
+                                        <FormIkDatePicker formik={formik} fieldName="dateOpen"
+                                            label="Open Register"
+                                        />
+                                    </Box>
 
-                        <Box sx={{ width: "48%" }}>
-                            <FormIkDatePicker formik={formik} fieldName="dateClose"
-                                label="Date Close"
-                            />
-                        </Box>
-                    </Stack>
+                                    <Box sx={{ p: 1, width: "50%" }}>
+                                        <FormIkDatePicker formik={formik} fieldName="dateClose"
+                                            label="Close Register"
+                                        />
+                                    </Box>
+                                    <Box sx={{ p: 1, width: "50%" }}>
+                                        <FormIkDatePicker formik={formik} fieldName="dateStart"
+                                            label="Start Exam"
+                                        />
+                                    </Box>
 
-                    <Stack direction="row" justifyContent={"space-between"} sx={{ marginTop: 1 }}>
-                        <Box sx={{width: "48%" }}>
-                            <FormIkDatePicker formik={formik} fieldName="dateStart"
-                                label="Date Start"
-                            />
-                        </Box>
+                                    <Box sx={{ p: 1, width: "50%" }}>
+                                        <FormIkDatePicker formik={formik} fieldName="dateEnd"
+                                            label="End Exam"
+                                        />
+                                    </Box>
+                                </Stack>
+                            </Box>
 
-                        <Box sx={{width: "48%" }}>
-                            <FormIkDatePicker formik={formik} fieldName="dateEnd"
-                                label="Date End"
-                            />
-                        </Box>
-                    </Stack>
+                            <Box sx={{ p: 1 }}>
+                                <TextField
+                                    fullWidth
+                                    multiline
+                                    minRows={3}
+                                    name="rules"
+                                    label="Description"
+                                    value={formik.values.rules}
+                                    onChange={formik.handleChange}
+                                    error={formik.touched.rules && Boolean(formik.errors.rules)}
+                                    helperText={formik.touched.rules && formik.errors.rules}
+                                />
+                            </Box>
 
-                    <FormIkTextField formik={formik} fieldName="rules"
-                        label="Description"
-                        fullWidth
-                        multiline
-                        minRows={3}
-                        style={{ marginTop: 1 }}
-                    />
+                            <Box>
+                                <Stack direction="row" spacing={20} alignItems="center" justifyContent="center" marginTop={5} marginBottom={5}>
 
-                    <Stack direction="row" justifyContent={"space-between"} margin={2}>
-                        <Box sx={{ width: "45%" }}>
-                            <LoadingButton
-                                loading={isLoading}
-                                style={{ width: "100%", fontSize: 20 }}
-                                onClick={() => formik.handleSubmit()}
-                            >
-                                Submit
-                            </LoadingButton>
-                        </Box>
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => formik.handleSubmit()}
+                                        sx={{ width: "120px" }}
+                                    >
+                                        Create
+                                    </Button>
 
-                        <Box sx={{ width: "45%" }}>
-                            <CommonButton
-                                style={{ width: "100%", fontSize: 20 }}
-                                onClick={() => {
-                                    if (props.onClose) {
-                                        props.onClose();
-                                    }
-                                }}
-                            >
-                                Cancel
-                            </CommonButton>
-                        </Box>
-                    </Stack>
+                                    <Button
+                                        variant="outlined"
+                                        onClick={() => onClickCancel()}
+                                        sx={{ width: "120px" }} >
+                                        Cancel
+                                    </Button>
 
-                </LocalizationProvider>
-            </Box >
-        </Stack >
+                                </Stack>
+                            </Box>
+
+                        </FormControl>
+                    </LocalizationProvider>
+                </Card >,
+                <SessionTable ></SessionTable>
+            ]}></CustomizedTabs>
+        </Container>
+    </Page >
     );
 }

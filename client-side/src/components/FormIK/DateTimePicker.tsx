@@ -13,6 +13,7 @@ export const FormIkDateTimePicker: FC<IProps> = (props) => {
     delete customProps.formik;
     delete customProps.fieldName;
     return <DateTimePicker
+    
         value={new Date(props.formik.values[props.fieldName])}
         onChange={(newDate: any) => {
             if (newDate) {
@@ -21,6 +22,7 @@ export const FormIkDateTimePicker: FC<IProps> = (props) => {
         }}
         renderInput={(params) => <TextField
             {...params}
+            style={{width:"100%"}}
             error={props.formik.touched[props.fieldName] && Boolean(props.formik.errors[props.fieldName])}
             helperText={props.formik.touched[props.fieldName] && props.formik.errors[props.fieldName]}
         />}

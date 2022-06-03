@@ -5,8 +5,10 @@ import HomePage from "../pages";
 import ClassesPage from "../pages/class";
 import ExamPage from "../pages/exam";
 import ExamPageUI from "../pages/exam/examPageUI";
-import ExamCreate, { EDIT_METHOD } from "../pages/examCreate";
+import {ExamCreateUI} from "../pages/exam/examCreateUI";
+import { EDIT_METHOD } from '../_enums/index';
 import ExamTestPage from "../pages/examTest/examTestPage";
+import {ExamTestCreate} from "../pages/examTest/examTestCreate";
 import LecturesPage from "../pages/lecture";
 import Login from "../pages/login"
 import ReceiptsPage from "../pages/receipt";
@@ -29,6 +31,10 @@ export default function RootRouter() {
         { path: 'student', element: <StudentsPage /> },
         { path: 'receipt', element: <ReceiptsPage /> },
         { path: 'report', element: <ReportsPage /> },
+        { path: 'exam/create', element: <ExamCreateUI method={EDIT_METHOD.create} />},
+        { path: 'session/create', element: <ExamTestCreate method={EDIT_METHOD.create} />},
+
+     
       ]
     },
     {
