@@ -289,7 +289,7 @@ export default function ExamCreate(props: IProps) {
                             </FormControl>
                         </LocalizationProvider>
                     </Card >,
-                    <SessionTable ></SessionTable>
+                    // <SessionTable ></SessionTable>
                 ]}></CustomizedTabs>
             </Container>
         </Page >
