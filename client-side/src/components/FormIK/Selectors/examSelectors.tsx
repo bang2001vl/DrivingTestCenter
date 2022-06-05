@@ -70,6 +70,8 @@ export const FormIKExamSelector: FC<IProps> = (props) => {
             }}
 
             styles={{
+                menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                menu: (provided) => ({ ...provided, zIndex: 9999 }),
                 control: (base, state) => ({
                     ...base,
                     borderRadius: "8px",
@@ -77,6 +79,7 @@ export const FormIKExamSelector: FC<IProps> = (props) => {
                     minWidth: "100%",
                     textAlign: "left",
                     paddingLeft: "8px",
+                    zIndex: '9999',
                     borderColor: state.isFocused ? "green" : "lightGray",
                     boxShadow: state.isFocused ? "none" : "none",
                     '&:hover': {

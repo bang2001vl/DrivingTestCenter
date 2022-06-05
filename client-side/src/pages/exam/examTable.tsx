@@ -60,7 +60,7 @@ export const ExamTable: FC<IProps> = (props) => {
         }
     }
     return <>{props.dataList.map((item) => {
-        const cells = [];
+        const cells = new Array();
         cells.push(<TableCell>{item.name}</TableCell>);
         cells.push(<TableCell>{item.type}</TableCell>);
         cells.push(<TableCell>{`${format(item.dateOpen, timeFormat)} - ${format(item.dateClose, timeFormat)}`}</TableCell>);
@@ -94,7 +94,9 @@ export const ExamTable: FC<IProps> = (props) => {
                 ]}
             ></ItemMoreMenu>
         </TableCell>);
-        return cells;
+        return <TableRow
+        >{cells}
+        </TableRow>;
     })}
     </>
 }

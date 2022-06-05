@@ -23,6 +23,7 @@ interface IProps {
     oldData?: { id: number, exam: any } & IData,
     onSuccess?: () => void,
     onClose?: () => void,
+    onSubmit?: ()=>void,
 }
 
 interface IData {
@@ -215,7 +216,7 @@ export const ExamTestCreate: FC<IProps> = (props: IProps) => {
 
                                         <Button
                                             variant="contained"
-                                            onClick={() => formik.handleSubmit()}
+                                            onClick={() =>((props.onSubmit===undefined)? formik.handleSubmit(): props.onSubmit)}
                                             sx={{ width: "120px" }}
                                         >
                                             Create

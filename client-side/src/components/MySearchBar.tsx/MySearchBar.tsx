@@ -1,4 +1,4 @@
-import { alpha, Button, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, Stack, TextField, Theme, Toolbar, Tooltip, Typography } from "@mui/material";
+import { alpha, Box, Button, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, Stack, TextField, Theme, Toolbar, Tooltip, Typography } from "@mui/material";
 import { styled, makeStyles } from "@mui/styles";
 import { CSSProperties, FC, useEffect, useState } from "react";
 import palette from "../../theme/palette";
@@ -69,31 +69,23 @@ export const MySearchBar: FC<IProps> = (props) => {
   }
 
   return <Toolbar style={RootStyle}>
-    <Stack direction="row" alignItems="center" spacing={2}>
-
+    <Stack direction="row" alignItems="center" spacing={0}>
       <OutlinedInput className={classes.searchBar}
         value={searchValue}
         onChange={(ev) => setSearchValue(ev.currentTarget.value)}
 
         placeholder={props.hintText ? props.hintText : "Search..."}
-        startAdornment={
-          <InputAdornment position="start" onClick={(ev) => {
+        endAdornment={
+          <IconButton style={{}} onClick={() => {
             if (props.onSubmit) {
               props.onSubmit(getData());
             }
           }}>
-            <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }}/>
-          </InputAdornment>
+            <Iconify icon="eva:search-fill" sx={{ color: '#00AB55' }} />
+          </IconButton>
         }
       />
-
-      {/* <CommonButton
-        onClick={(ev) => {
-          if (props.onSubmit) {
-            props.onSubmit(getData());
-          }
-        }}
-        >Search</CommonButton> */}
+    
 
     </Stack>
 
@@ -120,7 +112,11 @@ export const MySearchBar: FC<IProps> = (props) => {
         <TextField
           label="Order By"
           value={orderOption ? orderOption : props.orderOptionList[0].value}
-          onChange={(event) => setOrderOption(event.target.value)}
+          onChange={(event) => {
+            setOrderOption(event.target.value); 
+            if (props.onSubmit) {
+            props.onSubmit(getData())
+          }}}
           select
         >
           {props.orderOptionList.map((v, index) => {

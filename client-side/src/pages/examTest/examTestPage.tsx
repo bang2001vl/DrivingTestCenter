@@ -136,17 +136,8 @@ export default function ExamTestPage() {
     }
 
     const handleEdit = (data: any) => {
-        rootDialog.openDialog({
-            children: <ExamTestCreate
-                method={EDIT_METHOD.update}
-                oldData={data}
-                onSuccess={() => {
-                    rootDialog.closeDialog();
-                    select();
-                }}
-                onClose={() => rootDialog.closeDialog()}
-            />,
-        });
+        navigate("edit/"+data.id, { replace: true });
+
     }
 
     const handleDelete = async (data: any) => {
@@ -179,17 +170,17 @@ export default function ExamTestPage() {
 
     return (
         <DataTable4 
-        searchOptionList={searchOptionList} 
-        orderOptionList={orderOptionList} 
-        searchbarText='Tìm tên ca thi'
-        title="Dashboard | Session"
-        textLabel="Ca thi"
-        maxRow={10} 
-        urlSelect='select/include/exam'
-        onClickCreate={handleCreate} 
-        headLabels={EXAM_HEAD_LABEL}
-         routeName="examtest" 
-         onRenderItem={renderTable }
-        />
+            searchOptionList={searchOptionList}
+            orderOptionList={orderOptionList}
+            searchbarText='Tìm tên ca thi'
+            title="Dashboard | Session"
+            textLabel="Ca thi"
+            maxRow={10}
+            selectURL='select/include/exam'
+            createURL='create'
+            headLabels={EXAM_HEAD_LABEL}
+            routeName="examtest"
+            onRenderItem={renderTable} 
+            needReload={false}     />
     )
 }

@@ -1,10 +1,10 @@
-import { DatePicker, DateRangePicker, LocalizationProvider } from "@mui/lab";
+import { DatePicker, DateRangePicker, LoadingButton, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { Box, Button, Card, Container, FormControl, Grid, Select, Stack, TextField, Typography } from "@mui/material";
-import { addDays, isBefore } from "date-fns";
+import { Box, Button, Card, Container, FormControl, Grid, Select, Stack, TableCell, TextField, Typography } from "@mui/material";
+import { addDays, isAfter, isBefore } from "date-fns";
 import { FormikConfig, useFormik, validateYupSchema } from "formik";
 import React, { FC, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import * as yup from 'yup';
 import { MyResponse } from "../../api/service";
 import { FormIkDatePicker } from "../../components/FormIK/DatePicker";
@@ -15,8 +15,12 @@ import { appConfig } from "../../configs";
 import useAPI from "../../hooks/useApi";
 import { DialogHelper } from "../../singleton/dialogHelper";
 import { EDIT_METHOD } from "../../_enums";
-import SessionTable from "../../sections/SessionTable";
 import Page from "../../components/Page";
+import { useRootDialog } from "../../hooks/rootDialog";
+import DataTable3 from "../../sections/DataTable3";
+import { ExamTestTable } from "../examTest/examTestTable";
+import { ExamTestCreate } from "../examTest/examTestCreate";
+
 
 interface IProps {
     method: EDIT_METHOD,
@@ -35,10 +39,34 @@ interface IProps {
     onSuccess?: () => void,
     onClose?: () => void,
 }
-
+interface ISessionData {
+    id: number,
+    examId: number,
+    name: string,
+    room: string,
+    dateTimeStart: Date,
+    dateTimeEnd: Date,
+    maxMember: number,
+    countStudent: number,
+    exam: { type: string, name: string, },
+}
+const EXAM_TEST_HEAD_LABEL = [
+    { id: 'name', label: 'Tên ca thi', alignRight: false },
+    { id: 'exam', label: 'Kì thi', alignRight: false },
+    { id: 'type', label: 'Loại bằng', alignRight: false },
+    { id: 'time', label: 'Thời gian thi', alignRight: false },
+    { id: 'date', label: 'Ngày thi', alignRight: false },
+    { id: 'room', label: 'Địa chỉ', alignRight: false },
+    { id: 'candidate', label: 'Thí sinh', alignRight: false },
+    { id: 'sessionStatus', label: 'Trạng thái', alignRight: false },
+    { id: '', label: '', alignRight: false },
+]
 const routeName = "exam";
 
 export const ExamCreateUI: FC<IProps> = (props: IProps) => {
+    const rootDialog = useRootDialog();
+
+    const [sessionList, setSessionList] = useState<any[]>([]);
     const api = useAPI();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
@@ -128,6 +156,17 @@ export const ExamCreateUI: FC<IProps> = (props: IProps) => {
             }
         }
     });
+    const renderSessionTable = () => {
+        return <ExamTestTable
+            dataList={sessionList.map(e => ({
+                ...e,
+                dateTimeStart: new Date(e.dateTimeStart),
+                dateTimeEnd: new Date(e.dateTimeEnd),
+            }))}
+            onEdit={()=>{}}
+            onDelete={()=>{}}
+            />
+    }
 
     function customValid(vals: any) {
         let errors: any = {}
@@ -152,45 +191,79 @@ export const ExamCreateUI: FC<IProps> = (props: IProps) => {
             navigate("/dashboard/exam");
         }
     }
+    function getSessionStatus(data: ISessionData) {
+        const now = new Date();
+        if (isAfter(data.dateTimeStart, now)) {
+            return "Coming"
+        }
+        else if (isAfter(data.dateTimeEnd, now)) {
+            return "Happening"
+        }
+        else {
+            return "Finish"
+        }
+    }
+    const handleCreate = () => {
+        rootDialog.openDialog({
+            children: <ExamTestCreate
+                method={EDIT_METHOD.create}
+                onSuccess={() => {
+                    rootDialog.closeDialog();
+                    
+                }}
+                onClose={() => rootDialog.closeDialog()}
+            />,
+        });
+    }
+
     const marginTop = 1;
-    return(
-         // @ts-ignore
+    return (
+        // @ts-ignore
         <Page title={getTitle(props.method)} >
-        <Container>
-        <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
+            <Container>
+                <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
                     {renderHeader(props.method)}
                 </Typography>
-            <CustomizedTabs listtab={['Information', "Exam sessions"]} children={[
+                <CustomizedTabs listtab={['Information', "Exam sessions"]} children={[
 
-                <Card style={{ alignItems: "center", justifyContent: 'center', padding: "auto", textAlign: "center", marginTop: '15px' }} >
-                    <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
-                        <FormControl style={{ width: '80%', alignSelf: "center", marginTop: "50px" }} >
-                            <Grid container spacing={2} sx={{ p: 1 }}>
-                                <Grid item md={6}>
+                    <Card style={{ alignItems: "center", justifyContent: 'center', padding: "30px 80px", textAlign: "center", marginTop: '15px' }} >
+                        <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
+
+                            <Stack direction="row" spacing={2} sx={{ p: 1 }}>
+                                <Box sx={{ width: "50%" }}>
                                     <FormIkTextField formik={formik} fieldName="name"
                                         fullWidth
                                         label="Name"
                                         style={{ marginTop }}
                                     />
 
-                                </Grid>
-                                <Grid item md={3}>
+                                </Box>
+                                <Box sx={{ minWidth: "50%" }}>
                                     <FormIkTextField formik={formik} fieldName="type"
                                         fullWidth
                                         label="Type"
                                         style={{ marginTop }}
                                     />
-                                </Grid>
-                                <Grid item md={3}>
+                                </Box>
+
+                            </Stack>
+                            <Stack direction="row" spacing={2} sx={{ p: 1 }}>
+                                <Box sx={{ width: "50%" }}>
                                     <FormIkNumberField formik={formik} fieldName="price"
                                         fullWidth
                                         label="Fees"
                                         style={{ marginTop: 1 }}
                                     />
+                                </Box>
+                                <Box sx={{ minWidth: "50%" }}>
+                                    <FormIkNumberField formik={formik} fieldName="maxMember"
+                                        fullWidth
+                                        label="Max Member"
+                                        style={{ marginTop }}
+                                    />
+                                </Box>
 
-
-                                </Grid>
-                            </Grid>
+                            </Stack>
 
 
                             <Box>
@@ -237,13 +310,13 @@ export const ExamCreateUI: FC<IProps> = (props: IProps) => {
                             <Box>
                                 <Stack direction="row" spacing={20} alignItems="center" justifyContent="center" marginTop={5} marginBottom={5}>
 
-                                    <Button
+                                    <LoadingButton
                                         variant="contained"
-                                        onClick={() => formik.handleSubmit()}
+                                        onClick={() =>  formik.handleSubmit()}
                                         sx={{ width: "120px" }}
                                     >
                                         Create
-                                    </Button>
+                                    </LoadingButton>
 
                                     <Button
                                         variant="outlined"
@@ -255,12 +328,20 @@ export const ExamCreateUI: FC<IProps> = (props: IProps) => {
                                 </Stack>
                             </Box>
 
-                        </FormControl>
-                    </LocalizationProvider>
-                </Card >,
-                <SessionTable ></SessionTable>
-            ]}></CustomizedTabs>
-        </Container>
-    </Page >
+
+                        </LocalizationProvider>
+                    </Card >,
+               <DataTable3 
+               searchbarText='Tìm ca thi'
+                maxRow={10} 
+                list={sessionList} 
+                headLabels={EXAM_TEST_HEAD_LABEL}
+                 handleCreate={(handleCreate)} 
+                  onRenderItem={renderSessionTable} 
+                  ></DataTable3>
+
+                ]}></CustomizedTabs>
+            </Container >
+        </Page >
     );
 }

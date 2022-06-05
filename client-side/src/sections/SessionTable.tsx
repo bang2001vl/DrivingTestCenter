@@ -1,185 +1,200 @@
-import { Box, LinearProgress, linearProgressClasses, Stack, styled, TableCell, Typography } from "@mui/material";
-import { format, parse } from "date-fns";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
-import { APIExam } from "../api/exam";
-import { ISelectOption } from "../api/_deafaultCRUD";
-import { BorderLinearProgress } from "../components/LinearProgress";
-import ItemMoreMenu from "../sections/user/ItemMoreMenu";
-import { DialogHelper } from "../singleton/dialogHelper";
-import DataTable3 from "./DataTable3";
+import { filter } from 'lodash';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { appConfig } from '../configs';
+import { useRootDialog } from '../hooks/rootDialog';
+import useAPI from '../hooks/useApi';
+import { ExamTestTable } from '../pages/examTest/examTestTable';
+import { DialogHelper } from '../singleton/dialogHelper';
+import DataTable3 from './DataTable3';
+import DataTable4 from './DataTable4';
+const EXAM_HEAD_LABEL = [
+        { id: 'name', label: 'Tên ca thi', alignRight: false },
+        { id: 'exam', label: 'Kì thi', alignRight: false },
+        { id: 'type', label: 'Loại bằng', alignRight: false },
+        { id: 'time', label: 'Thời gian thi', alignRight: false },
+        { id: 'date', label: 'Ngày thi', alignRight: false },
+        { id: 'room', label: 'Địa chỉ', alignRight: false },
+        { id: 'candidate', label: 'Thí sinh', alignRight: false },
+        { id: 'sessionStatus', label: 'Trạng thái', alignRight: false },
+        { id: '', label: '', alignRight: false },
+]
+const searchOptionList = [{
+    label: "Name",
+    value: {
+        searchby: "name"
+    }
+}];
 
-const SessionTable = () => {
-    return <></>
-    // const [maxRow, setMaxRow] = useState(0);
-    // const [list, setList] = useState<any[]>([]);
-    // const auth = useRecoilValue(authAtom);
-    // const apiResultHandler = useAPIResultHandler();
-    // const navigate = useNavigate();
+const orderOptionList = [
+    {
+        label: "Name (A-Z)",
+        value: {
+            orderby: "name",
+            orderdirection: "asc"
+        }
+    },
+    {
+        label: "Name (Z-A)",
+        value: {
+            orderby: "name",
+            orderdirection: "desc"
+        }
+    }
+];
 
-    // const initSelectOption = {
-    //     searchby: "name",
-    //     searchvalue: "",
-    //     orderby: "name",
-    //     orderdirection: "asc",
-    //     start: 0,
-    //     count: 5,
-    // }
-    // const EXAM_HEAD_LABEL = [
-    //     { id: 'name', label: 'Name', alignRight: false },
-    //     { id: 'exam', label: 'Exam', alignRight: false },
-    //     { id: 'time', label: 'Exam time', alignRight: false },
-    //     { id: 'date', label: 'Exam date', alignRight: false },
-    //     { id: 'room', label: 'Room', alignRight: false },
-    //     { id: 'candidate', label: 'Candidates', alignRight: false },
-    //     { id: 'sessionStatus', label: 'Status', alignRight: false },
-     
-    // ]
-    // useEffect(() => {
-    //     onSelectChanged(initSelectOption);
-    // }, []);
-
-
-    // const onSelectChanged = async (option: ISelectOption) => {
-    //     console.log("OnSelectChanged");
-    //     console.log(option);
-
-    //     const [error1, newList] = await APIExam.select(option, auth?.token);
-    //     if (error1) {
-    //         if (!apiResultHandler.catchFatalError(error1)) {
-    //             DialogHelper.showAlert(error1.errorMessage);
-    //         }
-    //         return;
-    //     }
-
-    //     const [error2, newMaxRow] = await APIExam.count(option, auth?.token);
-    //     if (error2) {
-    //         if (!apiResultHandler.catchFatalError(error2)) {
-    //             DialogHelper.showAlert(error2.errorMessage);
-    //         }
-    //         return;
-    //     }
-    //     console.log(newList);
-    //     console.log(newMaxRow);
-
-    //     setList(newList);
-    //     setMaxRow(newMaxRow);
-    // }
-
-    // const onClickCreate = () => {
-    //     //window.alert("Clicked create");
-    //     navigate("create", { replace: true });
-    // }
-    // const onClickEdit = (item: any) => {
-    //     //window.alert("Clicked edit on item = " + JSON.stringify(item, undefined, 4));
-    //     const params = new URLSearchParams(item);
-    //     navigate(`update?${params}`, { replace: true });
-    // }
-    // const checkExamStatus = (examDate: any,) => {
-    //     const currentDate = new Date();
-    //     if (currentDate.getTime() < (new Date(examDate).getTime()))
-    //         return 0;
-        
-    //     return 1;
-
-    // }
-    // const onClickDelete = async (item: any) => {
-    //     //window.alert("Clicked delete on item = " + JSON.stringify(item, undefined, 4));
-    //     const result = DialogHelper.showConfirm("Are you sure?");
-    //     if (result) {
-    //         const [error, newMaxRow] = await APIExam.delete([item.id], auth?.token);
-    //         if (error) {
-    //             if (!apiResultHandler.catchFatalError(error)) {
-    //                 DialogHelper.showAlert(error.errorMessage);
-    //             }
-    //             return;
-    //         }
-    //     }
-    //     else {
-    //         onSelectChanged(initSelectOption);
-    //     }
-    // }
-
-    // return (
-    //     <DataTable3
-        
-    //         maxRow={maxRow}
-    //         list={list}
-    //         initSelectOption={initSelectOption}
-    //         onClickCreate={onClickCreate}
-    //         onChangedSearch={onSelectChanged}
-
-    //         headLabels={EXAM_HEAD_LABEL}
-
-    //         onRenderItem={(data) => {
-    //              var { id, name, exam, examDate, timeStart, timeEnd, room, Member, maxMember } = data.row;
-
-    //             const isItemSelected = data.isItemSelected;
-    //             const cells = [];
-
-    //             // const examStatus = checkExamStatus(examDate);
-
-    //             cells.push(
-    //                 <TableCell key={1} component="th" scope="row" padding="none">
-    //                     {/* {name} */}
-    //                 </TableCell>
-    //             );
-    //            cells.push(
-    //                 <TableCell key={2} align="left">
-    //                     {/* {exam} */}
-    //                 </TableCell>);
-    //             cells.push(
-    //                 <TableCell key={2} align="left">
-    //                     {/* {timeStart}-{timeEnd} */}
-    //                 </TableCell>
-    //             );
-    //             cells.push(
-    //                 <TableCell key={3} component="th" scope="row" padding="normal">
-    //                     {/* {format(new Date(examDate), "dd/MM/yyyy")} */}
-    //                 </TableCell>
-    //             );
-    //             cells.push(
-    //                 <TableCell key={3} component="th" scope="row" padding="normal">
-    //                     {/* {room} */}
-    //                 </TableCell>
-    //             );
-    //             cells.push(
-    //                 <TableCell key={5} align="left">
-    //                     <Box style={{display: "flex"}}>
-    //                     <BorderLinearProgress style={{margin: '3px', marginRight: "5", width: "50px"}} variant="determinate" value={Number(Member / maxMember) * 100}></BorderLinearProgress>
-    //                      {/* {Member}/{maxMember} */}
-    //                     </Box>
-    //                 </TableCell>
-    //             );
-    //             cells.push(
-    //                 <TableCell key={7} align="left">
-    //                     {/* {examStatus} */}
-    //                 </TableCell>
-    //             );
-    //             cells.push(
-    //                 <TableCell key={8} align="right">
-    //                     <ItemMoreMenu
-    //                         items={[
-    //                             {
-    //                                 label: "Delete",
-    //                                 iconURI: "eva:trash-2-outline",
-    //                                 onClick: onClickDelete
-    //                             },
-    //                             {
-    //                                 label: "Edit",
-    //                                 iconURI: "eva:edit-fill",
-    //                                 onClick: onClickEdit
-    //                             },
-    //                         ]}
-    //                         data={data.row}
-    //                     ></ItemMoreMenu>
-    //                 </TableCell>
-    //             );
-    //             return cells;
-    //         }}
-    //     ></DataTable3>
-    // )
+interface TypeProps {
+    onClickCreate: any,
+    handleEdit: any,
+    handleDelete: any,
+    list: any[],
+    handleCreate: any,
+    renderItem:any,
 }
 
-export default SessionTable;
+   
+export default function ExamTestPage(props: TypeProps) {
+    const _dataList = props.list;
+    const navigate = useNavigate();
+
+    const [isLoading, setIsLoading] = useState(false);
+    const api = useAPI();
+    const rootDialog = useRootDialog();
+    const [selected, setSelected] = useState([]);
+
+    const [page, setPage] = useState(0);
+    const [rowPerPage, setRowPerPage] = useState(10);
+    const [options, setOptions] = useState({
+        searchby: "name",
+        searchvalue: "",
+        orderby: "name",
+        orderdirection: "asc",
+    });
+    const [maxCount, setMaxCount] = useState(0);
+    const [dataList, setDataList] = useState<any[]>([]);
+    const handleChangePage = (event:any, newPage:number) => {
+        setPage(newPage);
+      };
+    
+      const handleChangeRowsPerPage = (event:any) => {
+        setRowPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+      };
+    
+      const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowPerPage - _dataList.length) : 0;
+    
+
+    //useEffect(() => {
+    //     countMax();
+    // }, [options.searchvalue]);
+
+    // useEffect(() => {
+    //     select();
+    // }, [page, rowPerPage, options]);
+
+    const select = () => {
+        //console.log("onSelect");
+
+    //     const queryParams = new URLSearchParams({
+    //         ...options,
+    //         start: rowPerPage * page,
+    //         count: rowPerPage,
+    //     } as any).toString();
+
+    //    // const url = `${appConfig.backendUri}/${routeName}/select/include/exam?${queryParams}`
+    //     setIsLoading(true);
+    //     api.get(url)
+    //         .then(res => {
+    //             setIsLoading(false);
+    //             if (res.result) {
+    //                 setDataList(res.data);
+    //             }
+    //             else {
+    //                 DialogHelper.showAlert(res.errorMessage);
+    //             }
+    //         })
+    }
+
+    // const countMax = () => {
+    //     //console.log("onCountMax");
+
+    //     const queryParams = new URLSearchParams({
+    //         ...options,
+    //         start: rowPerPage * page,
+    //         count: rowPerPage,
+    //     } as any).toString();
+
+    //     const url = `${appConfig.backendUri}/${routeName}/count?${queryParams}`
+    //     setIsLoading(true);
+    //     api.get(url)
+    //         .then(res => {
+    //             setIsLoading(false);
+    //             if (res.result) {
+    //                 setMaxCount(res.data);
+    //             }
+    //             else {
+    //                 DialogHelper.showAlert(res.errorMessage);
+    //             }
+    //         })
+    // }
+
+    // const handleCreate = () => {
+    //     // rootDialog.openDialog({
+    //     //     children: <ExamTestCreate
+    //     //         method={EDIT_METHOD.create}
+    //     //         onSuccess={() => {
+    //     //             rootDialog.closeDialog();
+    //     //             select();
+    //     //         }}
+    //     //         onClose={() => rootDialog.closeDialog()}
+    //     //     />,
+    //     // });
+    //     navigate("create", { replace: true });
+    // }
+
+    // const handleEdit = (data: any) => {
+    //     rootDialog.openDialog({
+    //         children: <ExamTestCreate
+    //             method={EDIT_METHOD.update}
+    //             oldData={data}
+    //             onSuccess={() => {
+    //                 rootDialog.closeDialog();
+    //                 select();
+    //             }}
+    //             onClose={() => rootDialog.closeDialog()}
+    //         />,
+    //     });
+    // }
+
+    // const handleDelete = async (data: any) => {
+    //     const id = data.id;
+    //     setIsLoading(true);
+    //     const res = await api.deleteWithToken(
+    //         `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
+    //     );
+    //     setIsLoading(false);
+    //     if (res.result) {
+    //         DialogHelper.showAlert("Success");
+    //         select();
+    //     }
+    //     else {
+    //         DialogHelper.showAlert(res.errorMessage);
+    //     }
+    //}
+
+
+    return (
+        <DataTable4 
+            searchOptionList={searchOptionList}
+            orderOptionList={orderOptionList}
+            searchbarText='Tìm tên ca thi'
+            title="Dashboard | Session"
+            textLabel="Ca thi"
+            maxRow={10}
+            selectURL='select/include/exam'
+            createURL='create'
+            headLabels={EXAM_HEAD_LABEL}
+            routeName="examtest"
+            onRenderItem={props.renderItem} needReload={false}             />
+    )
+}
