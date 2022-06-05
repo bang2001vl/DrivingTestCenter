@@ -26,7 +26,7 @@ export interface BasicEditSectionProps<T extends FormikValues = FormikValues, Ol
 
 export const BasicEditSection: FC<BasicEditSectionProps> = (props) => {
     const [isLoading, setIsLoading] = useState(false);
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();    
 
     const formik = useFormik({
         initialValues: props.initValues,
@@ -40,12 +40,15 @@ export const BasicEditSection: FC<BasicEditSectionProps> = (props) => {
 
     useEffect(()=>{
         if(props.loadOldData){
-            props.loadOldData(searchParams)
+            let params = Object.fromEntries([...searchParams as any]);
+            console.log("Search Params", params);
+            props.loadOldData(params)
             .then(res =>{
                 if(res.result && res.data){
                     Object.keys(res.data).forEach(key =>{
                         formik.setFieldValue(key, res.data[key]);
-                    })
+                    console.log(formik.values);
+                    });
                 }
                 else{
                     DialogHelper.showAlert(res.errorMessage);
@@ -71,7 +74,7 @@ export const BasicEditSection: FC<BasicEditSectionProps> = (props) => {
             DialogHelper.showAlert(result.errorMessage);
         }
         else {
-            DialogHelper.showAlert("Success");
+            //DialogHelper.showAlert("Success");
             if (props.onSuccess) {
                 props.onSuccess();
             }

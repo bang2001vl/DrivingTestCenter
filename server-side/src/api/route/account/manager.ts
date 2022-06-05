@@ -16,6 +16,7 @@ const tag = "AccountManager";
 
 
 const selectBasicInfo = {
+    id: true,
     username: true,
     roleId: true,
 
@@ -133,7 +134,7 @@ function checkInput_Update(input: any) {
         }
 
         return {
-            key: input.key,
+            key: FieldGetter.Number(input, "key"),
             data
         };
     }

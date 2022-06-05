@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom"
 import { MyResponse } from "../../api/service"
 import { FormIkAvatar } from "../../components/FormIK/Avatar"
 import { FormIkDatePicker } from "../../components/FormIK/DatePicker"
+import { FormIkAddress } from "../../components/FormIK/Selectors/Address"
+import { DialogHelper } from "../../singleton/dialogHelper"
 
 interface IProps {
     method: EDIT_METHOD,
@@ -58,11 +60,14 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
         const formData = new FormData();
 
         Object.keys(formik.values).forEach(key => {
-            formData.append(key, formik.values[key])
+            if(formik.values[key]){
+                formData.append(key, formik.values[key])
+            }
         });
 
-        return api.postWithToken(
-            `${appConfig.backendUri}/${routeName}/insertak`,
+        if(props.method === EDIT_METHOD.create){
+            return api.postWithToken(
+            `${appConfig.backendUri}/${routeName}/insert`,
             formData,
             {
                 headers: {
@@ -70,6 +75,20 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
                 }
             }
         );
+        }
+        else{
+            formData.delete("id");
+            formData.append("key", formik.values.id);
+            return api.putWithToken(
+                `${appConfig.backendUri}/${routeName}/update`,
+                formData,
+                {
+                    headers: {
+                        'content-type': 'multipart/form-data'
+                    }
+                }
+            );
+        }
     }
 
     const loadOldData = (params: any) => {
@@ -88,14 +107,30 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
                 count: "1",
                 id: String(params.id),
             }).toString()}`
-        );
+        ).then(res =>{
+            if(res.result && res.data){
+                return new MyResponse(true, undefined, undefined, res.data[0]);
+            }
+            return res;
+        });
+    }
+
+    function handleSuccess(){
+        DialogHelper.showAlert("Success");
+        navigate("/dashboard/account/manager", {replace: true});
+    }
+
+    function handleClose(){
+        navigate("/dashboard/account/manager", {replace: true});
     }
 
     return <BasicEditSection
+        title="Create Account"
         initValues={initValue}
+        onSuccess={handleSuccess}
+        onClose={handleClose}
         validation={handleValidate}
         submit={handleSubmit}
-        title="Create Account"
         loadOldData={props.method === EDIT_METHOD.update ? loadOldData : undefined}
         formComponent={(formik, cancel, isLoading) => {
             return (
@@ -104,6 +139,7 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
                         <Stack spacing={2} alignItems="center" justifyContent="start" marginTop={5} marginBottom={5}>
                             <Stack direction={"row"}>
                                 <FormIkAvatar formik={formik} fieldName="avatar"
+                                    defaultValue={(()=>{console.log(formik.values["avatarURI"]);return true})() && formik.values["avatarURI"]}
                                     label="Avatar"
                                     propFormControl={{
                                         style: {
@@ -152,23 +188,31 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
                                         fullWidth
                                     />
 
-                                    <FormIkTextField formik={formik} fieldName="address"
-                                        label="Địa chỉ"
-                                        fullWidth
-                                    /><Stack direction={"row"} spacing={20} style={{alignSelf:"center"}}>
+                                    <FormIkAddress formik={formik} fieldName="address"
+                                        propsStack={{
+                                            direction: "row",
+                                            spacing: 2
+                                        }}
+                                        propsItem={{
+                                            style: {
+                                                minWidth: 200
+                                            }
+                                        }}
+                                    />
+                                    <Stack direction={"row"} spacing={20} style={{alignSelf:"center"}}>
                                 <LoadingButton
                                     variant="contained"
                                     onClick={() => formik.handleSubmit()}
                                     sx={{ width: "120px" }}
                                 >
-                                    Create
+                                    Xác nhận
                                 </LoadingButton>
 
                                 <Button
                                     variant="outlined"
                                     onClick={() => cancel()}
                                     sx={{ width: "120px" }} >
-                                    Cancel
+                                    Hủy
                                 </Button>
                                 </Stack>
                                 

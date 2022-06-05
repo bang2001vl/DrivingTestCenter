@@ -28,6 +28,7 @@ const _wrapper_1 = require("../_wrapper");
 const repo = prisma_1.myPrisma.account;
 const tag = "AccountManager";
 const selectBasicInfo = {
+    id: true,
     username: true,
     roleId: true,
     fullname: true,
@@ -37,6 +38,7 @@ const selectBasicInfo = {
     phoneNumber: true,
     address: true,
     avatarURI: true,
+    createdAt: true,
 };
 const DEFAULT_UPLOAD_FOLDER = path_1.default.resolve(config_1.default.publicFolder, "uploads", "avatar");
 const upload = (0, multer_1.default)({
@@ -66,6 +68,9 @@ function customSelectFilter(input) {
     const filter = {};
     if (!isNaN(Number(input.roleId))) {
         filter.roleId = Number(input.roleId);
+    }
+    if (!isNaN(Number(input.id))) {
+        filter.id = Number(input.id);
     }
 }
 function checkInput_Insert(input) {
@@ -98,7 +103,7 @@ function checkInput_Update(input) {
             gender: FieldGetter_1.FieldGetter.Number(input, "gender"),
         };
         return {
-            key: input.key,
+            key: FieldGetter_1.FieldGetter.Number(input, "key"),
             data
         };
     }
