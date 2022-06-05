@@ -355,6 +355,4 @@ export const ExamCreateUI: FC<IProps> = (props: IProps) => {
         );
     }
 
-function getStatus(data: any): React.ReactNode {
-    throw new Error("Function not implemented.");
-}
+

@@ -172,17 +172,17 @@ export const ExamTestCreate: FC<IProps> = (props: IProps) => {
                 <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
                     {renderHeader(props.method)}
                 </Typography>
-                    <Card style={{ alignItems: "center", justifyContent: 'center', padding: "auto", textAlign: "center", marginTop: '15px' }} >
-                        <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
-                            <Stack direction="row" spacing={2}>
-                                <Box sx={{ width: "50%" }}>
-                                    <FormIkTextField formik={formik} fieldName="name"
-                                        fullWidth
-                                        label="Name"
+                <Card style={{ alignItems: "center", justifyContent: 'center', textAlign: "center", marginTop: '15px', padding: "5%" }} >
+                    <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
+                        <Stack direction="row" spacing={2}>
 
-                                    />
-                                </Box>
-                                <Box sx={{ minWidth: "50%" }}>
+                            <FormIkTextField formik={formik} fieldName="name"
+                                fullWidth
+                                label="Name"
+
+                            />
+                            {(props.isExamCreate) ? <></> :
+                                < Box sx={{ minWidth: "50%" }}>
                                     <FormIKExamSelector formik={formik} fieldName="examOption"
                                         placeholder="Exam"
                                         propFormControl={{
@@ -191,63 +191,64 @@ export const ExamTestCreate: FC<IProps> = (props: IProps) => {
                                         }}
                                     />
                                 </Box>
-                            </Stack>
-                            <Stack direction="row" spacing={2}>
-                                <Box sx={{ width: "50%" }}>
-                                    <FormIkTextField formik={formik} fieldName="location"
-                                        fullWidth
-                                        label="Location"
-                                        sx={{ marginTop }}
-                                    />
-                                </Box>
-                                <Box sx={{ minWidth: "50%" }}>
-                                    <FormIkNumberField formik={formik} fieldName="maxMember"
-                                        fullWidth
-                                        label="Max Member"
-                                        sx={{ marginTop }}
-                                    />
-                                </Box>
-
-                            </Stack>
-                            <Stack direction="row" spacing={2} paddingTop={2}>
-                                <Box sx={{ width: "50%" }}>
-                                    <FormIkDateTimePicker formik={formik} fieldName="dateTimeStart"
-                                        label="Date Time Start"
-                                    />
-                                </Box>
-                                <Box sx={{ minWidth: "50%" }}>
-                                    <FormIkDateTimePicker formik={formik} fieldName="dateTimeEnd"
-                                        label="Date Time End"
-
-                                    />
-                                </Box>
-
-                            </Stack>
-
-
-                            <Box>
-                                <Stack direction="row" spacing={20} alignItems="center" justifyContent="center" marginTop={5} marginBottom={5}>
-
-                                    <Button
-                                        variant="contained"
-                                        onClick={() => formik.handleSubmit()}
-                                        sx={{ width: "120px" }}
-                                    >
-                                        Create
-                                    </Button>
-
-                                    <Button
-                                        variant="outlined"
-
-                                        onClick={() => (props.onClose) ? props.onClose() : onClickCancel()}
-                                        sx={{ width: "120px" }} >
-                                        Cancel
-                                    </Button>
-
-                                </Stack>
+                            }
+                        </Stack>
+                        <Stack direction="row" spacing={2}>
+                            <Box sx={{ width: "50%" }}>
+                                <FormIkTextField formik={formik} fieldName="location"
+                                    fullWidth
+                                    label="Location"
+                                    sx={{ marginTop }}
+                                />
                             </Box>
-                        </LocalizationProvider>
-                    </Card >
+                            <Box sx={{ minWidth: "50%" }}>
+                                <FormIkNumberField formik={formik} fieldName="maxMember"
+                                    fullWidth
+                                    label="Max Member"
+                                    sx={{ marginTop }}
+                                />
+                            </Box>
+
+                        </Stack>
+                        <Stack direction="row" spacing={2} paddingTop={2}>
+                            <Box sx={{ width: "50%" }}>
+                                <FormIkDateTimePicker formik={formik} fieldName="dateTimeStart"
+                                    label="Date Time Start"
+                                />
+                            </Box>
+                            <Box sx={{ minWidth: "50%" }}>
+                                <FormIkDateTimePicker formik={formik} fieldName="dateTimeEnd"
+                                    label="Date Time End"
+
+                                />
+                            </Box>
+
+                        </Stack>
+
+
+                        <Box>
+                            <Stack direction="row" spacing={20} alignItems="center" justifyContent="center" marginTop={5} marginBottom={5}>
+
+                                <Button
+                                    variant="contained"
+                                    onClick={() => formik.handleSubmit()}
+                                    sx={{ width: "120px" }}
+                                >
+                                    Create
+                                </Button>
+
+                                <Button
+                                    variant="outlined"
+
+                                    onClick={() => (props.onClose) ? props.onClose() : onClickCancel()}
+                                    sx={{ width: "120px" }} >
+                                    Cancel
+                                </Button>
+
+                            </Stack>
+                        </Box>
+                    </LocalizationProvider>
+                </Card >
             </Container>
         </Page >
     );
