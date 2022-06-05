@@ -1,6 +1,7 @@
 import e, { NextFunction, Request, Response } from "express";
 import { unlinkSync } from "fs";
 import multer from "multer";
+import { type } from "os";
 import path from "path";
 import appConfig from "../../config";
 import { RouteHandleWrapper } from "./_wrapper";
@@ -63,7 +64,7 @@ export function parseInputDeleted(input: any, primarykeyType = "number") {
     }
 }
 
-export const cacheOldImage = (fields: string[], tag = "Utilities") => {
+export const pushToOldImage = (fields: string[], tag = "Utilities") => {
     return RouteHandleWrapper.wrapMiddleware((req, res) => {
         if (!res.locals.oldImages) {
             res.locals.oldImages = [];
@@ -108,4 +109,20 @@ export function uploadWrapper(upload: any) {
             next();
         });
     }
+}
+
+export type InsertChecker = (input: any) => { data: any } | undefined;
+export type UpdateChecker = (input: any) => { data: any, key: any } | undefined;
+
+export function checkNestedInput_Insert(nestData: any, mainKey: string, checker: InsertChecker) {
+    const fakeId = 1;
+    const checked = checker({
+        ...nestData,
+        [mainKey]: fakeId,
+    });
+    if (!checked) {
+        return undefined;
+    }
+    delete checked.data[mainKey];
+    return checked;
 }

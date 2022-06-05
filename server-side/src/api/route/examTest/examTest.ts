@@ -50,22 +50,40 @@ export const ExamTestRoute = () => {
 
 function checkInput_Insert(input: any) {
     if (input) {
-        console.log(input);
+        let data = {
+            examId: input.examId,
+            name: input.name,
+            location: input.location,
+            dateTimeStart: input.dateTimeStart,
+            dateTimeEnd: input.dateTimeEnd,
+            maxMember: input.maxMember,
+        }
 
         return {
-            data: input
+            data
         };
     }
 }
 
 function checkInput_Update(input: any) {
     if (input) {
+        let data = {
+            examId: input.examId,
+            name: input.name,
+            location: input.location,
+            dateTimeStart: input.dateTimeStart,
+            dateTimeEnd: input.dateTimeEnd,
+            maxMember: input.maxMember,
+        }
+
         return {
             key: input.key,
-            data: {
-                ...input,
-                key: undefined,
-            }
+            data
         };
     }
+}
+
+export const ExamTestChecker = {
+    checkInput_Insert,
+    checkInput_Update,
 }

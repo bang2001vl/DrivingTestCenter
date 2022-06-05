@@ -6,9 +6,10 @@ import appConfig from "../../../config";
 import helper from "../../../helper";
 import { myPrisma } from "../../../prisma";
 import SessionHandler from "../../handler/session";
-import { cacheOldImage, handleCleanUp, parsePathToPublicRelative } from "../utilities";
+import { pushToOldImage, handleCleanUp, parsePathToPublicRelative } from "../utilities";
 import { RouteBuilder } from "../_default";
 import { RouteHandleWrapper } from "../_wrapper";
+import { AccountManagerRoute } from "./manager";
 
 const repo = myPrisma.account;
 const tag = "Account";
@@ -29,6 +30,8 @@ const upload = multer({
 
 export const AccountRoute = () => {
     const route = Router();
+
+    route.use("/manager", AccountManagerRoute());
 
     route.get("/info/self",
         SessionHandler.sessionMiddleware,
@@ -59,7 +62,7 @@ export const AccountRoute = () => {
         }),
         addUploadedURIs,
         cacheOldData,
-        cacheOldImage(["avatarURI"]),
+        pushToOldImage(["avatarURI"]),
         RouteBuilder.buildUpdateRoute(repo, tag),
         handleCleanUp,
     );

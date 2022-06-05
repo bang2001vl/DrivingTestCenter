@@ -72,7 +72,7 @@ export default class SessionHandler {
                const session = res.locals.session;
                
                if (!session || !roles.includes(session.roleId)) {
-                   res.status(400).send("Bad request: Permission required");
+                   res.status(401).send("Bad request: Higher permission required");
                    return;
                }
        

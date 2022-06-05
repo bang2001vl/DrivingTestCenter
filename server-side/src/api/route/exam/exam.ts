@@ -1,7 +1,8 @@
 import { json, Router, urlencoded } from "express";
 import { myPrisma } from "../../../prisma";
 import SessionHandler from "../../handler/session";
-import { parseInputDeleted } from "../utilities";
+import { ExamTestChecker } from "../examTest";
+import { buildResponseError, checkNestedInput_Insert, parseInputDeleted } from "../utilities";
 import { RouteBuilder } from "../_default";
 import { InputSource, RouteHandleWrapper } from "../_wrapper";
 
@@ -25,12 +26,15 @@ export const ExamRoute = () => {
     route.post("/insert",
         SessionHandler.roleChecker([0]),
         RouteHandleWrapper.wrapCheckInput(checkInput_Insert, tag),
+        RouteBuilder.buildNestInsertManyCheckerRoute("examTest", "examId", ExamTestChecker.checkInput_Insert),
         RouteBuilder.buildInsertRoute(repo, tag),
     );
 
     route.put("/update",
         SessionHandler.roleChecker([0]),
         RouteHandleWrapper.wrapCheckInput(checkInput_Update, tag),
+        RouteBuilder.buildNestInsertManyCheckerRoute("examTest", "examId", ExamTestChecker.checkInput_Insert),
+        RouteBuilder.buildDeleteNestedData("examTest", "id"),
         RouteBuilder.buildUpdateRoute(repo, tag),
     )
 
@@ -45,22 +49,41 @@ export const ExamRoute = () => {
 
 function checkInput_Insert(input: any) {
     if (input) {
-        console.log(input);
+        const data: any = {
+            name: input.name,
+            type: input.type,
+            dateStart: input.dateStart,
+            dateEnd: input.dateEnd,
+            dateOpen: input.dateOpen,
+            dateClose: input.name,
+            maxMember: input.name,
+            rules: input.name,
+            price: input.name,
+        }
 
         return {
-            data: input
+            data
         };
     }
 }
 
 function checkInput_Update(input: any) {
     if (input) {
+        const data: any = {
+            name: input.name,
+            type: input.type,
+            dateStart: input.dateStart,
+            dateEnd: input.dateEnd,
+            dateOpen: input.dateOpen,
+            dateClose: input.name,
+            maxMember: input.name,
+            rules: input.name,
+            price: input.name,
+        }
+
         return {
             key: input.key,
-            data: {
-                ...input,
-                key: undefined,
-            }
+            data
         };
     }
 }

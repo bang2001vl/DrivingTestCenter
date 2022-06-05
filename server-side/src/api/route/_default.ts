@@ -1,4 +1,5 @@
 import { PrismaDelegate } from "../../prisma";
+import { buildResponseError, checkNestedInput_Insert, InsertChecker, parseInputDeleted, parseStringToArrayId } from "./utilities";
 import { InputSource, RouteHandleWrapper, WrapperErrorCallback } from "./_wrapper";
 
 export const RouteBuilder = {
@@ -46,6 +47,17 @@ export const RouteBuilder = {
         }, tag, inputSource, onError);
     },
 
+    buildDeleteSingleRoute(repo: PrismaDelegate, tag: string, primarykeyName = "id", inputSource = InputSource.locals, onError?: WrapperErrorCallback) {
+        return RouteHandleWrapper.wrapHandleInput(async (input) => {
+            const result = await repo.delete({
+                where: {
+                    [primarykeyName]: input.key
+                },
+            });
+            return result.count;
+        }, tag, inputSource, onError);
+    },
+
     buildSelectRoute(repo: PrismaDelegate, tag: string, customFilter?: (input: any) => any, select?: any, include?: any) {
         return RouteHandleWrapper.wrapHandleInput(async (input) => {
             const { searchby, searchvalue, orderby, orderdirection, start, count } = input;
@@ -73,14 +85,16 @@ export const RouteBuilder = {
         }, tag);
     },
 
-    buildCountRoute(repo: PrismaDelegate, tag: string, onError?: (err: any) => any) {
+    buildCountRoute(repo: PrismaDelegate, tag: string, customFilter?: (input: any) => any) {
         return RouteHandleWrapper.wrapHandleInput(async (input) => {
             const { searchby, searchvalue } = input;
+            const filter = customFilter ? customFilter(input) : {};
             const result = await repo.count({
                 where: {
                     [searchby]: {
                         contains: searchvalue
                     },
+                    ...filter
                 },
             });
             return result;
@@ -145,7 +159,7 @@ export const RouteBuilder = {
                                 keys_number.push(parseInt(keys[i]))
                             }
                             catch (ex: any) {
-                                return undefined;
+                                throw buildResponseError(1, "Invalid keys");
                             }
                         }
                         return {
@@ -161,5 +175,70 @@ export const RouteBuilder = {
             }
         }, tag, inputSource);
     },
+    buildKeyParser(tag: string, primarykeyType = "number", inputSource = InputSource.body) {
+        return RouteHandleWrapper.wrapCheckInput((input) => {
+            if (input
+                && !isNaN(input.key)
+            ) {
+                return {
+                    ...input,
+                    key: Number(input.key)
+                }
+            }
+        }, tag, inputSource);
+    },
+    buildNestInsertManyCheckerRoute(nestFieldName: string, mainKey: string, checker: InsertChecker, source = InputSource.body) {
+        return RouteHandleWrapper.wrapMiddleware((req, res) => {
+            const input = RouteHandleWrapper.getInput(req, res, source);
+            if (input[nestFieldName] && input[nestFieldName].added) {
+                if (typeof input[nestFieldName] === "string") {
+                    input[nestFieldName] = JSON.parse(input[nestFieldName]);
+                }
+                if (!Array.isArray(input[nestFieldName].added)) {
+                    throw buildResponseError(1, `Invalid examTest`);
+                }
 
+                const newInsertArray = input[nestFieldName].added.map((e: any) => {
+                    const checked = checkNestedInput_Insert(e, mainKey, checker);
+                    if (!checked) {
+                        throw buildResponseError(1, `Invalid input nested`);
+                    }
+                    else {
+                        return checked;
+                    }
+                });
+
+                res.locals.input.data = {
+                    ...res.locals.input.data,
+                    [nestFieldName]: {
+                        createMany: {
+                            data: newInsertArray,
+                        }
+                    }
+                }
+            }
+        });
+    },
+    buildDeleteNestedData(nestFieldName: string, nestPKName: string, source = InputSource.body) {
+        return RouteHandleWrapper.wrapMiddleware((req, res) => {
+            const input = RouteHandleWrapper.getInput(req, res, source);
+            if (input[nestFieldName] && input[nestFieldName].deleted) {
+                const ids = parseInputDeleted({ keys: input[nestFieldName].deleted });
+                if (!ids) {
+                    throw buildResponseError(1, `Invalid input nested`);
+                }
+
+                res.locals.input.data = {
+                    ...res.locals.input.data,
+                    [nestFieldName]: {
+                        deleteMany: {
+                            [nestPKName]: {
+                                in: ids
+                            }
+                        },
+                    }
+                }
+            }
+        });
+    },
 }

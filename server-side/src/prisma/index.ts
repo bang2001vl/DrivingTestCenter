@@ -13,4 +13,10 @@ export interface PrismaDelegate {
     updateMany(options: any): PrismaPromise<Prisma.BatchPayload>;
     upsert(options: any): Promise<any>;
   }
-export const myPrisma = new PrismaClient();
+export const myPrisma = new PrismaClient({
+  log: ['query', 'info', 'warn', 'error'],
+});
+
+export function findMaxPk(tableName: string, pkName = 'id'){
+  return myPrisma.$queryRawUnsafe(`SELECT max(${pkName}) as max FROM ${tableName};`);
+}
