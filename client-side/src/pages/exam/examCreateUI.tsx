@@ -163,6 +163,7 @@ export const ExamCreateUI: FC<IProps> = (props: IProps) => {
                 dateTimeStart: new Date(e.dateTimeStart),
                 dateTimeEnd: new Date(e.dateTimeEnd),
             }))}
+            headLabels={EXAM_TEST_HEAD_LABEL}
             onEdit={()=>{}}
             onDelete={()=>{}}
             />

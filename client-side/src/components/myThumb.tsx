@@ -6,7 +6,7 @@ import avatarDefault from "../assets/images/avatarDefault.jpg"
 import { GetImageStringFromBE, IsImageUrl } from "../singleton/imageHelper";
 
 interface Props {
-  file: File | string | null,
+  file?: File | string,
   width: number,
   height: number,
   
@@ -45,7 +45,7 @@ export class MyThumb extends React.Component<Props & React.HTMLAttributes<HTMLDi
         alt={file.name} />;
     }
 
-    if (file === null) {
+    if (!file) {
       return <img
         style={{ objectFit: "fill" , width: width, height: height}}
         src={avatarDefault}
