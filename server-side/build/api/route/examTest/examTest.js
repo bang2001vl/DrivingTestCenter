@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExamTestChecker = exports.ExamTestRoute = void 0;
 const express_1 = require("express");
 const prisma_1 = require("../../../prisma");
+const FieldGetter_1 = require("../../handler/FieldGetter");
 const session_1 = __importDefault(require("../../handler/session"));
 const utilities_1 = require("../utilities");
 const _default_1 = require("../_default");
@@ -28,12 +29,12 @@ exports.ExamTestRoute = ExamTestRoute;
 function checkInput_Insert(input) {
     if (input) {
         let data = {
-            examId: input.examId,
-            name: input.name,
-            location: input.location,
-            dateTimeStart: input.dateTimeStart,
-            dateTimeEnd: input.dateTimeEnd,
-            maxMember: input.maxMember,
+            examId: FieldGetter_1.FieldGetter.Number(input, "examId", true),
+            name: FieldGetter_1.FieldGetter.String(input, "name", true),
+            location: FieldGetter_1.FieldGetter.String(input, "location", true),
+            dateTimeStart: FieldGetter_1.FieldGetter.Date(input, "dateTimeStart", true),
+            dateTimeEnd: FieldGetter_1.FieldGetter.Date(input, "dateTimeEnd", true),
+            maxMember: FieldGetter_1.FieldGetter.Number(input, "maxMember", true),
         };
         return {
             data
@@ -43,12 +44,12 @@ function checkInput_Insert(input) {
 function checkInput_Update(input) {
     if (input) {
         let data = {
-            examId: input.examId,
-            name: input.name,
-            location: input.location,
-            dateTimeStart: input.dateTimeStart,
-            dateTimeEnd: input.dateTimeEnd,
-            maxMember: input.maxMember,
+            examId: FieldGetter_1.FieldGetter.Number(input, "examId", false),
+            name: FieldGetter_1.FieldGetter.String(input, "name", false),
+            location: FieldGetter_1.FieldGetter.String(input, "location", false),
+            dateTimeStart: FieldGetter_1.FieldGetter.Date(input, "dateTimeStart", false),
+            dateTimeEnd: FieldGetter_1.FieldGetter.Date(input, "dateTimeEnd", false),
+            maxMember: FieldGetter_1.FieldGetter.Number(input, "maxMember", false),
         };
         return {
             key: input.key,

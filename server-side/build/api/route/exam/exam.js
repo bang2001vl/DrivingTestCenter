@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExamRoute = void 0;
 const express_1 = require("express");
 const prisma_1 = require("../../../prisma");
+const FieldGetter_1 = require("../../handler/FieldGetter");
 const session_1 = __importDefault(require("../../handler/session"));
 const examTest_1 = require("../examTest");
 const utilities_1 = require("../utilities");
@@ -27,15 +28,15 @@ exports.ExamRoute = ExamRoute;
 function checkInput_Insert(input) {
     if (input) {
         const data = {
-            name: input.name,
-            type: input.type,
-            dateStart: input.dateStart,
-            dateEnd: input.dateEnd,
-            dateOpen: input.dateOpen,
-            dateClose: input.name,
-            maxMember: input.name,
-            rules: input.name,
-            price: input.name,
+            name: FieldGetter_1.FieldGetter.String(input, "name"),
+            type: FieldGetter_1.FieldGetter.String(input, "type"),
+            dateStart: FieldGetter_1.FieldGetter.Date(input, "dateStart"),
+            dateEnd: FieldGetter_1.FieldGetter.Date(input, "dateEnd"),
+            dateOpen: FieldGetter_1.FieldGetter.Date(input, "dateOpen"),
+            dateClose: FieldGetter_1.FieldGetter.Date(input, "dateClose"),
+            maxMember: FieldGetter_1.FieldGetter.Number(input, "maxMember"),
+            rules: FieldGetter_1.FieldGetter.String(input, "rules"),
+            price: FieldGetter_1.FieldGetter.Number(input, "price"),
         };
         return {
             data
@@ -45,15 +46,15 @@ function checkInput_Insert(input) {
 function checkInput_Update(input) {
     if (input) {
         const data = {
-            name: input.name,
-            type: input.type,
-            dateStart: input.dateStart,
-            dateEnd: input.dateEnd,
-            dateOpen: input.dateOpen,
-            dateClose: input.name,
-            maxMember: input.name,
-            rules: input.name,
-            price: input.name,
+            name: FieldGetter_1.FieldGetter.String(input, "name"),
+            type: FieldGetter_1.FieldGetter.String(input, "type"),
+            dateStart: FieldGetter_1.FieldGetter.Date(input, "dateStart"),
+            dateEnd: FieldGetter_1.FieldGetter.Date(input, "dateEnd"),
+            dateOpen: FieldGetter_1.FieldGetter.Date(input, "dateOpen"),
+            dateClose: FieldGetter_1.FieldGetter.Date(input, "dateClose"),
+            maxMember: FieldGetter_1.FieldGetter.Number(input, "maxMember"),
+            rules: FieldGetter_1.FieldGetter.String(input, "rules"),
+            price: FieldGetter_1.FieldGetter.Number(input, "price"),
         };
         return {
             key: input.key,

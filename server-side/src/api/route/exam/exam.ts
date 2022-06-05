@@ -1,5 +1,6 @@
 import { json, Router, urlencoded } from "express";
 import { myPrisma } from "../../../prisma";
+import { FieldGetter } from "../../handler/FieldGetter";
 import SessionHandler from "../../handler/session";
 import { ExamTestChecker } from "../examTest";
 import { buildResponseError, checkNestedInput_Insert, parseInputDeleted } from "../utilities";
@@ -50,15 +51,15 @@ export const ExamRoute = () => {
 function checkInput_Insert(input: any) {
     if (input) {
         const data: any = {
-            name: input.name,
-            type: input.type,
-            dateStart: input.dateStart,
-            dateEnd: input.dateEnd,
-            dateOpen: input.dateOpen,
-            dateClose: input.name,
-            maxMember: input.name,
-            rules: input.name,
-            price: input.name,
+            name: FieldGetter.String(input, "name"),
+            type: FieldGetter.String(input, "type"),
+            dateStart: FieldGetter.Date(input, "dateStart"),
+            dateEnd: FieldGetter.Date(input, "dateEnd"),
+            dateOpen: FieldGetter.Date(input, "dateOpen"),
+            dateClose: FieldGetter.Date(input, "dateClose"),
+            maxMember: FieldGetter.Number(input, "maxMember"),
+            rules: FieldGetter.String(input, "rules"),
+            price: FieldGetter.Number(input, "price"),
         }
 
         return {
@@ -70,15 +71,15 @@ function checkInput_Insert(input: any) {
 function checkInput_Update(input: any) {
     if (input) {
         const data: any = {
-            name: input.name,
-            type: input.type,
-            dateStart: input.dateStart,
-            dateEnd: input.dateEnd,
-            dateOpen: input.dateOpen,
-            dateClose: input.name,
-            maxMember: input.name,
-            rules: input.name,
-            price: input.name,
+            name: FieldGetter.String(input, "name"),
+            type: FieldGetter.String(input, "type"),
+            dateStart: FieldGetter.Date(input, "dateStart"),
+            dateEnd: FieldGetter.Date(input, "dateEnd"),
+            dateOpen: FieldGetter.Date(input, "dateOpen"),
+            dateClose: FieldGetter.Date(input, "dateClose"),
+            maxMember: FieldGetter.Number(input, "maxMember"),
+            rules: FieldGetter.String(input, "rules"),
+            price: FieldGetter.Number(input, "price"),
         }
 
         return {

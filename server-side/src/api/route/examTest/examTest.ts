@@ -1,5 +1,6 @@
 import { json, Router, urlencoded } from "express";
 import { myPrisma } from "../../../prisma";
+import { FieldGetter } from "../../handler/FieldGetter";
 import SessionHandler from "../../handler/session";
 import { parseInputDeleted } from "../utilities";
 import { RouteBuilder } from "../_default";
@@ -56,12 +57,12 @@ export const ExamTestRoute = () => {
 function checkInput_Insert(input: any) {
     if (input) {
         let data = {
-            examId: input.examId,
-            name: input.name,
-            location: input.location,
-            dateTimeStart: input.dateTimeStart,
-            dateTimeEnd: input.dateTimeEnd,
-            maxMember: input.maxMember,
+            examId: FieldGetter.Number(input, "examId", true),
+            name: FieldGetter.String(input, "name", true),
+            location: FieldGetter.String(input, "location", true),
+            dateTimeStart: FieldGetter.Date(input, "dateTimeStart", true),
+            dateTimeEnd: FieldGetter.Date(input, "dateTimeEnd", true),
+            maxMember: FieldGetter.Number(input, "maxMember", true),
         }
 
         return {
@@ -73,12 +74,12 @@ function checkInput_Insert(input: any) {
 function checkInput_Update(input: any) {
     if (input) {
         let data = {
-            examId: input.examId,
-            name: input.name,
-            location: input.location,
-            dateTimeStart: input.dateTimeStart,
-            dateTimeEnd: input.dateTimeEnd,
-            maxMember: input.maxMember,
+            examId: FieldGetter.Number(input, "examId", false),
+            name: FieldGetter.String(input, "name", false),
+            location: FieldGetter.String(input, "location", false),
+            dateTimeStart: FieldGetter.Date(input, "dateTimeStart", false),
+            dateTimeEnd: FieldGetter.Date(input, "dateTimeEnd", false),
+            maxMember: FieldGetter.Number(input, "maxMember", false),
         }
 
         return {
