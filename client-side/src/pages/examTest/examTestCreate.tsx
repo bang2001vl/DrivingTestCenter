@@ -172,10 +172,6 @@ export const ExamTestCreate: FC<IProps> = (props: IProps) => {
                 <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
                     {renderHeader(props.method)}
                 </Typography>
-                <Card style={{ alignItems: "center", justifyContent: 'center', padding: "auto", textAlign: "center", marginTop: '15px' }} >
-                    <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
-                        <FormControl style={{ width: '80%', alignSelf: "center", marginTop: "50px" }} >
-                            <Stack direction="row" spacing={2}>
                     <Card style={{ alignItems: "center", justifyContent: 'center', padding: "auto", textAlign: "center", marginTop: '15px' }} >
                         <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
                             <Stack direction="row" spacing={2}>
@@ -251,8 +247,7 @@ export const ExamTestCreate: FC<IProps> = (props: IProps) => {
                                 </Stack>
                             </Box>
                         </LocalizationProvider>
-                    </Card >,
-                ]}></CustomizedTabs>
+                    </Card >
             </Container>
         </Page >
     );
