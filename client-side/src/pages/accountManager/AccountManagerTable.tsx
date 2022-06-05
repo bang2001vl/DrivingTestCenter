@@ -16,6 +16,7 @@ interface IProps {
 }
 
 interface IData {
+    id: number;
     username: string;
     roleId: number;
     fullname: string;

@@ -221,28 +221,13 @@ model CONN_Employee_Class {
     @@map("conn_employee_class")
 }
 
-model FullReportMonthly {
-    id      Int  @id @default(autoincrement())
-    month Int
-    year Int
-
-    totalRevenue  BigInt   @default(0)
-    newStudent  Int @default(0)
-    classInProgress  Int @default(0)
-    openingExam  Int @default(0)
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    revenueDaily    RevenueReportDaily[]
-}
-
 model RevenueReportDaily {
     id      Int  @id @default(autoincrement())
-    rpMonthId   Int
-    dayInMonth  Int
+    year Int
+    month   Int
+    day  Int
 
     totalRevenue  BigInt   @default(0)
-    
-    monthReport FullReportMonthly @relation(fields: [rpMonthId], references: [id]) 
+
+    @@map("revenue_report_daily")
 }
