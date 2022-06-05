@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { generatePath, useNavigate } from "react-router-dom";
 // material
 import {
     Card,
@@ -47,23 +48,26 @@ interface TypeProps {
     title: string,
     textLabel: string,
     maxRow: number,
-    urlSelect:string
-    onClickCreate: any,
+
+    selectURL: string,
+    createURL:string,
+
 
     headLabels: any,
-    
+
     routeName: string,
 
-    onRenderItem: (data: {
-        row: any,
-    }) => any,
+    onRenderItem: (dataList: any[])=>void,
+    //onSelect: () => void,
 
-
+    needReload: boolean,
 }
 
 export default function DataTable4(props: TypeProps) {
+
     const [isLoading, setIsLoading] = useState(false);
     const api = useAPI();
+    const navigate = useNavigate();
 
     const [page, setPage] = useState(0);
     const [rowPerPage, setRowPerPage] = useState(10);
@@ -73,9 +77,8 @@ export default function DataTable4(props: TypeProps) {
         orderby: "name",
         orderdirection: "asc",
     });
-    const [maxCount, setMaxCount] = useState(0);
+    const [maxCount, setMaxCount] = useState(10);
     const [dataList, setDataList] = useState<any[]>([]);
-
     useEffect(() => {
         countMax();
     }, [options.searchvalue]);
@@ -83,7 +86,6 @@ export default function DataTable4(props: TypeProps) {
     useEffect(() => {
         select();
     }, [page, rowPerPage, options]);
-
     const select = () => {
         //console.log("onSelect");
 
@@ -93,7 +95,7 @@ export default function DataTable4(props: TypeProps) {
             count: rowPerPage,
         } as any).toString();
 
-        const url = `${appConfig.backendUri}/${props.routeName}/${props.urlSelect}?${queryParams}`
+        const url = `${appConfig.backendUri}/${props.routeName}/${props.selectURL}?${queryParams}`
         setIsLoading(true);
         api.get(url)
             .then(res => {
@@ -106,7 +108,6 @@ export default function DataTable4(props: TypeProps) {
                 }
             })
     }
-
     const countMax = () => {
         //console.log("onCountMax");
 
@@ -129,7 +130,6 @@ export default function DataTable4(props: TypeProps) {
                 }
             })
     }
-
     const emptyRows = rowPerPage - dataList.length;
     console.log("Empty rows = " + emptyRows);
 
@@ -137,6 +137,19 @@ export default function DataTable4(props: TypeProps) {
 
     const isUserNotFound = dataList.length === 0;
     console.log("isUserNotFound = " + isUserNotFound);
+    const handleCreate = () => {
+        // rootDialog.openDialog({
+        //     children: <ExamCreateUI
+        //         method={EDIT_METHOD.create}
+        //         onSuccess={() => {
+        //             rootDialog.closeDialog();
+        //             select();
+        //         }}
+        //         onClose={() => rootDialog.closeDialog()}
+        //     />,
+        // });
+        navigate(props.createURL, { replace: true });
+    }
 
     return (
         // @ts-ignore
@@ -148,7 +161,7 @@ export default function DataTable4(props: TypeProps) {
                     </Typography>
                     <Button
                         variant="contained"
-                        onClick={() => props.onClickCreate()}
+                        onClick={() => handleCreate()}
                         startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
                     >
                         Create new
@@ -172,28 +185,10 @@ export default function DataTable4(props: TypeProps) {
                                     headLabel={props.headLabels}
                                 />
 
-                                <TableBody>
-                                    {dataList
-                                        .map((row) => {
-                                            const { id, name } = row;
-                                       
+                                <TableBody>  {props.onRenderItem(dataList)}
 
-                                            return (
-                                                <TableRow
-                                                    hover
-                                                    key={id}
-                                                    tabIndex={-1}
-                                                    role="checkbox"
-                                                >
-
-                                                    {props.onRenderItem({
-                                                        row: row
-                                                    })}
-                                                </TableRow>
-                                            );
-                                        })}
                                     {emptyRows > 0 && (
-                                        <TableRow style={{ height: 53 * emptyRows }}>
+                                        <TableRow style={{ height: 40 * emptyRows }}>
                                             <TableCell colSpan={6} />
                                         </TableRow>
                                     )}
@@ -212,20 +207,20 @@ export default function DataTable4(props: TypeProps) {
                     </Scrollbar>
 
                     <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={maxCount}
-                    rowsPerPage={rowPerPage}
-                    page={page}
-                    onPageChange={(ev, newPage) => {
-                        setPage(newPage);
-                    }}
-                    onRowsPerPageChange={(ev) => {
-                        const newRowPerPage = ev.target.value;
-                        setRowPerPage(parseInt(newRowPerPage, 10));
-                        setPage(0);
-                    }}
-                />
+                        rowsPerPageOptions={[5, 10, 25]}
+                        component="div"
+                        count={maxCount}
+                        rowsPerPage={rowPerPage}
+                        page={page}
+                        onPageChange={(ev, newPage) => {
+                            setPage(newPage);
+                        }}
+                        onRowsPerPageChange={(ev) => {
+                            const newRowPerPage = ev.target.value;
+                            setRowPerPage(parseInt(newRowPerPage, 10));
+                            setPage(0);
+                        }}
+                    />
                 </Card>
             </Container>
         </Page>

@@ -19,7 +19,7 @@ interface IData {
     dateTimeEnd: Date,
     maxMember: number,
     countStudent: number,
-    exam: {type: string, name: string,},
+    exam: { type: string, name: string, },
 }
 export const ExamTestTable: FC<IProps> = (props) => {
     let timeFormat = "HH:mm";
@@ -37,17 +37,17 @@ export const ExamTestTable: FC<IProps> = (props) => {
         }
     }
 
-       
+
 
     return <>{props.dataList.map((data) => {
         const cells = [];
         cells.push(<TableCell>{data.name}</TableCell>);
         cells.push(<TableCell>{data.exam.name}</TableCell>);
         cells.push(<TableCell>{data.exam.type}</TableCell>);
-        cells.push( <TableCell>{`${format(data.dateTimeStart, timeFormat)} - ${format(data.dateTimeEnd, timeFormat)}`}</TableCell>  );
+        cells.push(<TableCell>{`${format(data.dateTimeStart, timeFormat)} - ${format(data.dateTimeEnd, timeFormat)}`}</TableCell>);
         cells.push(<TableCell>{data.room}</TableCell>);
 
-       cells.push(<TableCell>
+        cells.push(<TableCell>
             <Box style={{ display: "flex" }}>
                 <BorderLinearProgress style={{ margin: '3px', marginRight: "5", width: "50px" }} variant="determinate" value={(Number(data.countStudent / data.maxMember) * 100 == 0 ? 1 : Number(data.countStudent / data.maxMember) * 100)}></BorderLinearProgress>
                 {`${data.countStudent}/${data.maxMember}`}
@@ -70,7 +70,9 @@ export const ExamTestTable: FC<IProps> = (props) => {
                 ]}
             ></ItemMoreMenu>
         </TableCell>);
-        return cells;
+        return <TableRow
+        >{cells}
+        </TableRow>;
     })}
     </>
 }

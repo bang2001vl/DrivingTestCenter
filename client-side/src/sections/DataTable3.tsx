@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { filter } from 'lodash';
+import { sentenceCase } from 'change-case';
+import { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 // material
 import {
     Card,
@@ -14,283 +17,174 @@ import {
     Typography,
     TableContainer,
     TablePagination,
-    Toolbar
+    InputAdornment,
+    OutlinedInput,
 } from '@mui/material';
 // components
 import Page from '../components/Page';
+import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
 import Iconify from '../components/Iconify';
 import SearchNotFound from '../components/SearchNotFound';
-import DataListToolbar3 from './user/DataListToolBar3';
+import { styled } from '@mui/material/styles';
+import { customShadows } from '../theme/shadows';
+import palette from '../theme/palette';
 import DataListHead from './user/DataListHead';
-import { ISelectOption } from '../api/_deafaultCRUD';
 
 // ----------------------------------------------------------------------
-
-export interface ISearchProperty {
-    key: string,
-    label: string,
-}
-
 interface TypeProps {
-    searchbarText?: string,
-
-    list: any[],
+    searchbarText: string | undefined;
     maxRow: number,
-
-    onChangedSearch: (options: ISelectOption) => void,
-
-    onClickCreate: any,
-
+    list: any[],
     headLabels: any,
+    handleCreate: () => void,
+    onRenderItem: (dataList: any[]) => void,
+    //onSelect: () => void,
+}
+const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
+    width: 320,
+    transition: theme.transitions.create(['box-shadow', 'width'], {
+        easing: theme.transitions.easing.easeInOut,
+        duration: theme.transitions.duration.shorter
+    }),
+    '&.Mui-focused': { width: 320, boxShadow: customShadows.z8 },
+    '& fieldset': {
+        borderWidth: `1px !important`,
+        borderColor: `${palette.grey[500_32]} !important`
+    }
 
-    onRenderItem: (data: {
-        row: any,
-        isItemSelected: boolean
-    }) => any,
-
-    initSelectOption: ISelectOption,
+}));
+function descendingComparator(a: any, b: any, orderBy: any) {
+    if (b[orderBy] < a[orderBy]) {
+        return -1;
+    }
+    if (b[orderBy] > a[orderBy]) {
+        return 1;
+    }
+    return 0;
 }
 
-export default function DataTable2(props: TypeProps) {
-    const dataList = props.list;
+function getComparator(order: any, orderBy: any) {
+    return order === 'desc'
+        ? (a: any, b: any) => descendingComparator(a, b, orderBy)
+        : (a: any, b: any) => -descendingComparator(a, b, orderBy);
+}
 
-    const [selected, setSelected] = useState<string[]>([]);
-
-    const [pageNumber, setPageNumber] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(props.initSelectOption.count);
-
-    const [searchProperty, setSearchProperty] = useState(props.initSelectOption.searchby);
-    const [searchValue, setSearchValue] = useState(props.initSelectOption.searchvalue);
-
-    const [orderBy, setOrderBy] = useState(props.initSelectOption.orderby);
-    const [orderType, setOrderType] = useState(props.initSelectOption.orderdirection);
-
-    const maxPage = props.maxRow <= rowsPerPage ? 1
-        : (props.maxRow % rowsPerPage === 0 ? props.maxRow / rowsPerPage : props.maxRow / rowsPerPage + 1);
-
-    const searchProperties = [
-        {
-            key: "name",
-            label: "By name"
-        },
-        {
-            key: "id",
-            label: "By id"
-        }
-    ];
-
-    const getOptions = (presets: {
-        searchProperty?: string
-        , searchValue?: string
-        , orderProperty?: string
-        , orderDirection?: string
-        , pageNumber?: number
-        , rowsPerPage?: number
+function applySortFilter(array: any[], comparator: any, query: string) {
+    const stabilizedThis = array.map((el: any, index: any) => [el, index]);
+    stabilizedThis.sort((a: any, b: any) => {
+        const order = comparator(a[0], b[0]);
+        if (order !== 0) return order;
+        return a[1] - b[1];
+    });
+    if (query) {
+        return filter(array, (_item) => _item.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
     }
-    ) => {
-        const _searchProperty = presets.searchProperty !== undefined ? presets.searchProperty : searchProperty;
-        const _searchValue = presets.searchValue !== undefined ? presets.searchValue : searchValue;
-        const _orderProperty = presets.orderProperty !== undefined ? presets.orderProperty : orderBy;
-        const _orderDirection = presets.orderDirection !== undefined ? presets.orderDirection : orderType;
-        const _pageNumber = presets.pageNumber !== undefined ? presets.pageNumber : pageNumber;
-        const _rowsPerPage = presets.rowsPerPage !== undefined ? presets.rowsPerPage : rowsPerPage;
-        return {
-            searchby: _searchProperty,
-            searchvalue: _searchValue,
-            orderby: _orderProperty,
-            orderdirection: _orderDirection,
-            start: _pageNumber > 0 ? (_pageNumber - 1) * _rowsPerPage : 0,
-            count: _rowsPerPage,
-        }
-    }
+    return stabilizedThis.map((el) => el[0]);
+}
+
+export default function DataTable3(props: TypeProps) {
+    const listData = props.list;
+    const [page, setPage] = useState(0);
+
+    const [order, setOrder] = useState('asc');
+
+    const [orderBy, setOrderBy] = useState('name');
+
+    const [filterName, setFilterName] = useState('');
+
+    const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const handleRequestSort = (event: any, property: any) => {
-        const isAsc = orderBy === property && orderType === 'asc';
-        const direction = isAsc ? 'desc' : 'asc';
-        console.log(`Order by ${property}, direction ${direction}`);
-
-        // Change UI
-        setOrderType(direction);
+        const isAsc = orderBy === property && order === 'asc';
+        setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
-
-        props.onChangedSearch(getOptions({
-            orderDirection: direction,
-            orderProperty: property,
-        }));
     };
+    const maxPage = props.maxRow <= rowsPerPage ? 1
+        : (listData.length % rowsPerPage === 0 ? listData.length / rowsPerPage : listData.length / rowsPerPage + 1);
 
-    const handleSelectAllClick = (event: any) => {
-        if (event.target.checked) {
-            const newSelecteds = dataList.map((n) => n.name);
-            setSelected(newSelecteds);
-            return;
-        }
-        setSelected([]);
-    };
 
-    const handleCheckChanged = (event: any, itemName: string) => {
-        const selectedIndex = selected.indexOf(itemName);
-        let newSelected: string[] = [];
-        if (selectedIndex === -1) {
-            // Add if not selected yet
-            newSelected = newSelected.concat(selected, itemName);
-        } else {
-            // deselect if already selected
-            if (selectedIndex === 0) {
-                newSelected = newSelected.concat(selected.slice(1));
-            } else if (selectedIndex === selected.length - 1) {
-                newSelected = newSelected.concat(selected.slice(0, -1));
-            } else if (selectedIndex > 0) {
-                newSelected = newSelected.concat(
-                    selected.slice(0, selectedIndex),
-                    selected.slice(selectedIndex + 1)
-                );
-            }
-        }
-        setSelected(newSelected);
-    };
 
-    const handleChangePage = (event: any, newPage: any) => {
-        setPageNumber(newPage);
-
-        props.onChangedSearch(getOptions({
-            pageNumber: newPage,
-        }));
+    const handleChangePage = (event: any, newPage: number) => {
+        setPage(newPage);
     };
 
     const handleChangeRowsPerPage = (event: any) => {
-        const newPageNumber = 0;
-        const newRowsPerPage = parseInt(event.target.value, 10);
-        setRowsPerPage(newRowsPerPage);
-        setPageNumber(newPageNumber);
-        props.onChangedSearch(getOptions({
-            pageNumber: newPageNumber,
-            rowsPerPage: newRowsPerPage,
-        }));
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
     };
 
-    const handleSearchValueChanged = (event: any) => {
-        const value = event.target.value;
-        if (value)
-            console.log("Search value = " + value);
-
-        setSearchValue(value);
-
-        props.onChangedSearch(getOptions({
-            searchValue: value,
-        }));
+    const handleFilterByName = (event: any) => {
+        setFilterName(event.target.value);
     };
 
-    const handleSearchPropertyChanged = (value: string) => {
-        console.log("Search property = " + value);
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listData.length) : 0;
 
-        setSearchProperty(value);
+    const filteredUsers = applySortFilter(listData, getComparator(order, orderBy), filterName);
 
-        props.onChangedSearch(getOptions({
-            searchProperty: value,
-        }));
-    }
-
-    //const emptyRows = pageNumber > 0 ? Math.max(0, (1 + pageNumber) * rowsPerPage - dataList.length) : 0;
-    const emptyRows = rowsPerPage - dataList.length;
-    console.log("Empty rows = " + emptyRows);
-
-    // const filteredUsers = applySortFilter(dataList, getComparator(orderType, orderBy), searchValue);
-
-    const isUserNotFound = dataList.length === 0;
-    console.log("isUserNotFound = " + isUserNotFound);
+    const isUserNotFound = filteredUsers.length === 0;
 
     return (
-        // @ts-ignore
-
-            <Container style={{marginTop: '15px'}} >
-                <Card>
-                    <DataListToolbar3
-                        numSelected={selected.length}
-                        hintText={props.searchbarText}
-
-                        searchValue={searchValue}
-                        onSearchValueChanged={handleSearchValueChanged}
-                        
-                        createClick={()=>{}}
-                        searchProperties={searchProperties}
-                        searchProperty={searchProperty}
-                        onSearchPropertyChanged={handleSearchPropertyChanged}
+        <Container>
+            <Card style={{marginTop: 10}}>
+                <Stack direction="row" alignItems="center" justifyContent="space-between"  padding={3} >
+                    <SearchStyle
+                        value={filterName}
+                        onChange={handleFilterByName}
+                        placeholder={props.searchbarText}
+                        startAdornment={
+                            <InputAdornment position="start">
+                                <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled', width: 20, height: 20 }} />
+                            </InputAdornment>
+                        }
                     />
-                    {/*@ts-ignore*/}
-                    <Scrollbar>
-                        <TableContainer sx={{ minWidth: 800 }}>
-                            <Table>
-                                <DataListHead
-                                    order={orderType}
-                                    orderBy={orderBy}
-                                    headLabel={props.headLabels}
-                                    numSelected={selected.length}
-                                    onRequestSort={handleRequestSort}
-                                    onSelectAllClick={handleSelectAllClick}
-                                    rowCount={maxPage}
-                                />
-
-                                <TableBody>
-                                    {dataList
-                                        .map((row) => {
-                                            const { id, name } = row;
-                                            const isItemSelected = selected.indexOf(name) !== -1;
-
-                                            return (
-                                                <TableRow
-                                                    hover
-                                                    key={id}
-                                                    tabIndex={-1}
-                                                    role="checkbox"
-                                                    
-                                                    selected={isItemSelected}
-                                                    aria-checked={isItemSelected}
-                                                >
-                                                    <TableCell padding="checkbox">
-                                                        <Checkbox
-                                                            checked={isItemSelected}
-                                                            onChange={(event) => handleCheckChanged(event, name)}
-                                                        />
-                                                    </TableCell>
-
-                                                    {props.onRenderItem({
-                                                        row: row,
-                                                        isItemSelected: isItemSelected,
-                                                    })}
-                                                </TableRow>
-                                            );
-                                        })}
-                                    {emptyRows > 0 && (
-                                        <TableRow style={{ height: 53 * emptyRows }}>
-                                            <TableCell colSpan={6} />
-                                        </TableRow>
-                                    )}
-                                </TableBody>
-                                {isUserNotFound && (
-                                    <TableBody>
-                                        <TableRow>
-                                            <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                                                <SearchNotFound searchQuery={searchValue} />
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableBody>
+                    <Button
+                        variant="contained"
+                        onClick={props.handleCreate}
+                        startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
+                    >
+                        Create new
+                    </Button>
+                </Stack>
+                {/*@ts-ignore*/}
+                <Scrollbar>
+                    <TableContainer sx={{ minWidth: 800 }}>
+                        <Table>
+                            <DataListHead
+                                headLabel={props.headLabels}
+                            />
+                            <TableBody>
+                                {props.onRenderItem(listData)}
+                                {emptyRows > 0 && (
+                                    <TableRow style={{ height: 53 * emptyRows }}>
+                                        <TableCell colSpan={6} />
+                                    </TableRow>
                                 )}
-                            </Table>
-                        </TableContainer>
-                    </Scrollbar>
+                            </TableBody>
 
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component="div"
-                        count={maxPage}
-                        rowsPerPage={rowsPerPage}
-                        page={pageNumber}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </Card>
-            </Container>
+                            {isUserNotFound && (
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell align="center" colSpan={6} sx={{ py: 6 }}>
+                                            {/* <SearchNotFound searchQuery={filterName} /> */}
+                                        </TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            )}
+                        </Table>
+                    </TableContainer>
+                </Scrollbar>
+
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={maxPage}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </Card>
+        </Container>
     );
 }
