@@ -36,7 +36,6 @@ interface TypeProps {
     searchbarText: string | undefined;
     maxRow: number,
     list: any[],
-    headLabels: any,
     handleCreate: () => void,
     onRenderItem: (dataList: any[]) => void,
     //onSelect: () => void,
@@ -100,8 +99,8 @@ export default function DataTable3(props: TypeProps) {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
     };
-    const maxPage = props.maxRow <= rowsPerPage ? 1
-        : (listData.length % rowsPerPage === 0 ? listData.length / rowsPerPage : listData.length / rowsPerPage + 1);
+    const maxPage = listData.length  <= rowsPerPage ? 1
+        : (listData.length % rowsPerPage === 0 ? listData.length % rowsPerPage : (listData.length % rowsPerPage) + 1);
 
 
 
@@ -123,11 +122,10 @@ export default function DataTable3(props: TypeProps) {
     const filteredUsers = applySortFilter(listData, getComparator(order, orderBy), filterName);
 
     const isUserNotFound = filteredUsers.length === 0;
-
     return (
         <Container>
-            <Card style={{marginTop: 10}}>
-                <Stack direction="row" alignItems="center" justifyContent="space-between"  padding={3} >
+            <Card style={{ marginTop: 10 }}>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" padding={3} >
                     <SearchStyle
                         value={filterName}
                         onChange={handleFilterByName}
@@ -150,17 +148,15 @@ export default function DataTable3(props: TypeProps) {
                 <Scrollbar>
                     <TableContainer sx={{ minWidth: 800 }}>
                         <Table>
-                            <DataListHead
-                                headLabel={props.headLabels}
-                            />
-                            <TableBody>
-                                {props.onRenderItem(listData)}
-                                {emptyRows > 0 && (
+                            {props.onRenderItem(listData)}
+                            {emptyRows > 0 && (
+                                <TableBody>
                                     <TableRow style={{ height: 53 * emptyRows }}>
                                         <TableCell colSpan={6} />
                                     </TableRow>
-                                )}
-                            </TableBody>
+                                </TableBody>
+
+                            )}
 
                             {isUserNotFound && (
                                 <TableBody>

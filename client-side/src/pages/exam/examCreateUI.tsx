@@ -1,8 +1,7 @@
-import { DatePicker, DateRangePicker, LoadingButton, LocalizationProvider } from "@mui/lab";
+import {  LoadingButton, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { Box, Button, Card, Container, FormControl, Grid, Select, Stack, TableCell, TextField, Typography } from "@mui/material";
-import { addDays, isAfter, isBefore } from "date-fns";
-import { FormikConfig, useFormik, validateYupSchema } from "formik";
+import { Box, Button, Card, Container, FormControl, Grid, Select, Stack, TableCell, TableRow, TextField, Typography } from "@mui/material";
+import {  useFormik} from "formik";
 import React, { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as yup from 'yup';
@@ -18,8 +17,11 @@ import { EDIT_METHOD } from "../../_enums";
 import Page from "../../components/Page";
 import { useRootDialog } from "../../hooks/rootDialog";
 import DataTable3 from "../../sections/DataTable3";
-import { ExamTestTable } from "../examTest/examTestTable";
+import { addDays, format, isAfter, isBefore } from "date-fns";
 import { ExamTestCreate } from "../examTest/examTestCreate";
+import ItemMoreMenu from "../../sections/user/ItemMoreMenu";
+import { BorderLinearProgress } from "../../components/LinearProgress";
+import { ExamSessionCreateTable } from "./examSessionCreateTable";
 
 
 interface IProps {
@@ -40,16 +42,15 @@ interface IProps {
     onClose?: () => void,
 }
 interface ISessionData {
-    id: number,
-    examId: number,
+    id?: number,
+    examOption?: any,
     name: string,
-    room: string,
-    dateTimeStart: Date,
-    dateTimeEnd: Date,
-    maxMember: number,
-    countStudent: number,
-    exam: { type: string, name: string, },
+    location: string,
+    dateTimeStart: string,
+    dateTimeEnd: string,
+    maxMember: number | string,
 }
+
 const EXAM_TEST_HEAD_LABEL = [
     { id: 'name', label: 'Tên ca thi', alignRight: false },
     { id: 'exam', label: 'Kì thi', alignRight: false },
@@ -156,193 +157,204 @@ export const ExamCreateUI: FC<IProps> = (props: IProps) => {
             }
         }
     });
+
     const renderSessionTable = () => {
-        return <ExamTestTable
-            dataList={sessionList.map(e => ({
-                ...e,
-                dateTimeStart: new Date(e.dateTimeStart),
-                dateTimeEnd: new Date(e.dateTimeEnd),
-            }))}
-            headLabels={EXAM_TEST_HEAD_LABEL}
-            onEdit={()=>{}}
-            onDelete={()=>{}}
-            />
+       return <ExamSessionCreateTable
+       dataList={sessionList.map(e => ({
+           ...e,
+           dateTimeStart: new Date(e.dateTimeStart),
+           dateTimeEnd: new Date(e.dateTimeEnd),
+       }))}
+       onEdit={()=>{}}
+       onDelete={()=>{}}
+       />
+        
     }
 
     function customValid(vals: any) {
-        let errors: any = {}
-        if (!isBefore(new Date(vals.dateOpen), new Date(vals.dateClose))) {
-            errors.dateClose = "Date close must bigger than date open";
-        }
-        return errors;
-    }
+                let errors: any = {}
+                if (!isBefore(new Date(vals.dateOpen), new Date(vals.dateClose))) {
+                    errors.dateClose = "Date close must bigger than date open";
+                }
+                return errors;
+            }
 
     function getTitle(method: EDIT_METHOD) {
-        return method === EDIT_METHOD.create ? "Exam | Create" : "Exam | Update";
-    }
+                return method === EDIT_METHOD.create ? "Exam | Create" : "Exam | Update";
+            }
 
     function renderHeader(method: EDIT_METHOD) {
-        const label = method === EDIT_METHOD.create ? "Create Exam" : "Create Exam";
-        return label;
-    }
+                const label = method === EDIT_METHOD.create ? "Create Exam" : "Create Exam";
+                return label;
+            }
     const onClickCancel = () => {
-        //window.alert("Clicked delete on item = " + JSON.stringify(item, undefined, 4));
-        const result = DialogHelper.showConfirm("Are you sure cancel the exam create?");
-        if (result) {
-            navigate("/dashboard/exam");
+            //window.alert("Clicked delete on item = " + JSON.stringify(item, undefined, 4));
+            const result = DialogHelper.showConfirm("Are you sure cancel the exam create?");
+            if (result) {
+                navigate("/dashboard/exam");
+            }
         }
-    }
-    function getSessionStatus(data: ISessionData) {
-        const now = new Date();
-        if (isAfter(data.dateTimeStart, now)) {
-            return "Coming"
+        function getSessionStatus(data: any) {
+            const now = new Date();
+            if (isAfter(data.dateTimeStart, now)) {
+                return "Coming"
+            }
+            else if (isAfter(data.dateTimeEnd, now)) {
+                return "Happening"
+            }
+            else {
+                return "Finish"
+            }
         }
-        else if (isAfter(data.dateTimeEnd, now)) {
-            return "Happening"
+        const handleCreate = () => {
+            rootDialog.openDialog({
+                children: <ExamTestCreate
+                    isExamCreate={true}
+                    method={EDIT_METHOD.create}
+                    onSuccess={() => {
+                        rootDialog.closeDialog();
+
+                    }}
+                    onSubmit={onSubmit}
+                    onClose={() => rootDialog.closeDialog()}
+                />,
+            });
         }
-        else {
-            return "Finish"
+        const onSubmit = (data: any) => {
+            sessionList.push(data);
+            console.log(data.name, data.location, data.maxMember, data.dateTimeStart, data.dateTimeEnd);
+            window.alert('success');
+
         }
-    }
-    const handleCreate = () => {
-        rootDialog.openDialog({
-            children: <ExamTestCreate
-                method={EDIT_METHOD.create}
-                onSuccess={() => {
-                    rootDialog.closeDialog();
-                    
-                }}
-                onClose={() => rootDialog.closeDialog()}
-            />,
-        });
-    }
+        const marginTop = 1;
+        return (
+            // @ts-ignore
+            <Page title={getTitle(props.method)} >
+                <Container>
+                    <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
+                        {renderHeader(props.method)}
+                    </Typography>
+                    <CustomizedTabs listtab={['Information', "Exam sessions"]} children={[
 
-    const marginTop = 1;
-    return (
-        // @ts-ignore
-        <Page title={getTitle(props.method)} >
-            <Container>
-                <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
-                    {renderHeader(props.method)}
-                </Typography>
-                <CustomizedTabs listtab={['Information', "Exam sessions"]} children={[
+                        <Card style={{ alignItems: "center", justifyContent: 'center', padding: "30px 80px", textAlign: "center", marginTop: '15px' }} >
+                            <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
 
-                    <Card style={{ alignItems: "center", justifyContent: 'center', padding: "30px 80px", textAlign: "center", marginTop: '15px' }} >
-                        <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
+                                <Stack direction="row" spacing={2} sx={{ p: 1 }}>
+                                    <Box sx={{ width: "50%" }}>
+                                        <FormIkTextField formik={formik} fieldName="name"
+                                            fullWidth
+                                            label="Name"
+                                            style={{ marginTop }}
+                                        />
 
-                            <Stack direction="row" spacing={2} sx={{ p: 1 }}>
-                                <Box sx={{ width: "50%" }}>
-                                    <FormIkTextField formik={formik} fieldName="name"
-                                        fullWidth
-                                        label="Name"
-                                        style={{ marginTop }}
-                                    />
-
-                                </Box>
-                                <Box sx={{ minWidth: "50%" }}>
-                                    <FormIkTextField formik={formik} fieldName="type"
-                                        fullWidth
-                                        label="Type"
-                                        style={{ marginTop }}
-                                    />
-                                </Box>
-
-                            </Stack>
-                            <Stack direction="row" spacing={2} sx={{ p: 1 }}>
-                                <Box sx={{ width: "50%" }}>
-                                    <FormIkNumberField formik={formik} fieldName="price"
-                                        fullWidth
-                                        label="Fees"
-                                        style={{ marginTop: 1 }}
-                                    />
-                                </Box>
-                                <Box sx={{ minWidth: "50%" }}>
-                                    <FormIkNumberField formik={formik} fieldName="maxMember"
-                                        fullWidth
-                                        label="Max Member"
-                                        style={{ marginTop }}
-                                    />
-                                </Box>
-
-                            </Stack>
-
-
-                            <Box>
-                                <Stack direction="row">
-                                    <Box sx={{ p: 1, width: "50%" }}>
-                                        <FormIkDatePicker formik={formik} fieldName="dateOpen"
-                                            label="Open Register"
+                                    </Box>
+                                    <Box sx={{ minWidth: "50%" }}>
+                                        <FormIkTextField formik={formik} fieldName="type"
+                                            fullWidth
+                                            label="Type"
+                                            style={{ marginTop }}
                                         />
                                     </Box>
-
-                                    <Box sx={{ p: 1, width: "50%" }}>
-                                        <FormIkDatePicker formik={formik} fieldName="dateClose"
-                                            label="Close Register"
-                                        />
-                                    </Box>
-                                    <Box sx={{ p: 1, width: "50%" }}>
-                                        <FormIkDatePicker formik={formik} fieldName="dateStart"
-                                            label="Start Exam"
-                                        />
-                                    </Box>
-
-                                    <Box sx={{ p: 1, width: "50%" }}>
-                                        <FormIkDatePicker formik={formik} fieldName="dateEnd"
-                                            label="End Exam"
-                                        />
-                                    </Box>
-                                </Stack>
-                            </Box>
-
-                            <Box sx={{ p: 1 }}>
-                                <TextField
-                                    fullWidth
-                                    multiline
-                                    minRows={3}
-                                    name="rules"
-                                    label="Description"
-                                    value={formik.values.rules}
-                                    onChange={formik.handleChange}
-                                    error={formik.touched.rules && Boolean(formik.errors.rules)}
-                                    helperText={formik.touched.rules && formik.errors.rules}
-                                />
-                            </Box>
-
-                            <Box>
-                                <Stack direction="row" spacing={20} alignItems="center" justifyContent="center" marginTop={5} marginBottom={5}>
-
-                                    <LoadingButton
-                                        variant="contained"
-                                        onClick={() =>  formik.handleSubmit()}
-                                        sx={{ width: "120px" }}
-                                    >
-                                        Create
-                                    </LoadingButton>
-
-                                    <Button
-                                        variant="outlined"
-                                        onClick={() => onClickCancel()}
-                                        sx={{ width: "120px" }} >
-                                        Cancel
-                                    </Button>
 
                                 </Stack>
-                            </Box>
+                                <Stack direction="row" spacing={2} sx={{ p: 1 }}>
+                                    <Box sx={{ width: "50%" }}>
+                                        <FormIkNumberField formik={formik} fieldName="price"
+                                            fullWidth
+                                            label="Fees"
+                                            style={{ marginTop: 1 }}
+                                        />
+                                    </Box>
+                                    <Box sx={{ minWidth: "50%" }}>
+                                        <FormIkNumberField formik={formik} fieldName="maxMember"
+                                            fullWidth
+                                            label="Max Member"
+                                            style={{ marginTop }}
+                                        />
+                                    </Box>
+
+                                </Stack>
 
 
-                        </LocalizationProvider>
-                    </Card >,
-               <DataTable3 
-               searchbarText='Tìm ca thi'
-                maxRow={10} 
-                list={sessionList} 
-                headLabels={EXAM_TEST_HEAD_LABEL}
-                 handleCreate={(handleCreate)} 
-                  onRenderItem={renderSessionTable} 
-                  ></DataTable3>
+                                <Box>
+                                    <Stack direction="row">
+                                        <Box sx={{ p: 1, width: "50%" }}>
+                                            <FormIkDatePicker formik={formik} fieldName="dateOpen"
+                                                label="Open Register"
+                                            />
+                                        </Box>
 
-                ]}></CustomizedTabs>
-            </Container >
-        </Page >
-    );
+                                        <Box sx={{ p: 1, width: "50%" }}>
+                                            <FormIkDatePicker formik={formik} fieldName="dateClose"
+                                                label="Close Register"
+                                            />
+                                        </Box>
+                                        <Box sx={{ p: 1, width: "50%" }}>
+                                            <FormIkDatePicker formik={formik} fieldName="dateStart"
+                                                label="Start Exam"
+                                            />
+                                        </Box>
+
+                                        <Box sx={{ p: 1, width: "50%" }}>
+                                            <FormIkDatePicker formik={formik} fieldName="dateEnd"
+                                                label="End Exam"
+                                            />
+                                        </Box>
+                                    </Stack>
+                                </Box>
+
+                                <Box sx={{ p: 1 }}>
+                                    <TextField
+                                        fullWidth
+                                        multiline
+                                        minRows={3}
+                                        name="rules"
+                                        label="Description"
+                                        value={formik.values.rules}
+                                        onChange={formik.handleChange}
+                                        error={formik.touched.rules && Boolean(formik.errors.rules)}
+                                        helperText={formik.touched.rules && formik.errors.rules}
+                                    />
+                                </Box>
+
+                                <Box>
+                                    <Stack direction="row" spacing={20} alignItems="center" justifyContent="center" marginTop={5} marginBottom={5}>
+
+                                        <LoadingButton
+                                            variant="contained"
+                                            onClick={() => formik.handleSubmit()}
+                                            sx={{ width: "120px" }}
+                                        >
+                                            Create
+                                        </LoadingButton>
+
+                                        <Button
+                                            variant="outlined"
+                                            onClick={() => onClickCancel()}
+                                            sx={{ width: "120px" }} >
+                                            Cancel
+                                        </Button>
+
+                                    </Stack>
+                                </Box>
+
+
+                            </LocalizationProvider>
+                        </Card >,
+                        <DataTable3
+                            searchbarText='Tìm ca thi'
+                            maxRow={10}
+                            list={sessionList}
+                            handleCreate={(handleCreate)}
+                            onRenderItem={renderSessionTable}
+                        ></DataTable3>
+
+                    ]}></CustomizedTabs>
+                </Container >
+            </Page >
+        );
+    }
+
+function getStatus(data: any): React.ReactNode {
+    throw new Error("Function not implemented.");
 }
