@@ -3,6 +3,8 @@ import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow }
 import { format, isAfter, isBefore } from "date-fns";
 import { FC } from "react";
 import { BorderLinearProgress } from "../../components/LinearProgress";
+import { DataTableLayout, DataTableLayoutProps } from "../../sections/CRUD/BasicDataTable";
+import DataListHead from "../../sections/user/DataListHead";
 import ItemMoreMenu from "../../sections/user/ItemMoreMenu";
 import { formatNumber } from "../../_helper/helper";
 interface IProps {
@@ -22,44 +24,45 @@ interface IData {
     maxMember: number,
     price: number,
 }
-export const ExamTable: FC<IProps> = (props) => {
-    let timeFormat = "dd/MM/yyyy";
+export const ExamTable: FC<IProps & DataTableLayoutProps> = (props) => {
     function getStatus(data: IData) {
         const now = new Date();
         if (isAfter(data.dateOpen, now)) {
-            return "Pre-Open"
+            return {
+                text: "Pre-Open",
+                color: "#1BB3E3",
+            }
         }
         else if (isAfter(data.dateClose, now)) {
-            return "Opening"
+            return {
+                text: "Opening",
+                color: "#00DB99",
+            };
         }
         else if (isAfter(data.dateStart, now)) {
-            return "Pre-Start"
+            return {
+                text: "Pre-Start",
+                color: "#D31BE3",
+            };
         }
         else if (isAfter(data.dateEnd, now)) {
-            return "Happening"
+            return {
+                text: "Happening",
+                color: "#E3931B",
+            };
         }
         else {
-            return "Closed"
+            return {
+                text: "Closed",
+                color: "#E31B1B",
+            };
         }
     }
-    function getColorStatus(status: string) {
-        if ((status) == "Pre-Open") {
-            return "#1BB3E3"
-        }
-        else if ((status) == "Opening") {
-            return "#00DB99"
-        }
-        else if ((status) == "Pre-Start") {
-            return '#D31BE3'
-        }
-        else if ((status) == "Happening") {
-            return "#E3931B"
-        }
-        else {
-            return "#E31B1B"
-        }
-    }
-    return <>{props.dataList.map((item) => {
+
+    function renderRow(item: IData) {
+        let timeFormat = "dd/MM/yyyy";
+        const status = getStatus(item);
+
         const cells = new Array();
         cells.push(<TableCell>{item.name}</TableCell>);
         cells.push(<TableCell>{item.type}</TableCell>);
@@ -72,10 +75,7 @@ export const ExamTable: FC<IProps> = (props) => {
             </Box></TableCell>);
         cells.push(<TableCell>{formatNumber(item.price)}</TableCell>);
         cells.push(<TableCell>
-
-            {getStatus(item)}
-
-
+            {status.text}
         </TableCell>);
         cells.push(<TableCell>
             <ItemMoreMenu
@@ -97,8 +97,13 @@ export const ExamTable: FC<IProps> = (props) => {
         return <TableRow
         >{cells}
         </TableRow>;
-    })}
-    </>
+    }
+
+    return <DataTableLayout
+    {...props}
+    >
+        {props.dataList.map(e => renderRow(e))}
+    </DataTableLayout>
 }
 
 

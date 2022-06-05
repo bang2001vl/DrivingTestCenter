@@ -16,6 +16,8 @@ import ReportsPage from "../pages/report";
 import SessionsPage from "../pages/session";
 import StudentsPage from "../pages/student";
 import UserPage from "../pages/user";
+import AccountManagerPage from "../pages/accountManager/AccountManagerPage";
+import { AccountManagerCreate } from "../pages/accountManager/AccountManagerCreate";
 
 export default function RootRouter() {
   return useRoutes([
@@ -28,7 +30,9 @@ export default function RootRouter() {
         { path: 'session', element: <ExamTestPage /> },
         { path: 'class', element: <ClassesPage /> },
         { path: 'lecture', element: <LecturesPage /> },
-        { path: 'student', element: <StudentsPage /> },
+        { path: 'account/manager', element: <AccountManagerPage /> },
+        { path: 'account/manager/create', element: <AccountManagerCreate method={EDIT_METHOD.create} /> },
+        { path: 'account/manager/edit', element: <AccountManagerCreate method={EDIT_METHOD.update} /> },
         { path: 'receipt', element: <ReceiptsPage /> },
         { path: 'report', element: <ReportsPage /> },
     //    { path:"/exam/edit/:id", element: <ExamCreateUI method={EDIT_METHOD.update} />},

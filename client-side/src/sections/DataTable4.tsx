@@ -48,13 +48,11 @@ interface TypeProps {
     searchbarText: string | undefined;
     title: string,
     textLabel: string,
-    maxRow: number,
-    headLabels: any,
 
-    onRenderItem: (dataList: any[])=>void,
+    onRenderItem: (dataList: any[], emptyView?: JSX.Element) => void,
     select: (params: URLSearchParams) => Promise<MyResponse>,
     count: (params: URLSearchParams) => Promise<MyResponse>,
-    onClickCreate?: ()=>void,
+    onClickCreate?: () => void,
 
     needReload: boolean,
 }
@@ -66,10 +64,10 @@ export default function DataTable4(props: TypeProps) {
     const [page, setPage] = useState(0);
     const [rowPerPage, setRowPerPage] = useState(10);
     const [options, setOptions] = useState({
-        searchby: "name",
+        searchby: props.searchOptionList[0].value.searchby,
         searchvalue: "",
-        orderby: "name",
-        orderdirection: "asc",
+        orderby: props.orderOptionList[0].value.orderby,
+        orderdirection: props.orderOptionList[0].value.orderdirection,
     });
     const [maxCount, setMaxCount] = useState(10);
     const [dataList, setDataList] = useState<any[]>([]);
@@ -80,7 +78,7 @@ export default function DataTable4(props: TypeProps) {
     useEffect(() => {
         select();
     }, [page, rowPerPage, options, props.needReload]);
-    
+
     const select = () => {
         //console.log("onSelect");
 
@@ -132,7 +130,7 @@ export default function DataTable4(props: TypeProps) {
     const isUserNotFound = dataList.length === 0;
     console.log("isUserNotFound = " + isUserNotFound);
     const handleCreate = () => {
-        if(props.onClickCreate){
+        if (props.onClickCreate) {
             props.onClickCreate();
         }
     }
@@ -165,7 +163,7 @@ export default function DataTable4(props: TypeProps) {
                     ></MySearchBar>
                     {/*@ts-ignore*/}
                     <Scrollbar>
-                        <TableContainer sx={{ minWidth: 800 }}>
+                        {/* <TableContainer sx={{ minWidth: 800 }}>
                             <Table>
                                 <DataListHead
                                     headLabel={props.headLabels}
@@ -189,7 +187,15 @@ export default function DataTable4(props: TypeProps) {
                                     </TableBody>
                                 )}
                             </Table>
-                        </TableContainer>
+                        </TableContainer> */}
+                        {props.onRenderItem(dataList, (
+                            dataList.length === 0
+                            ? <Container>
+                                <SearchNotFound searchQuery={options.searchvalue} />
+                            </Container>
+                            : undefined
+                        ))
+                        }
                     </Scrollbar>
 
                     <TablePagination

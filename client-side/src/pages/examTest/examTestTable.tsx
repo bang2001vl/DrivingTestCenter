@@ -3,6 +3,8 @@ import { format, isAfter, isBefore } from "date-fns";
 import { FC } from "react";
 import internal from "stream";
 import { BorderLinearProgress } from "../../components/LinearProgress";
+import { DataTableLayout, DataTableLayoutProps } from "../../sections/CRUD/BasicDataTable";
+import DataListHead from "../../sections/user/DataListHead";
 import ItemMoreMenu from "../../sections/user/ItemMoreMenu";
 import { formatNumber } from "../../_helper/helper";
 interface IProps {
@@ -21,9 +23,7 @@ interface IData {
     countStudent: number,
     exam: { type: string, name: string, },
 }
-export const ExamTestTable: FC<IProps> = (props) => {
-    let timeFormat = "HH:mm";
-    let dateFormat = "dd/MM/yyyy";
+export const ExamTestTable: FC<IProps & DataTableLayoutProps> = (props) => {
     function getStatus(data: IData) {
         const now = new Date();
         if (isAfter(data.dateTimeStart, now)) {
@@ -37,9 +37,10 @@ export const ExamTestTable: FC<IProps> = (props) => {
         }
     }
 
+    function renderRow(data: IData) {
+        let timeFormat = "HH:mm";
+        let dateFormat = "dd/MM/yyyy";
 
-
-    return <>{props.dataList.map((data) => {
         const cells = [];
         cells.push(<TableCell>{data.name}</TableCell>);
         cells.push(<TableCell>{data.exam.name}</TableCell>);
@@ -73,6 +74,11 @@ export const ExamTestTable: FC<IProps> = (props) => {
         return <TableRow
         >{cells}
         </TableRow>;
-    })}
-    </>
+    }
+
+    return <DataTableLayout
+        {...props}
+    >
+        {props.dataList.map(e => renderRow(e))}
+    </DataTableLayout>
 }

@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npx tsnd --respawn src/index.ts",
+    "pull-apply": "git pull && npm i && npx prisma migrate deploy && pm2 stop doan2 && pm2 start doan2",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

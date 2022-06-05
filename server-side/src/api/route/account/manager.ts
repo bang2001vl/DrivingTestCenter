@@ -7,9 +7,9 @@ import helper from "../../../helper";
 import { myPrisma } from "../../../prisma";
 import { FieldGetter } from "../../handler/FieldGetter";
 import SessionHandler from "../../handler/session";
-import { buildResponseError, pushToOldImage, handleCleanUp, parseInputDeleted, parsePathToPublicRelative } from "../utilities";
+import { pushToOldImage, handleCleanUp, parsePathToPublicRelative } from "../utilities";
 import { RouteBuilder } from "../_default";
-import { InputSource, RouteHandleWrapper } from "../_wrapper";
+import { RouteHandleWrapper } from "../_wrapper";
 
 const repo = myPrisma.account;
 const tag = "AccountManager";
@@ -26,6 +26,8 @@ const selectBasicInfo = {
     phoneNumber: true,
     address: true,
     avatarURI: true,
+
+    createdAt: true,
 }
 
 const DEFAULT_UPLOAD_FOLDER = path.resolve(appConfig.publicFolder, "uploads", "avatar");
@@ -92,6 +94,9 @@ function customSelectFilter(input: any){
     const filter: any ={};
     if (!isNaN(Number(input.roleId))) {
         filter.roleId = Number(input.roleId);
+    }
+    if (!isNaN(Number(input.id))) {
+        filter.id = Number(input.id);
     }
 }
 

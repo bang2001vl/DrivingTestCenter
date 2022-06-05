@@ -176,28 +176,25 @@ export const ExamTestCreate: FC<IProps> = (props: IProps) => {
                     <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
                         <FormControl style={{ width: '80%', alignSelf: "center", marginTop: "50px" }} >
                             <Stack direction="row" spacing={2}>
+                    <Card style={{ alignItems: "center", justifyContent: 'center', padding: "auto", textAlign: "center", marginTop: '15px' }} >
+                        <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
+                            <Stack direction="row" spacing={2}>
+                                <Box sx={{ width: "50%" }}>
+                                    <FormIkTextField formik={formik} fieldName="name"
+                                        fullWidth
+                                        label="Name"
 
-                                <FormIkTextField formik={formik} fieldName="name"
-                                    fullWidth
-                                    label="Name"
-
-                                />
-
-                                {props.isExamCreate ? <></> :
-                                    <Box sx={{ minWidth: "50%" }}>
-                                        <FormIKExamSelector formik={formik} fieldName="examOption"
-                                            placeholder="Exam"
-                                            propFormControl={{
-                                                fullWidth: true,
-
-                                                sx: { height: "100%" }
-                                            }}
-                                        />
-                                    </Box>
-                                }
-
-
-
+                                    />
+                                </Box>
+                                <Box sx={{ minWidth: "50%" }}>
+                                    <FormIKExamSelector formik={formik} fieldName="examOption"
+                                        placeholder="Exam"
+                                        propFormControl={{
+                                            fullWidth: true,
+                                            sx: { height: "100%" }
+                                        }}
+                                    />
+                                </Box>
                             </Stack>
                             <Stack direction="row" spacing={2}>
                                 <Box sx={{ width: "50%" }}>
@@ -245,6 +242,7 @@ export const ExamTestCreate: FC<IProps> = (props: IProps) => {
 
                                     <Button
                                         variant="outlined"
+
                                         onClick={() => (props.onClose) ? props.onClose() : onClickCancel()}
                                         sx={{ width: "120px" }} >
                                         Cancel
@@ -252,10 +250,9 @@ export const ExamTestCreate: FC<IProps> = (props: IProps) => {
 
                                 </Stack>
                             </Box>
-
-                        </FormControl>
-                    </LocalizationProvider>
-                </Card >,
+                        </LocalizationProvider>
+                    </Card >,
+                ]}></CustomizedTabs>
             </Container>
         </Page >
     );

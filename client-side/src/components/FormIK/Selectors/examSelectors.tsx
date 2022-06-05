@@ -85,7 +85,8 @@ export const FormIKExamSelector: FC<IProps> = (props) => {
                     '&:hover': {
                         boxShadow: state.isFocused ? "none" : "none"
                     }
-                })
+                }),
+                
             }}
         />
         <FormHelperText>{props.formik.errors[props.fieldName]}</FormHelperText>

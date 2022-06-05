@@ -5,21 +5,22 @@ import { appConfig } from "../../configs";
 import useAPI from "../../hooks/useApi";
 import { DialogHelper } from "../../singleton/dialogHelper";
 import DataTable4 from "../../sections/DataTable4";
+import { AccountManagerTable } from "./AccountManagerTable";
 
-const EXAM_HEAD_LABEL = [
+const HEAD_LABEL = [
     { id: 'name', label: 'Name', alignRight: false },
-    { id: 'type', label: 'Category', alignRight: false },
-    { id: 'dateRegist', label: 'Registration date', alignRight: false },
-    { id: 'dateExam', label: 'Exam date', alignRight: false },
-    { id: 'candidate', label: 'Candidates', alignRight: false },
-    { id: 'fee', label: 'Fees', alignRight: false },
-    { id: 'examStatus', label: 'Status', alignRight: false },
+    { id: 'gender', label: 'Gender', alignRight: false },
+    { id: 'email', label: 'Email', alignRight: false },
+    { id: 'phoneNumber', label: 'Phone Number', alignRight: false },
+    { id: 'address', label: 'Address', alignRight: false },
+    { id: 'joinDate', label: 'Join Date', alignRight: false },
+    { id: 'status', label: 'Status', alignRight: false },
     { id: '' }
 ]
 const searchOptionList = [{
     label: "Name",
     value: {
-        searchby: "name"
+        searchby: "fullname"
     }
 }];
 
@@ -27,22 +28,21 @@ const orderOptionList = [
     {
         label: "Name (A-Z)",
         value: {
-            orderby: "name",
+            orderby: "fullname",
             orderdirection: "asc"
         }
     },
     {
         label: "Name (Z-A)",
         value: {
-            orderby: "name",
+            orderby: "fullname",
             orderdirection: "desc"
         }
     }
 ];
 
-
-export default function ExamPageUI() {
-    const routeName = "exam";
+export default function AccountManagerPage() {
+    const routeName = "account/manager";
     const api = useAPI();
     const [loadChild, setLoadChild] = useState(false);
     const navigate = useNavigate();
@@ -85,8 +85,14 @@ export default function ExamPageUI() {
     }
 
 
-    const renderTable = (dataList: any[]) => {
-        return <></>
+    const renderTable = (dataList: any[], emptyView?: JSX.Element) => {
+        return <AccountManagerTable
+            dataList={dataList}
+            emptyView={emptyView}
+            headLabels={HEAD_LABEL}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+        />
     }
 
     return (
@@ -96,8 +102,6 @@ export default function ExamPageUI() {
             searchbarText='Tìm tên kì thi'
             title="Dashboard | Exam"
             textLabel="Kì thi"
-            maxRow={10}
-            headLabels={EXAM_HEAD_LABEL}
             needReload={loadChild}
 
             onRenderItem={renderTable} 

@@ -9,10 +9,10 @@ export function formatNumber(num: number | string | undefined){
     return Number(num).toLocaleString('en-US')
 }
 
-export function validYupToObject<T = any>(values: T, yup: any){
+export function validYupToObject<T = any>(values: T, schema: any){
     const errors: any = {};
     Object.keys(values).forEach(key =>{
-        yup.validateAt(key, values)
+        schema.validateAt(key, values)
         .catch((err: any) => {
             errors[key] = err.message;
         });
@@ -20,10 +20,10 @@ export function validYupToObject<T = any>(values: T, yup: any){
     return errors;
 }
 
-export function validYupToArray<T = any>(values: T, yup: any){
+export function validYupToArray<T = any>(values: T, schema: any){
     const errors: any[] = [];
     Object.keys(values).forEach(key =>{
-        yup.validateAt(key, values)
+        schema.validateAt(key, values)
         .catch((err: any) => {
             errors.push(err.message);
         });

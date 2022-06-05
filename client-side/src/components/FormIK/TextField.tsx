@@ -18,5 +18,7 @@ export const FormIkTextField: FC<IProps & TextFieldProps> = (props) => {
         error={props.formik.touched[props.fieldName] && Boolean(props.formik.errors[props.fieldName])}
         helperText={props.formik.touched[props.fieldName] && props.formik.errors[props.fieldName]}
         {...customProps}
-    />
+    >
+        {props.children}
+    </TextField>
 }

@@ -88,7 +88,7 @@ export default function ExamPageUI() {
     }
 
 
-    const renderTable = (dataList: any[]) => {
+    const renderTable = (dataList: any[], emptyView?: JSX.Element) => {
         return <ExamTable
             dataList={dataList.map(e => ({
                 ...e,
@@ -103,6 +103,8 @@ export default function ExamPageUI() {
                 price: Number(e.price),
                 type: e.type,
             }))}
+            headLabels={EXAM_HEAD_LABEL}
+            emptyView={emptyView}
             onEdit={handleEdit}
             onDelete={handleDelete}
         />
@@ -115,8 +117,6 @@ export default function ExamPageUI() {
             searchbarText='Tìm tên kì thi'
             title="Dashboard | Exam"
             textLabel="Kì thi"
-            maxRow={10}
-            headLabels={EXAM_HEAD_LABEL}
             needReload={loadChild}
 
             onRenderItem={renderTable} 

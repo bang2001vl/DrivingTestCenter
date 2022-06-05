@@ -34,8 +34,8 @@ const sidebarConfig = [
     icon: getIcon('fa-solid:chalkboard-teacher')
   },
   {
-    title: 'student',
-    path: '/dashboard/student',
+    title: 'Tài khoản',
+    path: '/dashboard/account/manager',
     icon: getIcon('bxs:user-account')
   },
   {

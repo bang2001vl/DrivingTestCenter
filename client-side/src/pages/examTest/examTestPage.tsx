@@ -12,7 +12,7 @@ import { ExamTestCreate } from "./examTestCreate";
 import { ExamTestTable } from "./examTestTable";
 import DataTable4 from "../../sections/DataTable4";
 
-const EXAM_HEAD_LABEL = [
+const HEAD_LABEL = [
         { id: 'name', label: 'Tên ca thi', alignRight: false },
         { id: 'exam', label: 'Kì thi', alignRight: false },
         { id: 'type', label: 'Loại bằng', alignRight: false },
@@ -93,13 +93,15 @@ export default function ExamTestPage(){
         }
     }
 
-    const renderTable = (dataList: any[]) => {
+    const renderTable = (dataList: any[], emptyView? : JSX.Element) => {
         return <ExamTestTable
             dataList={dataList.map(e => ({
                 ...e,
                 dateTimeStart: new Date(e.dateTimeStart),
                 dateTimeEnd: new Date(e.dateTimeEnd),
             }))}
+            headLabels={HEAD_LABEL}
+            emptyView={emptyView}
             onEdit={handleEdit}
             onDelete={handleDelete}
             />
@@ -112,8 +114,6 @@ export default function ExamTestPage(){
             searchbarText='Tìm tên ca thi'
             title="Dashboard | Session"
             textLabel="Ca thi"
-            maxRow={10}
-            headLabels={EXAM_HEAD_LABEL}
             needReload={loadChild} 
             onRenderItem={renderTable} 
             count={handleCount}
