@@ -22,6 +22,11 @@ export const ExamTestRoute = () => {
         RouteBuilder.buildSelectRoute(repo, tag, undefined, undefined, { exam: true }),
     );
 
+    route.get("/select/detail",
+    RouteBuilder.buildSelectInputParser(["name"], ["name", "dateStart", "dateEnd"], tag),
+    RouteBuilder.buildSelectRoute(repo, tag, undefined, undefined, { exam: true }),
+);
+
     route.get("/count",
         RouteBuilder.buildCountInputParser(["name"], tag),
         RouteBuilder.buildCountRoute(repo, tag),

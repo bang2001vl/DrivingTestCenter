@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadWrapper = exports.handleCleanUp = exports.cacheOldImage = exports.parseInputDeleted = exports.parsePathToPublicRelative = exports.parseStringToArrayId = exports.parseInputKeys = exports.checkArrayChange = exports.buildResponseSuccess = exports.buildResponseError = void 0;
+exports.checkNestedInput_Insert = exports.uploadWrapper = exports.handleCleanUp = exports.pushToOldImage = exports.parseInputDeleted = exports.parsePathToPublicRelative = exports.parseStringToArrayId = exports.parseInputKeys = exports.checkArrayChange = exports.buildResponseSuccess = exports.buildResponseError = void 0;
 const fs_1 = require("fs");
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
@@ -66,7 +66,7 @@ function parseInputDeleted(input, primarykeyType = "number") {
     }
 }
 exports.parseInputDeleted = parseInputDeleted;
-const cacheOldImage = (fields, tag = "Utilities") => {
+const pushToOldImage = (fields, tag = "Utilities") => {
     return _wrapper_1.RouteHandleWrapper.wrapMiddleware((req, res) => {
         if (!res.locals.oldImages) {
             res.locals.oldImages = [];
@@ -81,7 +81,7 @@ const cacheOldImage = (fields, tag = "Utilities") => {
         }
     }, tag, true);
 };
-exports.cacheOldImage = cacheOldImage;
+exports.pushToOldImage = pushToOldImage;
 const handleCleanUp = (req, res, next) => {
     if (res.locals.error && req.files) {
         // Delete uploaded images if occur error
@@ -113,3 +113,13 @@ function uploadWrapper(upload) {
     };
 }
 exports.uploadWrapper = uploadWrapper;
+function checkNestedInput_Insert(nestData, mainKey, checker) {
+    const fakeId = 1;
+    const checked = checker(Object.assign(Object.assign({}, nestData), { [mainKey]: fakeId }));
+    if (!checked) {
+        return undefined;
+    }
+    delete checked.data[mainKey];
+    return checked;
+}
+exports.checkNestedInput_Insert = checkNestedInput_Insert;

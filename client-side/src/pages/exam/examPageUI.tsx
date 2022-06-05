@@ -41,14 +41,36 @@ const orderOptionList = [
     }
 ];
 
-const routeName = "exam";
 
 export default function ExamPageUI() {
+    const routeName = "exam";
     const api = useAPI();
-    const [loadChild, setLoadChild] = useState(false);
     const navigate = useNavigate();
+    
+    const [loadChild, setLoadChild] = useState(false);
+
     const reload = ()=>{
         setLoadChild(!loadChild);
+    }
+
+    const handleSelect = (params: URLSearchParams)=>{
+        return api.get(
+            `${appConfig.backendUri}/${routeName}/select?${params.toString()}`
+        );
+    }
+
+    const handleCount = (params: URLSearchParams)=>{
+        return api.get(
+            `${appConfig.backendUri}/${routeName}/count?${params.toString()}`
+        );
+    }
+
+    const handleCreate = ()=>{
+        navigate("create");
+    }
+    
+    const handleEdit = (data: any) => {
+        navigate("edit/"+data.id);
     }
 
     const handleDelete = async (data: any) => {
@@ -63,10 +85,6 @@ export default function ExamPageUI() {
         else {
             DialogHelper.showAlert(res.errorMessage);
         }
-    }
-    const handleEdit = (data: any) => {
-        navigate("edit/"+data.id, { replace: true });
-        
     }
 
 
@@ -98,12 +116,14 @@ export default function ExamPageUI() {
             title="Dashboard | Exam"
             textLabel="Kì thi"
             maxRow={10}
-            selectURL='select'
-            createURL="create"
             headLabels={EXAM_HEAD_LABEL}
-            routeName="exam"
+            needReload={loadChild}
+
             onRenderItem={renderTable} 
-            needReload={false} />
+            count={handleCount}
+            select={handleSelect}
+            onClickCreate={handleCreate}
+            />
 
     )
 }

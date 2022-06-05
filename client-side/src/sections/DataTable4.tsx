@@ -29,6 +29,7 @@ import { MySearchBar } from '../components/MySearchBar.tsx/MySearchBar';
 import useAPI from '../hooks/useApi';
 import { DialogHelper } from '../singleton/dialogHelper';
 import { appConfig } from '../configs';
+import { MyResponse } from '../api/service';
 
 // ----------------------------------------------------------------------
 
@@ -48,17 +49,12 @@ interface TypeProps {
     title: string,
     textLabel: string,
     maxRow: number,
-
-    selectURL: string,
-    createURL:string,
-
-
     headLabels: any,
 
-    routeName: string,
-
     onRenderItem: (dataList: any[])=>void,
-    //onSelect: () => void,
+    select: (params: URLSearchParams) => Promise<MyResponse>,
+    count: (params: URLSearchParams) => Promise<MyResponse>,
+    onClickCreate?: ()=>void,
 
     needReload: boolean,
 }
@@ -66,8 +62,6 @@ interface TypeProps {
 export default function DataTable4(props: TypeProps) {
 
     const [isLoading, setIsLoading] = useState(false);
-    const api = useAPI();
-    const navigate = useNavigate();
 
     const [page, setPage] = useState(0);
     const [rowPerPage, setRowPerPage] = useState(10);
@@ -81,11 +75,12 @@ export default function DataTable4(props: TypeProps) {
     const [dataList, setDataList] = useState<any[]>([]);
     useEffect(() => {
         countMax();
-    }, [options.searchvalue]);
+    }, [options.searchvalue, props.needReload]);
 
     useEffect(() => {
         select();
-    }, [page, rowPerPage, options]);
+    }, [page, rowPerPage, options, props.needReload]);
+    
     const select = () => {
         //console.log("onSelect");
 
@@ -93,11 +88,10 @@ export default function DataTable4(props: TypeProps) {
             ...options,
             start: rowPerPage * page,
             count: rowPerPage,
-        } as any).toString();
+        } as any);
 
-        const url = `${appConfig.backendUri}/${props.routeName}/${props.selectURL}?${queryParams}`
         setIsLoading(true);
-        api.get(url)
+        props.select(queryParams)
             .then(res => {
                 setIsLoading(false);
                 if (res.result) {
@@ -115,11 +109,10 @@ export default function DataTable4(props: TypeProps) {
             ...options,
             start: rowPerPage * page,
             count: rowPerPage,
-        } as any).toString();
+        } as any);
 
-        const url = `${appConfig.backendUri}/${props.routeName}/count?${queryParams}`
         setIsLoading(true);
-        api.get(url)
+        props.count(queryParams)
             .then(res => {
                 setIsLoading(false);
                 if (res.result) {
@@ -130,6 +123,7 @@ export default function DataTable4(props: TypeProps) {
                 }
             })
     }
+
     const emptyRows = rowPerPage - dataList.length;
     console.log("Empty rows = " + emptyRows);
 
@@ -138,17 +132,9 @@ export default function DataTable4(props: TypeProps) {
     const isUserNotFound = dataList.length === 0;
     console.log("isUserNotFound = " + isUserNotFound);
     const handleCreate = () => {
-        // rootDialog.openDialog({
-        //     children: <ExamCreateUI
-        //         method={EDIT_METHOD.create}
-        //         onSuccess={() => {
-        //             rootDialog.closeDialog();
-        //             select();
-        //         }}
-        //         onClose={() => rootDialog.closeDialog()}
-        //     />,
-        // });
-        navigate(props.createURL, { replace: true });
+        if(props.onClickCreate){
+            props.onClickCreate();
+        }
     }
 
     return (

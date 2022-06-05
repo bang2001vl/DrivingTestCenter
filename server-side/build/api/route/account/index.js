@@ -24,6 +24,7 @@ const session_1 = __importDefault(require("../../handler/session"));
 const utilities_1 = require("../utilities");
 const _default_1 = require("../_default");
 const _wrapper_1 = require("../_wrapper");
+const manager_1 = require("./manager");
 const repo = prisma_1.myPrisma.account;
 const tag = "Account";
 const DEFAULT_UPLOAD_FOLDER = path_1.default.resolve(config_1.default.publicFolder, "uploads", "avatar");
@@ -41,6 +42,7 @@ const upload = (0, multer_1.default)({
 });
 const AccountRoute = () => {
     const route = (0, express_1.Router)();
+    route.use("/manager", (0, manager_1.AccountManagerRoute)());
     route.get("/info/self", session_1.default.sessionMiddleware, addAccountId, _wrapper_1.RouteHandleWrapper.wrapHandleInput((input) => __awaiter(void 0, void 0, void 0, function* () {
         const result = yield repo.findFirst({
             where: { id: input.accountId },
@@ -58,7 +60,7 @@ const AccountRoute = () => {
     }), tag));
     route.put("/update/self", session_1.default.sessionMiddleware, _wrapper_1.RouteHandleWrapper.wrapMulterUpload(upload.fields([{ name: "avatar", maxCount: 1 }])), _wrapper_1.RouteHandleWrapper.wrapCheckInput(parseInputUpdate, tag), _wrapper_1.RouteHandleWrapper.wrapMiddleware((req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.locals.input.key = res.locals.session.accountId;
-    })), addUploadedURIs, cacheOldData, (0, utilities_1.cacheOldImage)(["avatarURI"]), _default_1.RouteBuilder.buildUpdateRoute(repo, tag), utilities_1.handleCleanUp);
+    })), addUploadedURIs, cacheOldData, (0, utilities_1.pushToOldImage)(["avatarURI"]), _default_1.RouteBuilder.buildUpdateRoute(repo, tag), utilities_1.handleCleanUp);
     return route;
 };
 exports.AccountRoute = AccountRoute;

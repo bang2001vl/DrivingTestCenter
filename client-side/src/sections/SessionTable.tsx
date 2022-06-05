@@ -183,18 +183,15 @@ export default function ExamTestPage(props: TypeProps) {
     //}
 
 
-    return (
-        <DataTable4 
-            searchOptionList={searchOptionList}
-            orderOptionList={orderOptionList}
-            searchbarText='Tìm tên ca thi'
-            title="Dashboard | Session"
-            textLabel="Ca thi"
-            maxRow={10}
-            selectURL='select/include/exam'
-            createURL='create'
-            headLabels={EXAM_HEAD_LABEL}
-            routeName="examtest"
-            onRenderItem={props.renderItem} needReload={false}             />
+    return ( <></>
+        // <DataTable4 
+        //     searchOptionList={searchOptionList}
+        //     orderOptionList={orderOptionList}
+        //     searchbarText='Tìm tên ca thi'
+        //     title="Dashboard | Session"
+        //     textLabel="Ca thi"
+        //     maxRow={10}
+        //     headLabels={EXAM_HEAD_LABEL}
+        //     onRenderItem={props.renderItem} needReload={false}             />
     )
 }

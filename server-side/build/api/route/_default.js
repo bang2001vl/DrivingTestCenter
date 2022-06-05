@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RouteBuilder = void 0;
+const utilities_1 = require("./utilities");
 const _wrapper_1 = require("./_wrapper");
 exports.RouteBuilder = {
     buildInsertRoute(repo, tag, inputSource = _wrapper_1.InputSource.locals, onError) {
@@ -52,6 +53,16 @@ exports.RouteBuilder = {
             return result.count;
         }), tag, inputSource, onError);
     },
+    buildDeleteSingleRoute(repo, tag, primarykeyName = "id", inputSource = _wrapper_1.InputSource.locals, onError) {
+        return _wrapper_1.RouteHandleWrapper.wrapHandleInput((input) => __awaiter(this, void 0, void 0, function* () {
+            const result = yield repo.delete({
+                where: {
+                    [primarykeyName]: input.key
+                },
+            });
+            return result.count;
+        }), tag, inputSource, onError);
+    },
     buildSelectRoute(repo, tag, customFilter, select, include) {
         return _wrapper_1.RouteHandleWrapper.wrapHandleInput((input) => __awaiter(this, void 0, void 0, function* () {
             const { searchby, searchvalue, orderby, orderdirection, start, count } = input;
@@ -74,15 +85,14 @@ exports.RouteBuilder = {
             return result;
         }), tag);
     },
-    buildCountRoute(repo, tag, onError) {
+    buildCountRoute(repo, tag, customFilter) {
         return _wrapper_1.RouteHandleWrapper.wrapHandleInput((input) => __awaiter(this, void 0, void 0, function* () {
             const { searchby, searchvalue } = input;
+            const filter = customFilter ? customFilter(input) : {};
             const result = yield repo.count({
-                where: {
-                    [searchby]: {
+                where: Object.assign({ [searchby]: {
                         contains: searchvalue
-                    },
-                },
+                    } }, filter),
             });
             return result;
         }), tag);
@@ -137,7 +147,7 @@ exports.RouteBuilder = {
                                 keys_number.push(parseInt(keys[i]));
                             }
                             catch (ex) {
-                                return undefined;
+                                throw (0, utilities_1.buildResponseError)(1, "Invalid keys");
                             }
                         }
                         return {
@@ -152,5 +162,58 @@ exports.RouteBuilder = {
                 }
             }
         }, tag, inputSource);
+    },
+    buildKeyParser(tag, primarykeyType = "number", inputSource = _wrapper_1.InputSource.body) {
+        return _wrapper_1.RouteHandleWrapper.wrapCheckInput((input) => {
+            if (input
+                && !isNaN(input.key)) {
+                return Object.assign(Object.assign({}, input), { key: Number(input.key) });
+            }
+        }, tag, inputSource);
+    },
+    buildNestInsertManyCheckerRoute(nestFieldName, mainKey, checker, source = _wrapper_1.InputSource.body) {
+        return _wrapper_1.RouteHandleWrapper.wrapMiddleware((req, res) => {
+            const input = _wrapper_1.RouteHandleWrapper.getInput(req, res, source);
+            if (input[nestFieldName] && input[nestFieldName].added) {
+                if (typeof input[nestFieldName] === "string") {
+                    input[nestFieldName] = JSON.parse(input[nestFieldName]);
+                }
+                if (!Array.isArray(input[nestFieldName].added)) {
+                    throw (0, utilities_1.buildResponseError)(1, `Invalid examTest`);
+                }
+                const newInsertArray = input[nestFieldName].added.map((e) => {
+                    const checked = (0, utilities_1.checkNestedInput_Insert)(e, mainKey, checker);
+                    if (!checked) {
+                        throw (0, utilities_1.buildResponseError)(1, `Invalid input nested`);
+                    }
+                    else {
+                        return checked;
+                    }
+                });
+                res.locals.input.data = Object.assign(Object.assign({}, res.locals.input.data), { [nestFieldName]: {
+                        createMany: {
+                            data: newInsertArray,
+                        }
+                    } });
+            }
+        });
+    },
+    buildDeleteNestedData(nestFieldName, nestPKName, source = _wrapper_1.InputSource.body) {
+        return _wrapper_1.RouteHandleWrapper.wrapMiddleware((req, res) => {
+            const input = _wrapper_1.RouteHandleWrapper.getInput(req, res, source);
+            if (input[nestFieldName] && input[nestFieldName].deleted) {
+                const ids = (0, utilities_1.parseInputDeleted)({ keys: input[nestFieldName].deleted });
+                if (!ids) {
+                    throw (0, utilities_1.buildResponseError)(1, `Invalid input nested`);
+                }
+                res.locals.input.data = Object.assign(Object.assign({}, res.locals.input.data), { [nestFieldName]: {
+                        deleteMany: {
+                            [nestPKName]: {
+                                in: ids
+                            }
+                        },
+                    } });
+            }
+        });
     },
 };
