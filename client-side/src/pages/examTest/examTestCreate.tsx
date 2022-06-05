@@ -23,7 +23,8 @@ interface IProps {
     oldData?: { id: number, exam: any } & IData,
     onSuccess?: () => void,
     onClose?: () => void,
-    onSubmit?: ()=>void,
+    onSubmit?: (value: IData) => void,
+    isExamCreate?: boolean,
 }
 
 interface IData {
@@ -81,48 +82,66 @@ export const ExamTestCreate: FC<IProps> = (props: IProps) => {
         onSubmit: async (values) => {
             console.log("Create ExamTest with", values);
             console.log("Valid", validSchema.validateSync(values));
-            const errors = customValid(values as IData);
-            if (Object.keys(errors).length > 0) {
-                console.log("Custom errors", errors);
-                formik.setErrors(errors);
-                return;
-            }
-
-            let examId = Number(values.examOption.value.id);
-            delete values.examOption;
-            // OK
-            let data = {
-                ...values,
-                examId,
-            }
-            setIsLoading(true);
-            let result: MyResponse;
-            if (props.method === EDIT_METHOD.create) {
-                result = await api.postWithToken(`${appConfig.backendUri}/${routeName}/insert`, data);
-            }
-            else {
-                result = await api.putWithToken(`${appConfig.backendUri}/${routeName}/update`, {
-                    ...data,
-                    key: props.oldData!.id,
-                });
-            }
-            setIsLoading(false)
-            if (result.errorCode) {
-                DialogHelper.showAlert(result.errorMessage);
-            }
-            else {
-                DialogHelper.showAlert("Success");
-                if (props.onSuccess) {
-                    props.onSuccess();
+            if (!props.isExamCreate) {
+                const errors = customValid(values as IData);
+                if (Object.keys(errors).length > 0) {
+                    console.log("Custom errors", errors);
+                    formik.setErrors(errors);
+                    return;
                 }
             }
+            if (props.onSubmit === undefined) {
+                let examId = Number(values.examOption.value.id);
+                delete values.examOption;
+                // OK
+                let data = {
+                    ...values,
+                    examId,
+                }
+                setIsLoading(true);
+                let result: MyResponse;
+                if (props.method === EDIT_METHOD.create) {
+                    result = await api.postWithToken(`${appConfig.backendUri}/${routeName}/insert`, data);
+                }
+                else {
+                    result = await api.putWithToken(`${appConfig.backendUri}/${routeName}/update`, {
+                        ...data,
+                        key: props.oldData!.id,
+                    });
+                }
+                setIsLoading(false)
+                if (result.errorCode) {
+                    DialogHelper.showAlert(result.errorMessage);
+                }
+                else {
+                    DialogHelper.showAlert("Success");
+                    if (props.onSuccess) {
+                        props.onSuccess();
+                    }
+                }
+            }
+            else {
+                const fakeID: number = 999999;
+                let data = {
+                    ...values,
+                    fakeID,
+                };
+                props.onSubmit(data);
+                if (props.onClose) {
+                    props.onClose()
+                }
+
+            };
+
+
         }
     });
+
     const onClickCancel = () => {
         //window.alert("Clicked delete on item = " + JSON.stringify(item, undefined, 4));
         const result = DialogHelper.showConfirm("Bạn muốn hủy tạo ca thi này?");
         if (result) {
-            navigate("/dashboard/session");
+            (props.onClose) ? props.onClose() : navigate("/dashboard/session");
         }
     }
     function customValid(vals: IData) {
@@ -153,19 +172,18 @@ export const ExamTestCreate: FC<IProps> = (props: IProps) => {
                 <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
                     {renderHeader(props.method)}
                 </Typography>
-                <CustomizedTabs listtab={['Thông tin', "Thí sinh tham gia"]} children={[
+                <Card style={{ alignItems: "center", justifyContent: 'center', padding: "auto", textAlign: "center", marginTop: '15px' }} >
+                    <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
+                        <FormControl style={{ width: '80%', alignSelf: "center", marginTop: "50px" }} >
+                            <Stack direction="row" spacing={2}>
 
-                    <Card style={{ alignItems: "center", justifyContent: 'center', padding: "auto", textAlign: "center", marginTop: '15px' }} >
-                        <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
-                            <FormControl style={{ width: '80%', alignSelf: "center", marginTop: "50px" }} >
-                                <Stack direction="row" spacing={2}>
-                                    <Box sx={{  width: "50%" }}>
-                                        <FormIkTextField formik={formik} fieldName="name"
-                                            fullWidth
-                                            label="Name"
+                                <FormIkTextField formik={formik} fieldName="name"
+                                    fullWidth
+                                    label="Name"
 
-                                        />
-                                    </Box>
+                                />
+
+                                {props.isExamCreate ? <></> :
                                     <Box sx={{ minWidth: "50%" }}>
                                         <FormIKExamSelector formik={formik} fieldName="examOption"
                                             placeholder="Exam"
@@ -176,66 +194,68 @@ export const ExamTestCreate: FC<IProps> = (props: IProps) => {
                                             }}
                                         />
                                     </Box>
+                                }
 
-                                </Stack>
-                                <Stack direction="row" spacing={2}>
-                                    <Box sx={{  width: "50%" }}>
+
+
+                            </Stack>
+                            <Stack direction="row" spacing={2}>
+                                <Box sx={{ width: "50%" }}>
                                     <FormIkTextField formik={formik} fieldName="location"
-                                            fullWidth
-                                            label="Location"
-                                            sx={{ marginTop }}
-                                        />
-                                    </Box>
-                                    <Box sx={{ minWidth: "50%" }}>
+                                        fullWidth
+                                        label="Location"
+                                        sx={{ marginTop }}
+                                    />
+                                </Box>
+                                <Box sx={{ minWidth: "50%" }}>
                                     <FormIkNumberField formik={formik} fieldName="maxMember"
-                                            fullWidth
-                                            label="Max Member"
-                                            sx={{ marginTop }}
-                                        />
-                                    </Box>
-
-                                </Stack>
-                                <Stack direction="row" spacing={2} paddingTop={2}>
-                                    <Box sx={{ width: "50%" }}>
-                                    <FormIkDateTimePicker formik={formik} fieldName="dateTimeStart"
-                                            label="Date Time Start"
-                                        />
-                                    </Box>
-                                    <Box sx={{ minWidth: "50%" }}>
-                                    <FormIkDateTimePicker formik={formik} fieldName="dateTimeEnd"
-                                            label="Date Time End"
-                                          
-                                        />
-                                    </Box>
-
-                                </Stack>
-                                
-
-                                <Box>
-                                    <Stack direction="row" spacing={20} alignItems="center" justifyContent="center" marginTop={5} marginBottom={5}>
-
-                                        <Button
-                                            variant="contained"
-                                            onClick={() =>((props.onSubmit===undefined)? formik.handleSubmit(): props.onSubmit)}
-                                            sx={{ width: "120px" }}
-                                        >
-                                            Create
-                                        </Button>
-
-                                        <Button
-                                            variant="outlined"
-                                            onClick={() => onClickCancel()}
-                                            sx={{ width: "120px" }} >
-                                            Cancel
-                                        </Button>
-
-                                    </Stack>
+                                        fullWidth
+                                        label="Max Member"
+                                        sx={{ marginTop }}
+                                    />
                                 </Box>
 
-                            </FormControl>
-                        </LocalizationProvider>
-                    </Card >,
-                ]}></CustomizedTabs>
+                            </Stack>
+                            <Stack direction="row" spacing={2} paddingTop={2}>
+                                <Box sx={{ width: "50%" }}>
+                                    <FormIkDateTimePicker formik={formik} fieldName="dateTimeStart"
+                                        label="Date Time Start"
+                                    />
+                                </Box>
+                                <Box sx={{ minWidth: "50%" }}>
+                                    <FormIkDateTimePicker formik={formik} fieldName="dateTimeEnd"
+                                        label="Date Time End"
+
+                                    />
+                                </Box>
+
+                            </Stack>
+
+
+                            <Box>
+                                <Stack direction="row" spacing={20} alignItems="center" justifyContent="center" marginTop={5} marginBottom={5}>
+
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => formik.handleSubmit()}
+                                        sx={{ width: "120px" }}
+                                    >
+                                        Create
+                                    </Button>
+
+                                    <Button
+                                        variant="outlined"
+                                        onClick={() => (props.onClose) ? props.onClose() : onClickCancel()}
+                                        sx={{ width: "120px" }} >
+                                        Cancel
+                                    </Button>
+
+                                </Stack>
+                            </Box>
+
+                        </FormControl>
+                    </LocalizationProvider>
+                </Card >,
             </Container>
         </Page >
     );
