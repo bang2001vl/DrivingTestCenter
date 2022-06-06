@@ -3,7 +3,7 @@ import { FC } from "react";
 import DataListHead from "../user/DataListHead";
 
 export interface DataTableLayoutProps<T = any> {
-    headLabels: any,
+    headLabels?: any,
     emptyView?: JSX.Element,
 }
 export const DataTableLayout: FC<DataTableLayoutProps> = (props) => {

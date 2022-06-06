@@ -13,7 +13,7 @@ export const FormIkDateTimePicker: FC<IProps> = (props) => {
     delete customProps.formik;
     delete customProps.fieldName;
     return <DateTimePicker
-    
+        inputFormat="dd/MM/yyyy hh:mm"
         value={new Date(props.formik.values[props.fieldName])}
         onChange={(newDate: any) => {
             if (newDate) {

@@ -48,7 +48,7 @@ interface TypeProps {
     searchbarText: string | undefined;
     title: string,
     textLabel: string,
-
+    cardColor?: string,
     onRenderItem: (dataList: any[], emptyView?: JSX.Element) => void,
     select: (params: URLSearchParams) => Promise<MyResponse>,
     count: (params: URLSearchParams) => Promise<MyResponse>,
@@ -134,11 +134,78 @@ export default function DataTable4(props: TypeProps) {
             props.onClickCreate();
         }
     }
+    const onRenderTable = () => {
+        return (<>
+            < MySearchBar
+                hintText={props.searchbarText}
+                searchOptionList={props.searchOptionList}
+                orderOptionList={props.orderOptionList}
+                onSubmit={(opt) => {
+                    setOptions(opt);
+                }
+                }
+            ></MySearchBar >
+            {/*@ts-ignore*/}
+            < Scrollbar >
+                {/* <TableContainer sx={{ minWidth: 800 }}>
+                <Table>
+                    <DataListHead
+                        headLabel={props.headLabels}
+                    />
+
+                    <TableBody>  {props.onRenderItem(dataList)}
+
+                        {emptyRows > 0 && (
+                            <TableRow style={{ height: 40 * emptyRows }}>
+                                <TableCell colSpan={6} />
+                            </TableRow>
+                        )}
+                    </TableBody>
+                    {isUserNotFound && (
+                        <TableBody>
+                            <TableRow>
+                                <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                                    <SearchNotFound searchQuery={options.searchvalue} />
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    )}
+                </Table>
+            </TableContainer> */}
+                {
+                    props.onRenderItem(dataList, (
+                        dataList.length === 0
+                            ? <Container>
+                                <SearchNotFound searchQuery={options.searchvalue} />
+                            </Container>
+                            : undefined
+                    ))
+                }
+            </Scrollbar >
+
+            <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={maxCount}
+                rowsPerPage={rowPerPage}
+                page={page}
+                onPageChange={(ev, newPage) => {
+                    setPage(newPage);
+                }}
+                onRowsPerPageChange={(ev) => {
+                    const newRowPerPage = ev.target.value;
+                    setRowPerPage(parseInt(newRowPerPage, 10));
+                    setPage(0);
+                }}
+            />
+        </>
+        )
+    }
 
     return (
         // @ts-ignore
         <Page title={props.title} >
-            <Container style={{maxWidth: '1920px'}}>
+            <Container style={{ maxWidth: '1920px' }}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1.5}>
                     <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
                         {props.textLabel}
@@ -151,69 +218,9 @@ export default function DataTable4(props: TypeProps) {
                         Thêm mới
                     </Button>
                 </Stack>
-
-                <Card>
-                    <MySearchBar
-                        hintText={props.searchbarText}
-                        searchOptionList={props.searchOptionList}
-                        orderOptionList={props.orderOptionList}
-                        onSubmit={(opt) => {
-                            setOptions(opt);
-                        }}
-                    ></MySearchBar>
-                    {/*@ts-ignore*/}
-                    <Scrollbar>
-                        {/* <TableContainer sx={{ minWidth: 800 }}>
-                            <Table>
-                                <DataListHead
-                                    headLabel={props.headLabels}
-                                />
-
-                                <TableBody>  {props.onRenderItem(dataList)}
-
-                                    {emptyRows > 0 && (
-                                        <TableRow style={{ height: 40 * emptyRows }}>
-                                            <TableCell colSpan={6} />
-                                        </TableRow>
-                                    )}
-                                </TableBody>
-                                {isUserNotFound && (
-                                    <TableBody>
-                                        <TableRow>
-                                            <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                                                <SearchNotFound searchQuery={options.searchvalue} />
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                )}
-                            </Table>
-                        </TableContainer> */}
-                        {props.onRenderItem(dataList, (
-                            dataList.length === 0
-                            ? <Container>
-                                <SearchNotFound searchQuery={options.searchvalue} />
-                            </Container>
-                            : undefined
-                        ))
-                        }
-                    </Scrollbar>
-
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component="div"
-                        count={maxCount}
-                        rowsPerPage={rowPerPage}
-                        page={page}
-                        onPageChange={(ev, newPage) => {
-                            setPage(newPage);
-                        }}
-                        onRowsPerPageChange={(ev) => {
-                            const newRowPerPage = ev.target.value;
-                            setRowPerPage(parseInt(newRowPerPage, 10));
-                            setPage(0);
-                        }}
-                    />
-                </Card>
+                {(props.cardColor === undefined) ? <Card>
+                    {onRenderTable()}
+                </Card> : onRenderTable()}
             </Container>
         </Page>
     );

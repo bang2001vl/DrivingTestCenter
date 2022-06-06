@@ -79,7 +79,7 @@ export const BasicEditSection: FC<BasicEditSectionProps> = (props) => {
     return (
         // @ts-ignore
         <Page  >
-            <Container>
+            <Container style={{maxWidth: "1920px"}}>
                 <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
                     {props.title}
                 </Typography>

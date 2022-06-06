@@ -7,7 +7,7 @@ import useAPI from "../../hooks/useApi"
 import { appConfig } from "../../configs"
 import { LoadingButton, LocalizationProvider } from "@mui/lab"
 import AdapterDateFns from "@mui/lab/AdapterDateFns"
-import { Box, Button, MenuItem, Stack } from "@mui/material"
+import { Box, Button, Card, MenuItem, Stack } from "@mui/material"
 import { FormIkTextField } from "../../components/FormIK/TextField"
 import { EDIT_METHOD } from "../../_enums"
 import { useNavigate, useSearchParams } from "react-router-dom"
@@ -133,7 +133,7 @@ export const CoursesCreate: FC<IProps> = (props) => {
 
     const marginTop = 1;
     return <BasicEditSection
-        title="Create Account"
+        title="Tạo Lớp Học"
         initValues={initValue}
         onSuccess={handleSuccess}
         onClose={handleClose}
@@ -141,12 +141,11 @@ export const CoursesCreate: FC<IProps> = (props) => {
         submit={handleSubmit}
         formComponent={(formik, cancel, isLoading) => {
             return (
-                <Box style={{ width: "100%", minWidth: 800 }}>
+                <Card style={{ alignItems: "center", justifyContent: 'center', textAlign: "center", marginTop: '15px', padding: "5%" }} >
                     <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
-                        <Stack spacing={2} alignItems="center" justifyContent="start" marginTop={5} marginBottom={5}>
+                        <Stack spacing={1}>
                             <Stack direction="row" spacing={2}>
-
-                                < Box sx={{ minWidth: "50%" }}>
+                                < Box sx={{ width: "50%" }}>
                                     <FormIkTextField formik={formik} fieldName="name"
                                         fullWidth
                                         label="Tên lớp"
@@ -154,7 +153,7 @@ export const CoursesCreate: FC<IProps> = (props) => {
                                     />
                                 </Box>
 
-                                < Box sx={{ minWidth: "50%" }}>
+                                < Box sx={{ width: "50%" }}>
                                     <FormIkNumberField formik={formik} fieldName="price"
                                         fullWidth
                                         label="Học phí"
@@ -169,10 +168,10 @@ export const CoursesCreate: FC<IProps> = (props) => {
                                         sx={{ marginTop }}
                                     />
                                 </Box>
-                                <Box sx={{ minWidth: "50%" }}>
+                                <Box sx={{ width: "50%" }}>
                                     <FormIkNumberField formik={formik} fieldName="maxMember"
                                         fullWidth
-                                        label="Số lượng"
+                                        label="Số lượng tối đa"
                                         sx={{ marginTop }}
                                     />
                                 </Box>
@@ -181,22 +180,23 @@ export const CoursesCreate: FC<IProps> = (props) => {
                             <Stack direction="row" spacing={2} paddingTop={2}>
                                 <Box sx={{ width: "50%" }}>
                                     <FormIkDatePicker formik={formik} fieldName="dateStart"
-                                        label="Bắt đầu"
+                                        label="Ngày bắt đầu"
+                                        
                                     />
                                 </Box>
-                                <Box sx={{ minWidth: "50%" }}>
+                                <Box sx={{ width: "50%" }}>
                                     <FormIkDatePicker formik={formik} fieldName="dateEnd"
-                                        label="Kết thúc"
-
-                                    />
+                                        label="Ngày kết thúc"   
+                                        
+                                        />
                                 </Box>
 
                             </Stack>
-                            <Stack direction={"row"} spacing={20} style={{ alignSelf: "center" }}>
+                            <Stack direction={"row"} spacing={20} style={{ alignSelf: "center", marginTop: "40px" }}>
                                 <LoadingButton
                                     variant="contained"
                                     onClick={() => formik.handleSubmit()}
-                                    sx={{ width: "120px" }}
+                                    sx={{ width: "120px", height: "43px" }}
                                 >
                                     Xác nhận
                                 </LoadingButton>
@@ -204,13 +204,14 @@ export const CoursesCreate: FC<IProps> = (props) => {
                                 <Button
                                     variant="outlined"
                                     onClick={() => cancel()}
-                                    sx={{ width: "120px" }} >
+                                    sx={{ width: "120px", height: "43px" }} >
                                     Hủy
                                 </Button>
                             </Stack>
                         </Stack>
                     </LocalizationProvider>
-                </Box >
+                </Card>
+
             )
         }}
     >

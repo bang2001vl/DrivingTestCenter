@@ -3,7 +3,7 @@ import { TextField } from "@mui/material"
 import { FC } from "react"
 
 interface IProps<TDate = unknown> extends Partial<DatePickerProps<TDate>> {
-    formik: any, 
+    formik: any,
     fieldName: string,
 }
 export const FormIkDatePicker: FC<IProps> = (props) => {
@@ -13,6 +13,8 @@ export const FormIkDatePicker: FC<IProps> = (props) => {
     delete customProps.formik;
     delete customProps.fieldName;
     return <DatePicker
+        inputFormat="dd/MM/yyyy"
+
         value={new Date(props.formik.values[props.fieldName])}
         onChange={(newDate: any) => {
             if (newDate) {
@@ -23,7 +25,9 @@ export const FormIkDatePicker: FC<IProps> = (props) => {
             {...params}
             error={props.formik.touched[props.fieldName] && Boolean(props.formik.errors[props.fieldName])}
             helperText={props.formik.touched[props.fieldName] && props.formik.errors[props.fieldName]}
+            {...customProps}
+            fullWidth
         />}
-        {...customProps}
+
     />
 }

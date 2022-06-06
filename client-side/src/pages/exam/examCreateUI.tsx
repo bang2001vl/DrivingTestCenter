@@ -181,105 +181,106 @@ export const ExamCreateUI: FC<IProps> = (props: IProps) => {
         validation={handleValidate}
         submit={handleSubmit}
         formComponent={(formik, cancel, isLoading) => {
-            return <Card style={{ alignItems: "center", justifyContent: 'center', padding: "30px 80px", textAlign: "center", marginTop: '15px' }} >
-            <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
+            return <Card style={{ alignItems: "center", justifyContent: 'center', textAlign: "center", marginTop: '15px', padding: "5%" }} >
 
-                <Stack direction="row" spacing={2} sx={{ p: 1 }}>
-                    <Box sx={{ width: "50%" }}>
-                        <FormIkTextField formik={formik} fieldName="name"
-                            fullWidth
-                            label="Name"
-                            style={{ marginTop }}
-                        />
+                <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
 
-                    </Box>
-                    <Box sx={{ minWidth: "50%" }}>
-                        <FormIkTextField formik={formik} fieldName="type"
-                            fullWidth
-                            label="Type"
-                            style={{ marginTop }}
-                        />
-                    </Box>
+                    <Stack direction="row" spacing={2} sx={{ p: 1 }}>
+                        <Box sx={{ width: "50%" }}>
+                            <FormIkTextField formik={formik} fieldName="name"
+                                fullWidth
+                                label="Name"
+                                style={{ marginTop }}
+                            />
 
-                </Stack>
-                <Stack direction="row" spacing={2} sx={{ p: 1 }}>
-                    <Box sx={{ width: "50%" }}>
-                        <FormIkNumberField formik={formik} fieldName="price"
-                            fullWidth
-                            label="Fees"
-                            style={{ marginTop: 1 }}
-                        />
-                    </Box>
-                    <Box sx={{ minWidth: "50%" }}>
-                        <FormIkNumberField formik={formik} fieldName="maxMember"
-                            fullWidth
-                            label="Max Member"
-                            style={{ marginTop }}
-                        />
-                    </Box>
-
-                </Stack>
-
-
-                <Box>
-                    <Stack direction="row">
-                        <Box sx={{ p: 1, width: "50%" }}>
-                            <FormIkDatePicker formik={formik} fieldName="dateOpen"
-                                label="Open Register"
+                        </Box>
+                        <Box sx={{ minWidth: "50%" }}>
+                            <FormIkTextField formik={formik} fieldName="type"
+                                fullWidth
+                                label="Type"
+                                style={{ marginTop }}
                             />
                         </Box>
 
-                        <Box sx={{ p: 1, width: "50%" }}>
-                            <FormIkDatePicker formik={formik} fieldName="dateClose"
-                                label="Close Register"
-                            />
-                        </Box>
-                        <Box sx={{ p: 1, width: "50%" }}>
-                            <FormIkDatePicker formik={formik} fieldName="dateStart"
-                                label="Start Exam"
-                            />
-                        </Box>
-
-                        <Box sx={{ p: 1, width: "50%" }}>
-                            <FormIkDatePicker formik={formik} fieldName="dateEnd"
-                                label="End Exam"
-                            />
-                        </Box>
                     </Stack>
-                </Box>
+                    <Stack direction="row" spacing={2} sx={{ p: 1 }}>
+                        <Box sx={{ width: "50%" }}>
+                            <FormIkNumberField formik={formik} fieldName="price"
+                                fullWidth
+                                label="Fees"
+                                style={{ marginTop: 1 }}
+                            />
+                        </Box>
+                        <Box sx={{ minWidth: "50%" }}>
+                            <FormIkNumberField formik={formik} fieldName="maxMember"
+                                fullWidth
+                                label="Max Member"
+                                style={{ marginTop }}
+                            />
+                        </Box>
 
-                <Box sx={{ p: 1 }}>
-                    <FormIkTextField formik={formik} fieldName="rules"
-                        fullWidth
-                        multiline
-                        minRows={3}
-                        label="Description"
-                    />
-                </Box>
+                    </Stack>
 
-                <Stack alignItems={"center"}>
-                            <Stack direction={"row"} spacing={20} style={{ alignSelf: "center", justifyContent: "space-around", marginTop: 20, maxWidth: 400 }}>
-                                <LoadingButton
-                                    variant="contained"
-                                    onClick={() => formik.handleSubmit()}
-                                    sx={{ width: "120px" }}
-                                >
-                                    Xác nhận
-                                </LoadingButton>
 
-                                <Button
-                                    variant="outlined"
-                                    onClick={() => cancel()}
-                                    sx={{ width: "120px" }} >
-                                    Hủy
-                                </Button>
-                            </Stack>
+                    <Box>
+                        <Stack direction="row">
+                            <Box sx={{ p: 1, width: "50%" }}>
+                                <FormIkDatePicker formik={formik} fieldName="dateOpen"
+                                    label="Open Register"
+                                />
+                            </Box>
+
+                            <Box sx={{ p: 1, width: "50%" }}>
+                                <FormIkDatePicker formik={formik} fieldName="dateClose"
+                                    label="Close Register"
+                                />
+                            </Box>
+                            <Box sx={{ p: 1, width: "50%" }}>
+                                <FormIkDatePicker formik={formik} fieldName="dateStart"
+                                    label="Start Exam"
+                                />
+                            </Box>
+
+                            <Box sx={{ p: 1, width: "50%" }}>
+                                <FormIkDatePicker formik={formik} fieldName="dateEnd"
+                                    label="End Exam"
+                                />
+                            </Box>
                         </Stack>
+                    </Box>
 
-            </LocalizationProvider>
-        </Card >
+                    <Box sx={{ p: 1 }}>
+                        <FormIkTextField formik={formik} fieldName="rules"
+                            fullWidth
+                            multiline
+                            minRows={3}
+                            label="Description"
+                        />
+                    </Box>
+
+                    <Stack alignItems={"center"}>
+                        <Stack direction={"row"} spacing={20} style={{ alignSelf: "center", justifyContent: "space-around", marginTop: 20, maxWidth: 400 }}>
+                            <LoadingButton
+                                variant="contained"
+                                onClick={() => formik.handleSubmit()}
+                                sx={{ width: "120px", height: "43px" }}
+                            >
+                                Xác nhận
+                            </LoadingButton>
+
+                            <Button
+                                variant="outlined"
+                                onClick={() => cancel()}
+                                sx={{ width: "120px", height: "43px" }}>
+                                Hủy
+                            </Button>
+                        </Stack>
+                    </Stack>
+
+                </LocalizationProvider>
+            </Card >
         }}
-        />
+    />
     //
 
     // const validSchema = yup.object();

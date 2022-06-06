@@ -202,7 +202,7 @@ export const ExamTestCreate: FC<IProps> = (props) => {
                                 <LoadingButton
                                     variant="contained"
                                     onClick={() => formik.handleSubmit()}
-                                    sx={{ width: "120px" }}
+                                    sx={{ width: "120px", height: "43px" }}
                                 >
                                     Xác nhận
                                 </LoadingButton>
@@ -210,7 +210,8 @@ export const ExamTestCreate: FC<IProps> = (props) => {
                                 <Button
                                     variant="outlined"
                                     onClick={() => cancel()}
-                                    sx={{ width: "120px" }} >
+                                    sx={{ width: "120px", height: "43px" }}
+                                     >
                                     Hủy
                                 </Button>
                             </Stack>

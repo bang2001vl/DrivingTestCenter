@@ -5,6 +5,7 @@ import { appConfig } from "../../configs";
 import useAPI from "../../hooks/useApi";
 import { DialogHelper } from "../../singleton/dialogHelper";
 import DataTable4 from "../../sections/DataTable4";
+import { CoursesTable } from "./CoursesTable";
 
 // const HEAD_LABEL = [
 //     { id: 'name', label: 'Name', alignRight: false },
@@ -83,20 +84,31 @@ export default function CoursesPage() {
         }
     }
 
-
-    const renderTable = (dataList: any[], emptyView?: JSX.Element) => {
-        return <p>{JSON.stringify(dataList, null, 4)}</p>
+    const renderTable = (dataList: any[]) => {
+        return <CoursesTable
+            dataList={dataList.map(e => ({
+                ...e,
+                id: Number(e.id),
+                name: e.name,
+                price: Number(e.price),
+                location: e.location,
+                dateStart: new Date(e.dateStart),
+                dateEnd: new Date(e.dateEnd),
+                countMember: e.countMember,
+            }))}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+        />
     }
-
     return (
         <DataTable4
             searchOptionList={searchOptionList}
             orderOptionList={orderOptionList}
-            searchbarText='Tìm tên kì thi'
-            title="Dashboard | Khóa học"
-            textLabel="Khóa học"
+            searchbarText='Tìm tên lớp học'
+            title="Dashboard | Classes"
+            textLabel="Lớp học"
             needReload={loadChild}
-
+            cardColor='transparent'
             onRenderItem={renderTable} 
             count={handleCount}
             select={handleSelect}
