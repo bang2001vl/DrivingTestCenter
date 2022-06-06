@@ -7,6 +7,7 @@ import { AuthRoute } from "./route/auth";
 import { ExamRoute } from "./route/exam";
 import { ExamTestRoute } from "./route/examTest/examTest";
 import { AccountManagerRoute } from "./route/account/manager";
+import { CourseRoute } from "./route/courses/course";
 
 export function ApiServer() {
     const app = express();
@@ -20,6 +21,8 @@ export function ApiServer() {
     app.use("/exam", ExamRoute());
     app.use("/examtest", ExamTestRoute());
     app.use("/user", AccountManagerRoute());
+    
+    app.use("/course", CourseRoute());
 
     app.use((req, res, next) => {
         if (res.locals.error) {

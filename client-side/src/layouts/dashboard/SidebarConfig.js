@@ -14,24 +14,19 @@ const sidebarConfig = [
     icon: getIcon('eva:pie-chart-2-fill')
   },
   {
-    title: 'exam',
+    title: 'Kì thi',
     path: '/dashboard/exam',
     icon: getIcon('ph:exam-fill')
   },
   {
-    title: 'session',
+    title: 'Ca thi',
     path: '/dashboard/session',
     icon: getIcon('eva:shopping-bag-fill')
   },
   {
-    title: 'class',
-    path: '/dashboard/class',
+    title: 'Khóa học',
+    path: '/dashboard/course',
     icon: getIcon('eos-icons:storage-class')
-  },
-  {
-    title: 'lecture',
-    path: '/dashboard/lecture',
-    icon: getIcon('fa-solid:chalkboard-teacher')
   },
   {
     title: 'Tài khoản',
@@ -39,12 +34,12 @@ const sidebarConfig = [
     icon: getIcon('bxs:user-account')
   },
   {
-    title: 'receipt',
+    title: 'Hóa đơn',
     path: '/dashboard/receipt',
     icon: getIcon('bxs:receipt')
   },
   {
-    title: 'report',
+    title: 'Báo cáo',
     path: '/dashboard/report',
     icon: getIcon('heroicons-solid:document-report')
   },

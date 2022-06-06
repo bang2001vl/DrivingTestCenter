@@ -19,7 +19,7 @@ import DataTable4 from "../../sections/DataTable4";
 const searchOptionList = [{
     label: "Name",
     value: {
-        searchby: "fullname"
+        searchby: "name"
     }
 }];
 
@@ -27,21 +27,21 @@ const orderOptionList = [
     {
         label: "Name (A-Z)",
         value: {
-            orderby: "fullname",
+            orderby: "name",
             orderdirection: "asc"
         }
     },
     {
         label: "Name (Z-A)",
         value: {
-            orderby: "fullname",
+            orderby: "name",
             orderdirection: "desc"
         }
     }
 ];
 
 export default function CoursesPage() {
-    const routeName = "courses";
+    const routeName = "course";
     const api = useAPI();
     const [loadChild, setLoadChild] = useState(false);
     const navigate = useNavigate();
@@ -51,7 +51,7 @@ export default function CoursesPage() {
 
     const handleSelect = (params: URLSearchParams)=>{
         return api.get(
-            `${appConfig.backendUri}/${routeName}/select?${params.toString()}`
+            `${appConfig.backendUri}/${routeName}/select/include?${params.toString()}`
         );
     }
 
@@ -93,8 +93,8 @@ export default function CoursesPage() {
             searchOptionList={searchOptionList}
             orderOptionList={orderOptionList}
             searchbarText='Tìm tên kì thi'
-            title="Dashboard | Exam"
-            textLabel="Kì thi"
+            title="Dashboard | Khóa học"
+            textLabel="Khóa học"
             needReload={loadChild}
 
             onRenderItem={renderTable} 
@@ -102,6 +102,6 @@ export default function CoursesPage() {
             select={handleSelect}
             onClickCreate={handleCreate}
             />
-
+        // <p>ádasd</p>
     )
 }

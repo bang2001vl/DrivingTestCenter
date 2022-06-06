@@ -75,7 +75,6 @@ model Exam {
     updatedAt    DateTime @updatedAt
 
     examTests ExamTest[]
-    classes   Class[]
     @@map("exam")
 }
 
@@ -101,21 +100,19 @@ model ExamTest {
 
 model Class {
     id     Int  @id @default(autoincrement())
-    examId Int?
 
     name      String   @db.VarChar(255)
     location  String   @db.VarChar(255)
     dateStart DateTime
     dateEnd   DateTime
     maxMember Int
-    rules     String   @db.VarChar(3000)
     price     Int
+    rules     String   @db.VarChar(3000) @default("")
 
     countStudent Int      @default(0)
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
 
-    exam         Exam?                 @relation(fields: [examId], references: [id])
     schedules    ClassSchedule[]
     studentCNNs  CONN_Student_Class[]
     employeeCNNs CONN_Employee_Class[]

@@ -19,7 +19,7 @@ const CourseRoute = () => {
     const searchFields = ["name"];
     const orderFields = ["name", "dateStart", "dateEnd"];
     route.get("/select", _default_1.RouteBuilder.buildSelectInputParser(searchFields, orderFields, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter));
-    route.get("/select/include/", _default_1.RouteBuilder.buildSelectInputParser(["name"], ["name", "dateStart", "dateEnd"], tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, customInclude));
+    route.get("/select/include/", _default_1.RouteBuilder.buildSelectInputParser(searchFields, orderFields, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, customInclude));
     route.get("/count", _default_1.RouteBuilder.buildCountInputParser(["name"], tag), _default_1.RouteBuilder.buildCountRoute(repo, tag, customFilter));
     route.post("/insert", session_1.default.roleChecker([0]), _wrapper_1.RouteHandleWrapper.wrapCheckInput(checkInput_Insert, tag), _default_1.RouteBuilder.buildInsertRoute(repo, tag));
     route.put("/update", session_1.default.roleChecker([0]), _wrapper_1.RouteHandleWrapper.wrapCheckInput(checkInput_Update, tag), _default_1.RouteBuilder.buildUpdateRoute(repo, tag));
@@ -30,11 +30,10 @@ exports.CourseRoute = CourseRoute;
 function checkInput_Insert(input) {
     if (input) {
         let data = {
-            examId: FieldGetter_1.FieldGetter.Number(input, "examId", true),
             name: FieldGetter_1.FieldGetter.String(input, "name", true),
             location: FieldGetter_1.FieldGetter.String(input, "location", true),
-            dateTimeStart: FieldGetter_1.FieldGetter.Date(input, "dateTimeStart", true),
-            dateTimeEnd: FieldGetter_1.FieldGetter.Date(input, "dateTimeEnd", true),
+            dateStart: FieldGetter_1.FieldGetter.Date(input, "dateStart", true),
+            dateEnd: FieldGetter_1.FieldGetter.Date(input, "dateEnd", true),
             maxMember: FieldGetter_1.FieldGetter.Number(input, "maxMember", true),
             price: FieldGetter_1.FieldGetter.Number(input, "price", true),
             rules: FieldGetter_1.FieldGetter.String(input, "rules", false),
@@ -47,12 +46,12 @@ function checkInput_Insert(input) {
 function checkInput_Update(input) {
     if (input) {
         let data = {
-            examId: FieldGetter_1.FieldGetter.Number(input, "examId", false),
             name: FieldGetter_1.FieldGetter.String(input, "name", false),
             location: FieldGetter_1.FieldGetter.String(input, "location", false),
             dateTimeStart: FieldGetter_1.FieldGetter.Date(input, "dateTimeStart", false),
             dateTimeEnd: FieldGetter_1.FieldGetter.Date(input, "dateTimeEnd", false),
             maxMember: FieldGetter_1.FieldGetter.Number(input, "maxMember", false),
+            rules: FieldGetter_1.FieldGetter.String(input, "rules", false),
         };
         return {
             key: FieldGetter_1.FieldGetter.Number(input, "key", true),
@@ -62,25 +61,19 @@ function checkInput_Update(input) {
 }
 function customFilter(input) {
     const rs = {};
-    if (!isNaN(Number(input.examId))) {
-        rs.examId = Number(input.examId);
+    if (!isNaN(Number(input.accountId))) {
+        rs.accountId = Number(input.accountId);
     }
     return rs;
 }
 function customInclude(input) {
-    if (input && typeof input.include === "string") {
-        try {
-            const rs = {};
-            const include = JSON.parse(input.include);
-            if (include.exam) {
-                rs.exam = true;
-            }
-            return rs;
-        }
-        catch (ex) {
-            throw (0, utilities_1.buildResponseError)(1, "Invalid include");
-        }
-    }
+    const rs = {};
+    // Employee
+    rs.employeeCNNs = {
+        select: { employee: true },
+        take: 10
+    };
+    return rs;
 }
 exports.CourseRouteChecker = {
     checkInput_Insert,

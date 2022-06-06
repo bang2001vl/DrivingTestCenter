@@ -19,6 +19,7 @@ import { DialogHelper } from "../../singleton/dialogHelper"
 
 interface IProps {
     method: EDIT_METHOD,
+    editKey?: number,
 }
 export const AccountManagerCreate: FC<IProps> = (props) => {
     const navigate = useNavigate();
@@ -40,7 +41,7 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
     
     useEffect(()=>{
         if(props.method === EDIT_METHOD.update){
-            const key = searchParams.get("id");
+            const key = searchParams.get("id") && props.editKey;
             if (!key) {
                 navigate("/", { replace: true });
                 DialogHelper.showAlert("Not found id");
@@ -119,30 +120,6 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
                 }
             );
         }
-    }
-
-    const loadOldData = (params: any) => {
-        if (!params.id) {
-            navigate("/", { replace: true });
-            return Promise.resolve(new MyResponse(false, -1, "Not found id"));
-        }
-
-        return api.getWithToken(
-            `${appConfig.backendUri}/${routeName}/select?${new URLSearchParams({
-                searchvalue: "",
-                searchby: "fullname",
-                orderby: "fullname",
-                orderdirection: "asc",
-                start: "0",
-                count: "1",
-                id: String(params.id),
-            }).toString()}`
-        ).then(res =>{
-            if(res.result && res.data){
-                return new MyResponse(true, undefined, undefined, res.data[0]);
-            }
-            return res;
-        });
     }
 
     function handleSuccess(){

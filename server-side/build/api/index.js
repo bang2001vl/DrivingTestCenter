@@ -34,6 +34,7 @@ const auth_1 = require("./route/auth");
 const exam_1 = require("./route/exam");
 const examTest_1 = require("./route/examTest/examTest");
 const manager_1 = require("./route/account/manager");
+const course_1 = require("./route/courses/course");
 function ApiServer() {
     const app = (0, express_1.default)();
     app.use((0, cors_1.default)());
@@ -43,6 +44,7 @@ function ApiServer() {
     app.use("/exam", (0, exam_1.ExamRoute)());
     app.use("/examtest", (0, examTest_1.ExamTestRoute)());
     app.use("/user", (0, manager_1.AccountManagerRoute)());
+    app.use("/course", (0, course_1.CourseRoute)());
     app.use((req, res, next) => {
         if (res.locals.error) {
             res.json(res.locals.error);

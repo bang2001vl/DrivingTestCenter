@@ -23,7 +23,7 @@ export const CourseRoute = () => {
     );
 
     route.get("/select/include/",
-        RouteBuilder.buildSelectInputParser(["name"], ["name", "dateStart", "dateEnd"], tag),
+        RouteBuilder.buildSelectInputParser(searchFields, orderFields, tag),
         RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, customInclude),
     );
 
@@ -56,11 +56,10 @@ export const CourseRoute = () => {
 function checkInput_Insert(input: any) {
     if (input) {
         let data = {
-            examId: FieldGetter.Number(input, "examId", true),
             name: FieldGetter.String(input, "name", true),
             location: FieldGetter.String(input, "location", true),
-            dateTimeStart: FieldGetter.Date(input, "dateTimeStart", true),
-            dateTimeEnd: FieldGetter.Date(input, "dateTimeEnd", true),
+            dateStart: FieldGetter.Date(input, "dateStart", true),
+            dateEnd: FieldGetter.Date(input, "dateEnd", true),
             maxMember: FieldGetter.Number(input, "maxMember", true),
             price: FieldGetter.Number(input, "price", true),
             rules: FieldGetter.String(input, "rules", false),
@@ -75,12 +74,12 @@ function checkInput_Insert(input: any) {
 function checkInput_Update(input: any) {
     if (input) {
         let data = {
-            examId: FieldGetter.Number(input, "examId", false),
             name: FieldGetter.String(input, "name", false),
             location: FieldGetter.String(input, "location", false),
             dateTimeStart: FieldGetter.Date(input, "dateTimeStart", false),
             dateTimeEnd: FieldGetter.Date(input, "dateTimeEnd", false),
             maxMember: FieldGetter.Number(input, "maxMember", false),
+            rules: FieldGetter.String(input, "rules", false),
         }
 
         return {
@@ -92,24 +91,20 @@ function checkInput_Update(input: any) {
 
 function customFilter(input: any) {
     const rs: any = {};
-    if (!isNaN(Number(input.examId))) {
-        rs.examId = Number(input.examId)
+    if (!isNaN(Number(input.accountId))) {
+        rs.accountId = Number(input.accountId)
     }
     return rs;
 }
 
 function customInclude(input: any) {
-    if (input && typeof input.include === "string") {
-        try {
-            const rs: any = {};
-            const include = JSON.parse(input.include);
-            if (include.exam) {
-                rs.exam = true;
-            }
-            return rs;
-        }
-        catch (ex) { throw buildResponseError(1, "Invalid include"); }
+    const rs: any = {};
+    // Employee
+    rs.employeeCNNs = {
+        select: { employee: true },
+        take: 10
     }
+    return rs;
 }
 
 export const CourseRouteChecker = {

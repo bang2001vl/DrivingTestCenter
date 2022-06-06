@@ -86,7 +86,10 @@ export const FormIKExamSelector: FC<IProps> = (props) => {
                         boxShadow: state.isFocused ? "none" : "none"
                     }
                 }),
-                
+                menuList: (base)=>({
+                    ...base,
+                    alignItems: "start",
+                })
             }}
         />
         <FormHelperText>{props.formik.errors[props.fieldName]}</FormHelperText>
