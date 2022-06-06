@@ -32,6 +32,11 @@ model Account {
 
     session  Session[]
 
+    studingClass CONN_Student_Class[]
+    joingTest CONN_Student_ExamTest[]
+    workingTest CONN_Employee_ExamTest[]
+    teachingClass CONN_Employee_Class[]
+
     @@index([username, password])
     @@map("account")
 }
@@ -135,26 +140,6 @@ model ClassSchedule {
     @@map("classschedule")
 }
 
-model Student {
-    id        Int @id @default(autoincrement())
-    accountId  Int 
-
-    //account      Account                 @relation(fields: [accountId], references: [id])
-    classCNNs    CONN_Student_Class[]
-    examTestCNNs CONN_Student_ExamTest[]
-    @@map("student")
-}
-
-model Employee {
-    id        Int @id @default(autoincrement())
-    accountId Int 
-
-    //account      Account                  @relation(fields: [accountId], references: [id])
-    classCNNs    CONN_Employee_Class[]
-    examTestCNNs CONN_Employee_ExamTest[]
-    @@map("employee")
-}
-
 model Bill {
     id        Int  @id @default(autoincrement())
     studentId Int?
@@ -173,17 +158,18 @@ model Bill {
     // depositorStudent Student?     @relation(fields: [depositorId], references: [id])
     // recipientClass Class?     @relation(fields: [recipientId], references: [id], map: "fk_bill_class")
     // recipientExamTest ExamTest?     @relation(fields: [recipientId], references: [id], map: "fk_bill_examtest")
-    @@map("payment")
+    @@map("bill")
 }
 
 model CONN_Student_ExamTest {
     id           Int @id @default(autoincrement())
     studentId    Int
     examTestId   Int
-    billDetailId Int @unique
+
+    createdAt DateTime @default(now())
 
     examTest   ExamTest   @relation(fields: [examTestId], references: [id])
-    student    Student    @relation(fields: [studentId], references: [id])
+    student    Account    @relation(fields: [studentId], references: [id])
     @@map("conn_student_examtest")
 }
 
@@ -191,9 +177,10 @@ model CONN_Student_Class {
     id           Int @id @default(autoincrement())
     studentId    Int
     classId      Int
-    billDetailId Int @unique
+    
+    createdAt DateTime @default(now())
 
-    student    Student    @relation(fields: [studentId], references: [id])
+    student    Account    @relation(fields: [studentId], references: [id])
     class      Class      @relation(fields: [classId], references: [id])
     @@map("conn_student_class")
 }
@@ -202,8 +189,10 @@ model CONN_Employee_ExamTest {
     id         Int @id @default(autoincrement())
     employeeId Int
     examTestId Int
+    
+    createdAt DateTime @default(now())
 
-    employee Employee @relation(fields: [employeeId], references: [id])
+    employee Account @relation(fields: [employeeId], references: [id])
     examTest ExamTest @relation(fields: [examTestId], references: [id])
     @@map("conn_employee_examtest")
 }
@@ -212,8 +201,10 @@ model CONN_Employee_Class {
     id         Int @id @default(autoincrement())
     employeeId Int
     classId    Int
+    
+    createdAt DateTime @default(now())
 
-    employee Employee @relation(fields: [employeeId], references: [id])
+    employee Account @relation(fields: [employeeId], references: [id])
     class    Class    @relation(fields: [classId], references: [id])
     @@map("conn_employee_class")
 }
