@@ -16,7 +16,7 @@ interface IData {
     id: number,
     examId: number,
     name: string,
-    room: string,
+    location: string,
     dateTimeStart: Date,
     dateTimeEnd: Date,
     maxMember: number,
@@ -46,7 +46,8 @@ export const ExamTestTable: FC<IProps & DataTableLayoutProps> = (props) => {
         cells.push(<TableCell>{data.exam.name}</TableCell>);
         cells.push(<TableCell>{data.exam.type}</TableCell>);
         cells.push(<TableCell>{`${format(data.dateTimeStart, timeFormat)} - ${format(data.dateTimeEnd, timeFormat)}`}</TableCell>);
-        cells.push(<TableCell>{data.room}</TableCell>);
+        cells.push(<TableCell>{`${format(data.dateTimeStart, dateFormat)}`}</TableCell>);
+        cells.push(<TableCell>{data.location}</TableCell>);
 
         cells.push(<TableCell>
             <Box style={{ display: "flex" }}>

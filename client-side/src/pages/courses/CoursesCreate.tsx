@@ -34,7 +34,6 @@ export const CoursesCreate: FC<IProps> = (props) => {
     const api = useAPI();
     const [searchParams] = useSearchParams();
     const [initValue, setInitValue] = useState({
-        examOption: null,
         name: "",
         location: "",
         dateStart: new Date().toISOString(),

@@ -3,7 +3,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import CustomizedTabs from "../../components/tabs";
 import { DialogHelper } from "../../singleton/dialogHelper";
 import { EDIT_METHOD } from "../../_enums";
-import { ExamTestCreate } from "../examTest/examTestCreate";
 import ExamTestPage from "../examTest/examTestPage";
 import { ExamCreateUI } from "./examCreateUI";
 

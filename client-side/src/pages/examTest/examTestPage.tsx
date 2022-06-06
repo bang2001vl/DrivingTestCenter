@@ -1,16 +1,10 @@
-import { Icon } from "@iconify/react";
-
-import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { appConfig } from "../../configs";
 import useAPI from "../../hooks/useApi";
 import { DialogHelper } from "../../singleton/dialogHelper";
-import { useRootDialog } from "../../hooks/rootDialog";
-import { ExamController } from "../../api/controllers/examController";
-import { EDIT_METHOD } from "../../_enums";
-import { ExamTestCreate } from "./examTestCreate";
 import { ExamTestTable } from "./examTestTable";
 import DataTable4 from "../../sections/DataTable4";
+import { useState } from "react";
 
 const HEAD_LABEL = [
         { id: 'name', label: 'Tên ca thi', alignRight: false },
