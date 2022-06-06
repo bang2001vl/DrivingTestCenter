@@ -10,22 +10,25 @@ interface IProps {
 
 }
 
-export const ExamDetailPage : FC<IProps> = ()=>{
+export const ExamDetailPage: FC<IProps> = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
     const key = searchParams.get("id");
-    if(!key){
-        navigate("/", {replace: true});
+    if (!key) {
+        navigate("/", { replace: true });
         DialogHelper.showAlert("Not found id");
     }
 
     return <CustomizedTabs
-        listtab={["Thông tin", "Quản lý lớp", "Quản lý ca thi"]}
+        listtab={["Thông tin", "Quản lý ca thi"]}
     >
-        <ExamCreateUI method={EDIT_METHOD.update}/>
-        <ExamTestPage filter={{
-            examId: key
-        }}/> 
+        <ExamCreateUI method={EDIT_METHOD.update} hideTitle/>
+        <ExamTestPage
+            filter={{
+                "examId": key,
+            }}
+            hideTitle
+        />
     </CustomizedTabs>
 }

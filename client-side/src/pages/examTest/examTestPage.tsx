@@ -43,7 +43,8 @@ const orderOptionList = [
 
 
 interface IProps {
-    filter?: any,
+    filter?: {[key: string]: any},
+    hideTitle?: boolean,
 }
 
 export default function ExamTestPage(props: IProps){
@@ -58,10 +59,12 @@ const routeName = "examtest";
     }
 
     const handleSelect = (params: URLSearchParams)=>{
+        console.log("Filter", props.filter);
+        
         if(props.filter){
-            for(let key in Object.keys(props.filter)){
-                params.append(key, props.filter[key])
-            }
+            Object.keys(props.filter).forEach(key =>{
+                params.append(key, props.filter![key])
+            });
         }
         return api.get(
             `${appConfig.backendUri}/${routeName}/select/include/exam?${params.toString()}`
@@ -70,9 +73,9 @@ const routeName = "examtest";
 
     const handleCount = (params: URLSearchParams)=>{
         if(props.filter){
-            for(let key in Object.keys(props.filter)){
-                params.append(key, props.filter[key])
-            }
+            Object.keys(props.filter).forEach(key =>{
+                params.append(key, props.filter![key])
+            });
         }
         return api.get(
             `${appConfig.backendUri}/${routeName}/count?${params.toString()}`
@@ -120,8 +123,8 @@ const routeName = "examtest";
             searchOptionList={searchOptionList}
             orderOptionList={orderOptionList}
             searchbarText='Tìm tên ca thi'
-            title="Dashboard | Session"
-            textLabel="Ca thi"
+            title={"Dashboard | Session"}
+            textLabel={props.hideTitle ? "": "Ca thi"}
             needReload={loadChild} 
             onRenderItem={renderTable} 
             count={handleCount}

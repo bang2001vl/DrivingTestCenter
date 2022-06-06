@@ -11,6 +11,7 @@ interface IProps {
     dataList: IData[];
     onEdit?: (data: IData) => void,
     onDelete?: (data: IData) => void,
+    onDetail?: (data: IData) => void,
 }
 interface IData {
     id: number,
@@ -82,14 +83,19 @@ export const ExamTable: FC<IProps & DataTableLayoutProps> = (props) => {
                 data={item}
                 items={[
                     {
-                        label: "Delete",
-                        iconURI: "eva:trash-2-outline",
-                        onClick: props.onDelete
-                    },
-                    {
                         label: "Edit",
                         iconURI: "eva:edit-fill",
                         onClick: props.onEdit
+                    },
+                    {
+                        label: "Detail",
+                        iconURI: "eva:info-outline",
+                        onClick: props.onDetail
+                    },
+                    {
+                        label: "Delete",
+                        iconURI: "eva:trash-2-outline",
+                        onClick: props.onDelete
                     },
                 ]}
             ></ItemMoreMenu>

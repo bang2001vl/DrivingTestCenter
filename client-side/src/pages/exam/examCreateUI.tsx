@@ -28,6 +28,7 @@ import { BasicEditSection } from "../../sections/CRUD/BasicEditSection";
 interface IProps {
     method: EDIT_METHOD,
     editKey?: number,
+    hideTitle?: boolean,
 }
 interface ISessionData {
     id?: number,
@@ -173,7 +174,7 @@ export const ExamCreateUI: FC<IProps> = (props: IProps) => {
     const marginTop = 1;
 
     return <BasicEditSection
-        title="Tạo Kì Thi"
+        title={props.hideTitle ? "" : "Tạo Kì Thi"}
         initValues={initValue}
         onSuccess={handleSuccess}
         onClose={handleClose}

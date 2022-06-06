@@ -73,6 +73,10 @@ export default function ExamPageUI() {
         navigate("edit?id="+data.id);
     }
 
+    const handleDetail = (data: any) => {
+        navigate("detail?id="+data.id);
+    }
+
     const handleDelete = async (data: any) => {
         const id = data.id;
         const res = await api.deleteWithToken(
@@ -107,6 +111,7 @@ export default function ExamPageUI() {
             emptyView={emptyView}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onDetail={handleDetail}
         />
     }
 
