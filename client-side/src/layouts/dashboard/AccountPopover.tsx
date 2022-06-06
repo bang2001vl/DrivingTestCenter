@@ -143,14 +143,14 @@ export default function AccountPopover() {
         anchorEl={anchorRef.current}
         sx={{ width: 220 }}
       >
-      <Box sx={{ p: 2, pt: 1.5 }}>
+      {/* <Box sx={{ p: 2, pt: 1.5 }}>
         <Button fullWidth color="inherit" variant="outlined" href='/signup'>
-          Signup
+          Login
         </Button>
-      </Box>
+      </Box> */}
         <Box sx={{ p: 2, pt: 1.5 }}>
           <Button fullWidth color="inherit" variant="outlined" href='/login' onClick={handleLogin}>
-            Login/Signup
+            Login
           </Button>
         </Box>
       </MenuPopover>

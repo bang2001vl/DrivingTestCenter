@@ -8,13 +8,13 @@ import { ExamTable } from "./examTable";
 import DataTable4 from "../../sections/DataTable4";
 
 const EXAM_HEAD_LABEL = [
-    { id: 'name', label: 'Name', alignRight: false },
-    { id: 'type', label: 'Category', alignRight: false },
-    { id: 'dateRegist', label: 'Registration date', alignRight: false },
-    { id: 'dateExam', label: 'Exam date', alignRight: false },
-    { id: 'candidate', label: 'Candidates', alignRight: false },
-    { id: 'fee', label: 'Fees', alignRight: false },
-    { id: 'examStatus', label: 'Status', alignRight: false },
+    { id: 'name', label: 'Tên', alignRight: false },
+    { id: 'type', label: 'Loại bằng', alignRight: false },
+    { id: 'dateRegist', label: 'Ngày đăng ký', alignRight: false },
+    { id: 'dateExam', label: 'Ngày thi', alignRight: false },
+    { id: 'candidate', label: 'Thí sinh', alignRight: false },
+    { id: 'fee', label: 'Lệ phí', alignRight: false },
+    { id: 'examStatus', label: 'Trạng thái', alignRight: false },
     { id: '' }
 ]
 const searchOptionList = [{

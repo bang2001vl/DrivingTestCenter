@@ -8,13 +8,12 @@ import DataTable4 from "../../sections/DataTable4";
 import { AccountManagerTable } from "./AccountManagerTable";
 
 const HEAD_LABEL = [
-    { id: 'name', label: 'Name', alignRight: false },
-    { id: 'gender', label: 'Gender', alignRight: false },
+    { id: 'name', label: 'Tên', alignRight: false },
+    { id: 'gender', label: 'Giới tính', alignRight: false },
     { id: 'email', label: 'Email', alignRight: false },
-    { id: 'phoneNumber', label: 'Phone Number', alignRight: false },
-    { id: 'address', label: 'Address', alignRight: false },
-    { id: 'joinDate', label: 'Join Date', alignRight: false },
-    { id: 'status', label: 'Status', alignRight: false },
+    { id: 'phoneNumber', label: 'Số điện thoại', alignRight: false },
+    { id: 'address', label: 'Địa chỉ', alignRight: false },
+    { id: 'status', label: 'Vai trò', alignRight: false },
     { id: '' }
 ]
 const searchOptionList = [{
@@ -99,9 +98,9 @@ export default function AccountManagerPage() {
         <DataTable4
             searchOptionList={searchOptionList}
             orderOptionList={orderOptionList}
-            searchbarText='Tìm tên kì thi'
-            title="Dashboard | Exam"
-            textLabel="Kì thi"
+            searchbarText='Tìm tên tài khoản'
+            title="Dashboard | Account"
+            textLabel="Tài khoản"
             needReload={loadChild}
 
             onRenderItem={renderTable} 

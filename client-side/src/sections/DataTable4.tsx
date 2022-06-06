@@ -138,7 +138,7 @@ export default function DataTable4(props: TypeProps) {
     return (
         // @ts-ignore
         <Page title={props.title} >
-            <Container>
+            <Container style={{maxWidth: '1920px'}}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1.5}>
                     <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
                         {props.textLabel}
@@ -148,7 +148,7 @@ export default function DataTable4(props: TypeProps) {
                         onClick={() => handleCreate()}
                         startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
                     >
-                        Create new
+                        Thêm mới
                     </Button>
                 </Stack>
 

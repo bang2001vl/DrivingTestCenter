@@ -7,7 +7,7 @@ import useAPI from "../../hooks/useApi"
 import { appConfig } from "../../configs"
 import { LoadingButton, LocalizationProvider } from "@mui/lab"
 import AdapterDateFns from "@mui/lab/AdapterDateFns"
-import { Box, Button, MenuItem, Stack } from "@mui/material"
+import { Box, Button, MenuItem, Stack, Card } from "@mui/material"
 import { FormIkTextField } from "../../components/FormIK/TextField"
 import { EDIT_METHOD } from "../../_enums"
 import { useNavigate, useSearchParams } from "react-router-dom"
@@ -38,15 +38,15 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
     });
 
     const routeName = "account/manager";
-    
-    useEffect(()=>{
-        if(props.method === EDIT_METHOD.update){
+
+    useEffect(() => {
+        if (props.method === EDIT_METHOD.update) {
             const key = searchParams.get("id") && props.editKey;
             if (!key) {
                 navigate("/", { replace: true });
                 DialogHelper.showAlert("Not found id");
             }
-    
+
             api.getWithToken(
                 `${appConfig.backendUri}/${routeName}/select?${new URLSearchParams({
                     searchvalue: "",
@@ -57,11 +57,11 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
                     count: "1",
                     id: String(key),
                 }).toString()}`
-            ).then(res =>{
-                if(res.result && res.data){
-                   setInitValue(res.data[0]);
+            ).then(res => {
+                if (res.result && res.data) {
+                    setInitValue(res.data[0]);
                 }
-                else{
+                else {
                     DialogHelper.showAlert(res.errorMessage);
                 }
             });
@@ -91,23 +91,23 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
         const formData = new FormData();
 
         Object.keys(formik.values).forEach(key => {
-            if(formik.values[key]){
+            if (formik.values[key]) {
                 formData.append(key, formik.values[key])
             }
         });
 
-        if(props.method === EDIT_METHOD.create){
+        if (props.method === EDIT_METHOD.create) {
             return api.postWithToken(
-            `${appConfig.backendUri}/${routeName}/insert`,
-            formData,
-            {
-                headers: {
-                    'content-type': 'multipart/form-data'
+                `${appConfig.backendUri}/${routeName}/insert`,
+                formData,
+                {
+                    headers: {
+                        'content-type': 'multipart/form-data'
+                    }
                 }
-            }
-        );
+            );
         }
-        else{
+        else {
             formData.delete("id");
             formData.append("key", formik.values.id);
             return api.putWithToken(
@@ -122,17 +122,17 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
         }
     }
 
-    function handleSuccess(){
+    function handleSuccess() {
         DialogHelper.showAlert("Success");
         navigate(-1);
     }
 
-    function handleClose(){
+    function handleClose() {
         navigate(-1);
     }
 
     return <BasicEditSection
-        title="Create Account"
+        title="Tạo tài khoản"
         initValues={initValue}
         onSuccess={handleSuccess}
         onClose={handleClose}
@@ -140,47 +140,64 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
         submit={handleSubmit}
         formComponent={(formik, cancel, isLoading) => {
             return (
-                <Box style={{ width: "100%", minWidth: 800 }}>
-                    <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
-                        <Stack spacing={2} alignItems="center" justifyContent="start" marginTop={5} marginBottom={5}>
-                            <Stack direction={"row"}>
+                <Box style={{ width: "100%"}}>
+                    <Card>
+                        <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
+                            <Stack direction="row" spacing={5} alignItems="start" justifyContent="start" paddingTop={5} paddingBottom={5} paddingLeft={10} paddingRight={10}>
                                 <FormIkAvatar formik={formik} fieldName="avatar"
-                                    defaultValue={(()=>{console.log(formik.values["avatarURI"]);return true})() && formik.values["avatarURI"]}
+                                    defaultValue={(() => { console.log(formik.values["avatarURI"]); return true })() && formik.values["avatarURI"]}
                                     label="Avatar"
                                     propFormControl={{
                                         style: {
-                                            minWidth: 300
+                                            minWidth: 200
                                         }
                                     }}
                                 />
-                                <Stack spacing={2} alignItems="start" style={{minWidth: 500}} >
-                                    <FormIkTextField formik={formik} fieldName="username"
-                                        label="Tên đăng nhập"
-                                        fullWidth
-                                    />
+                                <Stack spacing={2} sx={{flex: 1}}>
+                                    <Box sx={{ width: "100%" }}>
+                                        <FormIkTextField formik={formik} fieldName="username"
+                                            label="Tên đăng nhập"
+                                            fullWidth
+                                        />
 
-                                    <FormIkTextField formik={formik} fieldName="password"
-                                        label="Mật khẩu"
-                                        type={"password"}
-                                        fullWidth
-                                    />
+                                    </Box>
+                                    <Box sx={{ width: "100%" }}>
+                                        <FormIkTextField formik={formik} fieldName="password"
+                                            label="Mật khẩu"
+                                            type={"password"}
+                                            fullWidth
+                                        />
+                                    </Box>
 
-                                    <FormIkTextField formik={formik} fieldName="fullname"
-                                        label="Họ và tên"
-                                        fullWidth
-                                    />
+                                    <Box sx={{ width: "100%" }}>
+                                        <FormIkTextField formik={formik} fieldName="fullname"
+                                            label="Họ và tên"
+                                            fullWidth
+                                        />
+                                    </Box>
 
-                                    <FormIkDatePicker formik={formik} fieldName="birthday"
-                                        label="Ngày sinh"
-                                    />
 
-                                    <FormIkTextField formik={formik} fieldName="gender"
-                                        label="Giới tính"
-                                        fullWidth
-                                        select
-                                    >
-                                        {["Nữ", "Nam"].map((e, index) => (<MenuItem key={e} value={index}>{String(e)}</MenuItem>))}
-                                    </FormIkTextField>
+                                    <Stack direction="row" spacing={2}>
+                                     
+                                            <FormIkDatePicker formik={formik} fieldName="birthday"
+                                                label="Ngày sinh"
+
+                                            />
+                                        
+                                        <Box sx={{ flex: 1}}>
+                                            <FormIkTextField formik={formik} fieldName="gender"
+                                                label="Giới tính"
+                                                fullWidth
+                                                select
+                                            >
+                                                {["Nữ", "Nam"].map((e, index) => (<MenuItem key={e} value={index}>{String(e)}</MenuItem>))}
+                                            </FormIkTextField>
+                                        </Box>
+                                    </Stack>
+
+
+
+
 
                                     <FormIkTextField formik={formik} fieldName="email"
                                         label="Email"
@@ -205,30 +222,27 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
                                             }
                                         }}
                                     />
-                                    <Stack direction={"row"} spacing={20} style={{alignSelf:"center"}}>
-                                <LoadingButton
-                                    variant="contained"
-                                    onClick={() => formik.handleSubmit()}
-                                    sx={{ width: "120px" }}
-                                >
-                                    Xác nhận
-                                </LoadingButton>
+                                    <Stack direction={"row"} spacing={20} style={{ alignSelf: "center", paddingTop: '20px'}}>
+                                        <LoadingButton
+                                            variant="contained"
+                                            onClick={() => formik.handleSubmit()}
+                                            sx={{ width: "120px" }}
+                                        >
+                                            Xác nhận
+                                        </LoadingButton>
 
-                                <Button
-                                    variant="outlined"
-                                    onClick={() => cancel()}
-                                    sx={{ width: "120px" }} >
-                                    Hủy
-                                </Button>
+                                        <Button
+                                            variant="outlined"
+                                            onClick={() => cancel()}
+                                            sx={{ width: "120px" }} >
+                                            Hủy
+                                        </Button>
+                                    </Stack>
+
                                 </Stack>
-                                
                             </Stack>
-                            </Stack>
-
-                            
-
-                        </Stack>
-                    </LocalizationProvider>
+                        </LocalizationProvider>
+                    </Card>
                 </Box>
             )
         }}

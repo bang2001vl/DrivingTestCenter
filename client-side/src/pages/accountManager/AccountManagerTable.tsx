@@ -45,11 +45,11 @@ export const AccountManagerTable: FC<IProps & DataTableLayoutProps> = (props) =>
             };
         } else if (data.roleId === 1) {
             return {
-                text: "Student",
+                text: "Học viên",
             };
         } else {
             return {
-                text: "Student",
+                text: "Giảng viên",
             };
         }
     }
@@ -59,8 +59,9 @@ export const AccountManagerTable: FC<IProps & DataTableLayoutProps> = (props) =>
         const role = getRole(item);
         const cells = new Array();
         cells.push(<TableCell>
-            <Stack direction={"row"} alignItems={"center"}>
-                <Avatar src={item.avatarURI ? createBEPublicURI(item.avatarURI) : appConfig.defaultImageURI} style={{width: 25, height: 25}}/>
+            <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                <Avatar src={item.avatarURI ? createBEPublicURI(item.avatarURI) : appConfig.defaultImageURI} style={{ width: 25, height: 25 }} />
+
                 <label>{item.fullname}</label>
             </Stack>
         </TableCell>);
@@ -68,7 +69,7 @@ export const AccountManagerTable: FC<IProps & DataTableLayoutProps> = (props) =>
         cells.push(<TableCell>{item.email}</TableCell>);
         cells.push(<TableCell>{item.phoneNumber}</TableCell>);
         cells.push(<TableCell>{item.address}</TableCell>);
-        cells.push(<TableCell>{format(parseISO(item.createdAt), timeFormat)}</TableCell>);
+        // cells.push(<TableCell>{format(parseISO(item.createdAt), timeFormat)}</TableCell>);
         cells.push(<TableCell>
 
             {role.text}
@@ -98,7 +99,7 @@ export const AccountManagerTable: FC<IProps & DataTableLayoutProps> = (props) =>
     }
 
     return <DataTableLayout
-    {...props}
+        {...props}
     >
         {props.dataList.map(e => renderRow(e))}
     </DataTableLayout>
