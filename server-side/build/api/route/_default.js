@@ -63,10 +63,12 @@ exports.RouteBuilder = {
             return result.count;
         }), tag, inputSource, onError);
     },
-    buildSelectRoute(repo, tag, customFilter, select, include) {
+    buildSelectRoute(repo, tag, customFilter, customSelect, customInclude) {
         return _wrapper_1.RouteHandleWrapper.wrapHandleInput((input) => __awaiter(this, void 0, void 0, function* () {
             const { searchby, searchvalue, orderby, orderdirection, start, count } = input;
-            const filter = customFilter ? customFilter(input) : {};
+            const filter = customFilter ? customFilter(input) : undefined;
+            const select = customSelect ? customSelect(input) : undefined;
+            const include = customInclude ? customInclude(input) : undefined;
             const result = yield repo.findMany({
                 where: Object.assign({ [searchby]: (!searchvalue || searchvalue === '') ? undefined : {
                         contains: searchvalue
@@ -88,7 +90,7 @@ exports.RouteBuilder = {
     buildCountRoute(repo, tag, customFilter) {
         return _wrapper_1.RouteHandleWrapper.wrapHandleInput((input) => __awaiter(this, void 0, void 0, function* () {
             const { searchby, searchvalue } = input;
-            const filter = customFilter ? customFilter(input) : {};
+            const filter = customFilter ? customFilter(input) : undefined;
             const result = yield repo.count({
                 where: Object.assign({ [searchby]: {
                         contains: searchvalue

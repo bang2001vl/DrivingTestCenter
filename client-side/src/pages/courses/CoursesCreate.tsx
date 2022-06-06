@@ -20,7 +20,7 @@ import { DialogHelper } from "../../singleton/dialogHelper"
 interface IProps {
     method: EDIT_METHOD,
 }
-export const AccountManagerCreate: FC<IProps> = (props) => {
+export const CoursesCreate: FC<IProps> = (props) => {
     const navigate = useNavigate();
     const api = useAPI();
     const [searchParams] = useSearchParams();
@@ -65,7 +65,7 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
                 }
             });
         }
-    }, [props.method, searchParams]);
+    }, [props.method]);
 
     const schema = yup.object({
         username: yup.string().required(),

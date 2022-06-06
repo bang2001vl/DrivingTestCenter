@@ -27,7 +27,7 @@ const _default_1 = require("../_default");
 const _wrapper_1 = require("../_wrapper");
 const repo = prisma_1.myPrisma.account;
 const tag = "AccountManager";
-const selectBasicInfo = {
+const selectBasicInfo = () => ({
     id: true,
     username: true,
     roleId: true,
@@ -39,7 +39,7 @@ const selectBasicInfo = {
     address: true,
     avatarURI: true,
     createdAt: true,
-};
+});
 const DEFAULT_UPLOAD_FOLDER = path_1.default.resolve(config_1.default.publicFolder, "uploads", "avatar");
 const upload = (0, multer_1.default)({
     storage: multer_1.default.diskStorage({
@@ -65,13 +65,14 @@ const AccountManagerRoute = () => {
 };
 exports.AccountManagerRoute = AccountManagerRoute;
 function customSelectFilter(input) {
-    const filter = {};
+    const rs = {};
     if (!isNaN(Number(input.roleId))) {
-        filter.roleId = Number(input.roleId);
+        rs.roleId = Number(input.roleId);
     }
     if (!isNaN(Number(input.id))) {
-        filter.id = Number(input.id);
+        rs.id = Number(input.id);
     }
+    return rs;
 }
 function checkInput_Insert(input) {
     if (input) {

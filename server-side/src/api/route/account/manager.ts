@@ -15,7 +15,7 @@ const repo = myPrisma.account;
 const tag = "AccountManager";
 
 
-const selectBasicInfo = {
+const selectBasicInfo = () => ({
     id: true,
     username: true,
     roleId: true,
@@ -29,7 +29,7 @@ const selectBasicInfo = {
     avatarURI: true,
 
     createdAt: true,
-}
+})
 
 const DEFAULT_UPLOAD_FOLDER = path.resolve(appConfig.publicFolder, "uploads", "avatar");
 const upload = multer({
@@ -92,13 +92,14 @@ export const AccountManagerRoute = () => {
 }
 
 function customSelectFilter(input: any){
-    const filter: any ={};
+    const rs: any ={};
     if (!isNaN(Number(input.roleId))) {
-        filter.roleId = Number(input.roleId);
+        rs.roleId = Number(input.roleId);
     }
     if (!isNaN(Number(input.id))) {
-        filter.id = Number(input.id);
+        rs.id = Number(input.id);
     }
+    return rs;
 }
 
 function checkInput_Insert(input: any) {

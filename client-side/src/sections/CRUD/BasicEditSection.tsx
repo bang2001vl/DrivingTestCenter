@@ -1,4 +1,4 @@
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import { FieldHelperProps, FieldInputProps, FieldMetaProps, FormikConfig, FormikErrors, FormikState, FormikTouched, FormikValues, useFormik } from "formik";
 import { FC, useEffect, useState } from "react";
 import { JsxElement } from "typescript";
@@ -16,8 +16,7 @@ export interface BasicEditSectionProps<T extends FormikValues = FormikValues, Ol
     initValues: T,
     formComponent: (formik: IFormIK<T>, cancel: () => void, isLoading: boolean) => JSX.Element,
     title: string,
-    submit: (formik: IFormIK<T>)=>Promise<MyResponse>,
-    loadOldData?: (params: any)=>Promise<MyResponse>,
+    submit: (formik: IFormIK<T>) => Promise<MyResponse>,
     validation?: (formik: IFormIK<T>) => any,
     oldData?: OldDataType,
     onSuccess?: () => void,
@@ -26,36 +25,26 @@ export interface BasicEditSectionProps<T extends FormikValues = FormikValues, Ol
 
 export const BasicEditSection: FC<BasicEditSectionProps> = (props) => {
     const [isLoading, setIsLoading] = useState(false);
-    const [searchParams] = useSearchParams();    
 
     const formik = useFormik({
         initialValues: props.initValues,
-        validate: (values)=>{
-
-        },
-        onSubmit: ()=>{
+        onSubmit: () => {
             handleSubmit();
         }, // Disable default handle
     });
 
-    useEffect(()=>{
-        if(props.loadOldData){
-            let params = Object.fromEntries([...searchParams as any]);
-            console.log("Search Params", params);
-            props.loadOldData(params)
-            .then(res =>{
-                if(res.result && res.data){
-                    Object.keys(res.data).forEach(key =>{
-                        formik.setFieldValue(key, res.data[key]);
-                    console.log(formik.values);
-                    });
-                }
-                else{
-                    DialogHelper.showAlert(res.errorMessage);
-                }
-            })
+    useEffect(() => {
+        loadInitValue();
+    }, [props.initValues]);
+
+    const loadInitValue = ()=>{
+        if (props.initValues) {
+            Object.keys(props.initValues).forEach(key => {
+                formik.setFieldValue(key, props.initValues[key]);
+                console.log(formik.values);
+            });
         }
-    }, [])
+    }
 
     async function handleSubmit() {
         console.log("Insert to db with", formik.values);
@@ -89,8 +78,11 @@ export const BasicEditSection: FC<BasicEditSectionProps> = (props) => {
 
     return (
         // @ts-ignore
-        <Page title={props.title} >
+        <Page  >
             <Container>
+                <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
+                    {props.title}
+                </Typography>
                 {props.formComponent(formik, handleCancel, isLoading)}
             </Container>
         </Page >

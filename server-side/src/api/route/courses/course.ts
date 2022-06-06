@@ -2,35 +2,34 @@ import { json, Router, urlencoded } from "express";
 import { myPrisma } from "../../../prisma";
 import { FieldGetter } from "../../handler/FieldGetter";
 import SessionHandler from "../../handler/session";
-import { parseInputDeleted } from "../utilities";
+import { buildResponseError, parseInputDeleted } from "../utilities";
 import { RouteBuilder } from "../_default";
 import { InputSource, RouteHandleWrapper } from "../_wrapper";
 
-const repo = myPrisma.examTest;
-const tag = "ExamTest";
+const repo = myPrisma.class;
+const tag = "Course";
 
-export const ExamTestRoute = () => {
+
+export const CourseRoute = () => {
     const route = Router();
     route.use(json());
 
+    const searchFields = ["name"];
+    const orderFields = ["name", "dateStart", "dateEnd"];
+
     route.get("/select",
-        RouteBuilder.buildSelectInputParser(["name"], ["name", "dateStart", "dateEnd"], tag),
-        RouteBuilder.buildSelectRoute(repo, tag),
+        RouteBuilder.buildSelectInputParser(searchFields, orderFields, tag),
+        RouteBuilder.buildSelectRoute(repo, tag, customFilter),
     );
 
-    route.get("/select/include/exam",
+    route.get("/select/include/",
         RouteBuilder.buildSelectInputParser(["name"], ["name", "dateStart", "dateEnd"], tag),
-        RouteBuilder.buildSelectRoute(repo, tag, undefined, undefined, ()=>({ exam: true })),
+        RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, customInclude),
     );
-
-    route.get("/select/detail",
-    RouteBuilder.buildSelectInputParser(["name"], ["name", "dateStart", "dateEnd"], tag),
-    RouteBuilder.buildSelectRoute(repo, tag, undefined, undefined, ()=>({ exam: true })),
-);
 
     route.get("/count",
         RouteBuilder.buildCountInputParser(["name"], tag),
-        RouteBuilder.buildCountRoute(repo, tag),
+        RouteBuilder.buildCountRoute(repo, tag, customFilter),
     );
 
     route.post("/insert",
@@ -63,6 +62,8 @@ function checkInput_Insert(input: any) {
             dateTimeStart: FieldGetter.Date(input, "dateTimeStart", true),
             dateTimeEnd: FieldGetter.Date(input, "dateTimeEnd", true),
             maxMember: FieldGetter.Number(input, "maxMember", true),
+            price: FieldGetter.Number(input, "price", true),
+            rules: FieldGetter.String(input, "rules", false),
         }
 
         return {
@@ -83,13 +84,35 @@ function checkInput_Update(input: any) {
         }
 
         return {
-            key: input.key,
+            key: FieldGetter.Number(input, "key", true),
             data
         };
     }
 }
 
-export const ExamTestChecker = {
+function customFilter(input: any) {
+    const rs: any = {};
+    if (!isNaN(Number(input.examId))) {
+        rs.examId = Number(input.examId)
+    }
+    return rs;
+}
+
+function customInclude(input: any) {
+    if (input && typeof input.include === "string") {
+        try {
+            const rs: any = {};
+            const include = JSON.parse(input.include);
+            if (include.exam) {
+                rs.exam = true;
+            }
+            return rs;
+        }
+        catch (ex) { throw buildResponseError(1, "Invalid include"); }
+    }
+}
+
+export const CourseRouteChecker = {
     checkInput_Insert,
     checkInput_Update,
 }

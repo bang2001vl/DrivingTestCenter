@@ -58,10 +58,12 @@ export const RouteBuilder = {
         }, tag, inputSource, onError);
     },
 
-    buildSelectRoute(repo: PrismaDelegate, tag: string, customFilter?: (input: any) => any, select?: any, include?: any) {
+    buildSelectRoute(repo: PrismaDelegate, tag: string, customFilter?: (input: any) => any, customSelect?: (input: any) => any, customInclude?: (input: any) => any) {
         return RouteHandleWrapper.wrapHandleInput(async (input) => {
             const { searchby, searchvalue, orderby, orderdirection, start, count } = input;
-            const filter = customFilter ? customFilter(input) : {};
+            const filter = customFilter ? customFilter(input) : undefined;
+            const select = customSelect ? customSelect(input) : undefined;
+            const include = customInclude ? customInclude(input) : undefined;
             const result = await repo.findMany({
                 where: {
                     [searchby]: (!searchvalue || searchvalue === '') ? undefined : {
@@ -88,7 +90,7 @@ export const RouteBuilder = {
     buildCountRoute(repo: PrismaDelegate, tag: string, customFilter?: (input: any) => any) {
         return RouteHandleWrapper.wrapHandleInput(async (input) => {
             const { searchby, searchvalue } = input;
-            const filter = customFilter ? customFilter(input) : {};
+            const filter = customFilter ? customFilter(input) : undefined;
             const result = await repo.count({
                 where: {
                     [searchby]: {
