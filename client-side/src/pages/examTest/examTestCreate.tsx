@@ -150,28 +150,26 @@ export const ExamTestCreate: FC<IProps> = (props) => {
                 <Card style={{ alignItems: "center", justifyContent: 'center', textAlign: "center", marginTop: '15px', padding: "5%" }} >
                     <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
                         <Stack direction="row" spacing={2}>
-                        < Box sx={{ minWidth: "50%" }}>
-                        <FormIkTextField formik={formik} fieldName="name"
+                            <FormIkTextField formik={formik} fieldName="name"
                                 fullWidth
                                 label="Name"
 
                             />
-                                </Box>
 
                             < Box sx={{ minWidth: "50%" }}>
-                                    <FormIKExamSelector formik={formik} fieldName="examOption"
-                                        placeholder="Exam"
-                                        propFormControl={{
-                                            fullWidth: true,
-                                            sx: { height: "100%" }
-                                        }}
-                                    />
-                                </Box>
+                                <FormIKExamSelector formik={formik} fieldName="examOption"
+                                    placeholder="Exam"
+                                    propFormControl={{
+                                        fullWidth: true,
+                                        sx: { height: "100%" }
+                                    }}
+                                />
+                            </Box>
                         </Stack>
                         <Stack direction="row" spacing={2}>
                             <Box sx={{ width: "50%" }}>
                                 <FormIkRoom formik={formik} fieldName="location"
-                                fullWidth
+                                    fullWidth
                                     label="Location"
                                     sx={{ marginTop, textAlign: "start" }}
                                 />
@@ -199,10 +197,8 @@ export const ExamTestCreate: FC<IProps> = (props) => {
                             </Box>
 
                         </Stack>
-
-
-                        <Box>
-                        <Stack direction={"row"} spacing={20} style={{ alignSelf: "center" }}>
+                        <Stack alignItems={"center"}>
+                            <Stack direction={"row"} spacing={20} style={{ alignSelf: "center", justifyContent: "space-around", marginTop: 20, maxWidth: 400 }}>
                                 <LoadingButton
                                     variant="contained"
                                     onClick={() => formik.handleSubmit()}
@@ -218,7 +214,7 @@ export const ExamTestCreate: FC<IProps> = (props) => {
                                     Hủy
                                 </Button>
                             </Stack>
-                        </Box>
+                        </Stack>
                     </LocalizationProvider>
                 </Card >
             )
@@ -227,142 +223,3 @@ export const ExamTestCreate: FC<IProps> = (props) => {
 
     </BasicEditSection >
 }
-
-// interface IProps {
-//     method: EDIT_METHOD,
-//     oldData?: { id: number, exam: any } & IData,
-//     onSuccess?: () => void,
-//     onClose?: () => void,
-//     onSubmit?: (value: IData) => void,
-//     isExamCreate?: boolean,
-// }
-
-// interface IData {
-//     id?: number,
-//     examOption?: any,
-//     name: string,
-//     location: string,
-//     dateTimeStart: string,
-//     dateTimeEnd: string,
-//     maxMember: number | string,
-// }
-
-// const routeName = "examtest";
-
-// export const ExamTestCreate: FC<IProps> = (props: IProps) => {
-//     const navigate = useNavigate();
-//     const api = useAPI();
-//     const [isLoading, setIsLoading] = useState(false);
-
-//     const validSchema = yup.object();
-
-//     const formik = useFormik<IData>({
-//         initialValues: props.oldData ? {
-//             examOption: { label: props.oldData.exam.name, value: props.oldData.exam },
-//             name: props.oldData.name,
-//             location: props.oldData.location,
-//             dateTimeStart: props.oldData.dateTimeStart,
-//             dateTimeEnd: props.oldData.dateTimeEnd,
-//             maxMember: props.oldData.maxMember,
-//         } : {
-            
-//         },
-//         validationSchema: validSchema,
-//         onSubmit: async (values) => {
-//             console.log("Create ExamTest with", values);
-//             console.log("Valid", validSchema.validateSync(values));
-//             if (!props.isExamCreate) {
-//                 const errors = customValid(values as IData);
-//                 if (Object.keys(errors).length > 0) {
-//                     console.log("Custom errors", errors);
-//                     formik.setErrors(errors);
-//                     return;
-//                 }
-//             }
-//             if (props.onSubmit === undefined) {
-//                 let examId = Number(values.examOption.value.id);
-//                 delete values.examOption;
-//                 // OK
-//                 let data = {
-//                     ...values,
-//                     examId,
-//                 }
-//                 setIsLoading(true);
-//                 let result: MyResponse;
-//                 if (props.method === EDIT_METHOD.create) {
-//                     result = await api.postWithToken(`${appConfig.backendUri}/${routeName}/insert`, data);
-//                 }
-//                 else {
-//                     result = await api.putWithToken(`${appConfig.backendUri}/${routeName}/update`, {
-//                         ...data,
-//                         key: props.oldData!.id,
-//                     });
-//                 }
-//                 setIsLoading(false)
-//                 if (result.errorCode) {
-//                     DialogHelper.showAlert(result.errorMessage);
-//                 }
-//                 else {
-//                     DialogHelper.showAlert("Success");
-//                     if (props.onSuccess) {
-//                         props.onSuccess();
-//                     }
-//                 }
-//             }
-//             else {
-//                 const fakeID: number = 999999;
-//                 let data = {
-//                     ...values,
-//                     fakeID,
-//                 };
-//                 props.onSubmit(data);
-//                 if (props.onClose) {
-//                     props.onClose()
-//                 }
-
-//             };
-
-
-//         }
-//     });
-
-//     const onClickCancel = () => {
-//         //window.alert("Clicked delete on item = " + JSON.stringify(item, undefined, 4));
-//         const result = DialogHelper.showConfirm("Bạn muốn hủy tạo ca thi này?");
-//         if (result) {
-//             (props.onClose) ? props.onClose() : navigate("/dashboard/session");
-//         }
-//     }
-//     function customValid(vals: IData) {
-//         let errors: any = {}
-//         if (!isBefore(new Date(vals.dateTimeStart), new Date(vals.dateTimeEnd))) {
-//             errors.dateClose = "Date time start must bigger than date time end";
-//         }
-//         if (!vals.examOption) {
-//             errors.examOption = "This field is required";
-//         }
-//         return errors;
-//     }
-
-//     function getTitle(method: EDIT_METHOD) {
-//         return method === EDIT_METHOD.create ? "Exam | Create" : "Exam | Update";
-//     }
-
-//     function renderHeader(method: EDIT_METHOD) {
-//         const label = method === EDIT_METHOD.create ? "Tạo ca thi" : "Chỉnh sửa ca thi";
-//         return label;
-//     }
-
-//     const marginTop = 2;
-//     return (
-//         // @ts-ignore
-//         <Page title={getTitle(props.method)} >
-//             <Container>
-//                 <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
-//                     {renderHeader(props.method)}
-//                 </Typography>
-                
-//             </Container>
-//         </Page >
-//     );
-// }

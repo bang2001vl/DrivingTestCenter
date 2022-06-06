@@ -70,7 +70,7 @@ export default function ExamPageUI() {
     }
     
     const handleEdit = (data: any) => {
-        navigate("edit/"+data.id);
+        navigate("edit?id="+data.id);
     }
 
     const handleDelete = async (data: any) => {

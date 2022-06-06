@@ -29,21 +29,28 @@ export default function RootRouter() {
       element: <DashboardLayout />,
       children: [
         { path: 'home', element: <HomePage /> },
+
         { path: 'exam', element: <ExamPageUI /> },
+        { path: 'exam/create', element: <ExamCreateUI method={EDIT_METHOD.create}/> },
+        { path: 'exam/edit', element: <ExamCreateUI method={EDIT_METHOD.update}/> },
         { path: 'exam/detail', element: <ExamDetailPage /> },
+
         { path: 'session', element: <ExamTestPage /> },
+        { path: 'session/create', element: <ExamTestCreate method={EDIT_METHOD.create} /> },
+        { path: 'session/edit', element: <ExamTestCreate method={EDIT_METHOD.update} /> },
+
         { path: 'course', element: <CoursesPage /> },
         { path: 'course/create', element: <CoursesCreate method={EDIT_METHOD.create} /> },
         { path: 'course/edit', element: <CoursesCreate method={EDIT_METHOD.update} /> },
+
         { path: 'lecture', element: <LecturesPage /> },
+
         { path: 'account/manager', element: <AccountManagerPage /> },
         { path: 'account/manager/create', element: <AccountManagerCreate method={EDIT_METHOD.create} /> },
         { path: 'account/manager/edit', element: <AccountManagerCreate method={EDIT_METHOD.update} /> },
+
         { path: 'receipt', element: <ReceiptsPage /> },
         { path: 'report', element: <ReportsPage /> },
-    //    { path:"/exam/edit/:id", element: <ExamCreateUI method={EDIT_METHOD.update} />},
-        { path: 'exam/create', element: <ExamCreateUI method={EDIT_METHOD.create} /> },
-        { path: 'session/create', element: <ExamTestCreate method={EDIT_METHOD.create} /> },
       ]
     },
     {
