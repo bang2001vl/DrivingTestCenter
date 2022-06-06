@@ -29,31 +29,31 @@ export const ExamTable: FC<IProps & DataTableLayoutProps> = (props) => {
         const now = new Date();
         if (isAfter(data.dateOpen, now)) {
             return {
-                text: "Pre-Open",
+                text: "Chưa mở",
                 color: "#1BB3E3",
             }
         }
         else if (isAfter(data.dateClose, now)) {
             return {
-                text: "Opening",
+                text: "Đang mở",
                 color: "#00DB99",
             };
         }
         else if (isAfter(data.dateStart, now)) {
             return {
-                text: "Pre-Start",
+                text: "Đã đóng",
                 color: "#D31BE3",
             };
         }
         else if (isAfter(data.dateEnd, now)) {
             return {
-                text: "Happening",
+                text: "Đang thi",
                 color: "#E3931B",
             };
         }
         else {
             return {
-                text: "Closed",
+                text: "Kết thúc",
                 color: "#E31B1B",
             };
         }

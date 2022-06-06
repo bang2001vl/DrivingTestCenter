@@ -5,5 +5,5 @@ export let appConfig = {
     defaultImageURI: "/static/mock-images/avatars/avatar_default.jpg",
     backendUri: "http://192.168.43.89:5000",
     //backendUri: "http://localhost:5000",
-    // backendUri: "http://thunderv.southeastasia.cloudapp.azure.com:5000",
+    //backendUri: "http://thunderv.southeastasia.cloudapp.azure.com:5000",
 }

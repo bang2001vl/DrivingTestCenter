@@ -1,4 +1,4 @@
-import { Stack, StackProps, TextFieldProps } from "@mui/material"
+import { Box, Stack, StackProps, TextFieldProps } from "@mui/material"
 import { FC } from "react"
 import { decodeAddress, encodeAddress, getDVHC_Lv1, getDVHC_Lv2, getDVHC_Lv3 } from "../../../_helper/address"
 import { IFormIK } from "../../../_interfaces/formik"
@@ -19,37 +19,46 @@ export const FormIkAddress: FC<IProps> = (props) => {
 
     const lv2s = getDVHC_Lv2(address[0]);
     const lv3s = getDVHC_Lv3(address[0], address[1]);
-    return <Stack {...props.propsStack}>
-        <FormIkSelect formik={props.formik} fieldName={props.fieldName}
-            label={"Chọn tỉnh/ thành phố"}
-            options={lv1s}
-            onChange={(ev) => {
-                //console.log("Onchange with ", ev);
-                props.formik.setFieldValue(props.fieldName, encodeAddress([ev.target.value]));
-            }}
-            value={address[0]}
-            {...props.propsItem}
-        />
+    return <Stack {...props.propsStack} spacing={'auto'}>
+        <Box sx={{ minWidth: "32%" }}>
+            <FormIkSelect formik={props.formik} fieldName={props.fieldName}
+                label={"Chọn tỉnh/ thành phố"}
+                options={lv1s}
+                fullWidth
+                onChange={(ev) => {
+                    //console.log("Onchange with ", ev);
+                    props.formik.setFieldValue(props.fieldName, encodeAddress([ev.target.value]));
+                }}
+                value={address[0]}
+                {...props.propsItem}
+            />
+        </Box>
 
-        <FormIkSelect formik={props.formik} fieldName={props.fieldName}
-            label={"Chọn quận/ huyện"}
-            options={lv2s}
-            onChange={(ev) => {
-                //console.log("Onchange with ", ev);
-                props.formik.setFieldValue(props.fieldName, encodeAddress([address[0], ev.target.value]));
-            }}
-            value={address[1]}
-            {...props.propsItem}
-        />
-        <FormIkSelect formik={props.formik} fieldName={props.fieldName}
-            label={"Chọn xã/ phường"}
-            options={lv3s}
-            onChange={(ev) => {
-                //console.log("Onchange with ", ev);
-                props.formik.setFieldValue(props.fieldName, encodeAddress([address[0], address[1], ev.target.value]));
-            }}
-            value={address[2]}
-            {...props.propsItem}
-        />
+        <Box sx={{ minWidth: "32%" }}>
+            <FormIkSelect formik={props.formik} fieldName={props.fieldName}
+                label={"Chọn quận/ huyện"}
+                options={lv2s}
+                onChange={(ev) => {
+                    //console.log("Onchange with ", ev);
+                    props.formik.setFieldValue(props.fieldName, encodeAddress([address[0], ev.target.value]));
+                }}
+                value={address[1]}
+                fullWidth
+                {...props.propsItem}
+            />
+        </Box>
+        <Box sx={{ minWidth: "32%" }}>
+            <FormIkSelect formik={props.formik} fieldName={props.fieldName}
+                label={"Chọn xã/ phường"}
+                options={lv3s}
+                onChange={(ev) => {
+                    //console.log("Onchange with ", ev);
+                    props.formik.setFieldValue(props.fieldName, encodeAddress([address[0], address[1], ev.target.value]));
+                }}
+                value={address[2]}
+                fullWidth
+                {...props.propsItem}
+            />
+        </Box>
     </Stack>
 }
