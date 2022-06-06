@@ -20,7 +20,7 @@ export const ExamTestRoute = () => {
 
     route.get("/select/include/exam",
         RouteBuilder.buildSelectInputParser(["name"], ["name", "dateStart", "dateEnd"], tag),
-        RouteBuilder.buildSelectRoute(repo, tag, undefined, undefined, ()=>({ exam: true })),
+        RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, ()=>({ exam: true })),
     );
 
     route.get("/select/detail",
@@ -87,6 +87,14 @@ function checkInput_Update(input: any) {
             data
         };
     }
+}
+
+function customFilter(input: any){
+    const rs: any = {};
+    if(!isNaN(input.examId)){
+        rs.examId = Number(input.examId);
+    }
+    return rs;
 }
 
 export const ExamTestChecker = {

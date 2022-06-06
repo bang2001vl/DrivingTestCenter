@@ -4,11 +4,11 @@ import { optionCSS } from "react-select/dist/declarations/src/components/Option"
 import { IFormIK } from "../../_interfaces/formik"
 import { ISelectable } from "../../_interfaces/selectable"
 
-interface IProps<T = any> {
+export interface FormIkSelectProps<T = any> {
     formik: IFormIK, fieldName: string,
     options: ISelectable<T>[],
 }
-export const FormIkSelect: FC<IProps & TextFieldProps> = (props) => {
+export const FormIkSelect: FC<FormIkSelectProps & TextFieldProps> = (props) => {
     const customProps: any = {
         ...props,
     }

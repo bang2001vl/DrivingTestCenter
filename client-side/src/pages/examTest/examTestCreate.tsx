@@ -2,6 +2,8 @@ import { LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { Box, Button, Card, Container, FormControl, Grid, Stack, TextField, TextFieldProps, Typography } from "@mui/material";
 import { addDays, isBefore } from "date-fns";
+import addHours from "date-fns/addHours";
+import addMinutes from "date-fns/addMinutes";
 import { useFormik } from "formik";
 import React, { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +12,7 @@ import { MyResponse } from "../../api/service";
 import { FormIkDateTimePicker } from "../../components/FormIK/DateTimePicker";
 import { FormIkNumberField } from "../../components/FormIK/NumberField";
 import { FormIKExamSelector } from "../../components/FormIK/Selectors/examSelectors";
+import { FormIkRoom } from "../../components/FormIK/Selectors/Rooms";
 import { FormIkTextField } from "../../components/FormIK/TextField";
 import Page from "../../components/Page";
 import CustomizedTabs from "../../components/tabs";
@@ -75,7 +78,7 @@ export const ExamTestCreate: FC<IProps> = (props: IProps) => {
             name: "",
             location: "",
             dateTimeStart: new Date().toISOString(),
-            dateTimeEnd: addDays(new Date(), 1).toISOString(),
+            dateTimeEnd: addHours(new Date(), 1).toISOString(),
             maxMember: "",
         },
         validationSchema: validSchema,
@@ -195,10 +198,10 @@ export const ExamTestCreate: FC<IProps> = (props: IProps) => {
                         </Stack>
                         <Stack direction="row" spacing={2}>
                             <Box sx={{ width: "50%" }}>
-                                <FormIkTextField formik={formik} fieldName="location"
-                                    fullWidth
+                                <FormIkRoom formik={formik} fieldName="location"
+                                fullWidth
                                     label="Location"
-                                    sx={{ marginTop }}
+                                    sx={{ marginTop, textAlign: "start" }}
                                 />
                             </Box>
                             <Box sx={{ minWidth: "50%" }}>

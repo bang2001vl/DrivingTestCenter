@@ -20,6 +20,7 @@ import AccountManagerPage from "../pages/accountManager/AccountManagerPage";
 import { AccountManagerCreate } from "../pages/accountManager/AccountManagerCreate";
 import CoursesPage from "../pages/courses/CoursesPage";
 import { CoursesCreate } from "../pages/courses/CoursesCreate";
+import { ExamDetailPage } from "../pages/exam/examDetailPage";
 
 export default function RootRouter() {
   return useRoutes([
@@ -29,6 +30,7 @@ export default function RootRouter() {
       children: [
         { path: 'home', element: <HomePage /> },
         { path: 'exam', element: <ExamPageUI /> },
+        { path: 'exam/detail', element: <ExamDetailPage /> },
         { path: 'session', element: <ExamTestPage /> },
         { path: 'course', element: <CoursesPage /> },
         { path: 'course/create', element: <CoursesCreate method={EDIT_METHOD.create} /> },

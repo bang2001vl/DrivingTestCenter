@@ -47,9 +47,13 @@ const orderOptionList = [
     }
 ];
 
-const routeName = "examtest";
 
-export default function ExamTestPage(){
+interface IProps {
+    filter?: any,
+}
+
+export default function ExamTestPage(props: IProps){
+const routeName = "examtest";
     const navigate = useNavigate();
     const api = useAPI();
     
@@ -60,12 +64,22 @@ export default function ExamTestPage(){
     }
 
     const handleSelect = (params: URLSearchParams)=>{
+        if(props.filter){
+            for(let key in Object.keys(props.filter)){
+                params.append(key, props.filter[key])
+            }
+        }
         return api.get(
             `${appConfig.backendUri}/${routeName}/select/include/exam?${params.toString()}`
         );
     }
 
     const handleCount = (params: URLSearchParams)=>{
+        if(props.filter){
+            for(let key in Object.keys(props.filter)){
+                params.append(key, props.filter[key])
+            }
+        }
         return api.get(
             `${appConfig.backendUri}/${routeName}/count?${params.toString()}`
         );
