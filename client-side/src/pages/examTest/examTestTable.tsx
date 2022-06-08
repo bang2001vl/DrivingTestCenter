@@ -1,5 +1,6 @@
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { format, isAfter, isBefore } from "date-fns";
+import { type } from "os";
 import { FC } from "react";
 import internal from "stream";
 import { BorderLinearProgress } from "../../components/LinearProgress";
@@ -23,7 +24,8 @@ interface IData {
     countStudent: number,
     exam: { type: string, name: string, },
 }
-export const ExamTestTable: FC<IProps & DataTableLayoutProps> = (props) => {
+export type ExamTestTableProps = IProps & DataTableLayoutProps;
+export const ExamTestTable: FC<ExamTestTableProps> = (props) => {
     function getStatus(data: IData) {
         const now = new Date();
         if (isAfter(data.dateTimeStart, now)) {
@@ -58,23 +60,31 @@ export const ExamTestTable: FC<IProps & DataTableLayoutProps> = (props) => {
         cells.push(<TableCell>
             <ItemMoreMenu
                 data={data}
-                items={[
-                    {
-                        label: "Delete",
-                        iconURI: "eva:trash-2-outline",
-                        onClick: props.onDelete
-                    },
-                    {
-                        label: "Edit",
-                        iconURI: "eva:edit-fill",
-                        onClick: props.onEdit
-                    },
-                ]}
+                items={buildActions()}
             ></ItemMoreMenu>
         </TableCell>);
         return <TableRow
         >{cells}
         </TableRow>;
+    }
+
+    const buildActions = ()=>{
+        const actions = [];
+        if (props.onDelete) {
+            actions.push({
+                label: "Delete",
+                iconURI: "eva:trash-2-outline",
+                onClick: props.onDelete
+            });
+        }
+        if (props.onEdit) {
+            actions.push({
+                label: "Edit",
+                iconURI: "eva:edit-fill",
+                onClick: props.onEdit
+            });
+        }
+        return actions;
     }
 
     return <DataTableLayout

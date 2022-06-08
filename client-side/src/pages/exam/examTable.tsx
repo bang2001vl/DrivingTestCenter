@@ -65,20 +65,25 @@ export const ExamTable: FC<IProps & DataTableLayoutProps> = (props) => {
         const status = getStatus(item);
 
         const cells = new Array();
-        cells.push(<TableCell>{item.name}</TableCell>);
-        cells.push(<TableCell>{item.type}</TableCell>);
-        cells.push(<TableCell>{`${format(item.dateOpen, timeFormat)} - ${format(item.dateClose, timeFormat)}`}</TableCell>);
-        cells.push(<TableCell>{`${format(item.dateStart, timeFormat)} - ${format(item.dateEnd, timeFormat)}`}</TableCell>);
-        cells.push(<TableCell>
-            <Box style={{ display: "flex" }}>
-                <BorderLinearProgress style={{ margin: '3px', marginRight: "5", width: "50px" }} variant="determinate" value={(Number(item.countStudent / item.maxMember) * 100 == 0 ? 1 : Number(item.countStudent / item.maxMember) * 100)}></BorderLinearProgress>
-                {`${item.countStudent}/${item.maxMember}`}
-            </Box></TableCell>);
-        cells.push(<TableCell>{formatNumber(item.price)}</TableCell>);
-        cells.push(<TableCell>
-            {status.text}
-        </TableCell>);
-        cells.push(<TableCell>
+        cells.push(<TableCell key={1}>{item.name}</TableCell>);
+        cells.push(<TableCell key={2}>{item.type}</TableCell>);
+        cells.push(<TableCell key={3}>{`${format(item.dateOpen, timeFormat)} - ${format(item.dateClose, timeFormat)}`}</TableCell>);
+        cells.push(<TableCell key={4}>{`${format(item.dateStart, timeFormat)} - ${format(item.dateEnd, timeFormat)}`}</TableCell>);
+        cells.push(
+            <TableCell key={5}>
+                <Box style={{ display: "flex" }}>
+                    <BorderLinearProgress style={{ margin: '3px', marginRight: "5", width: "50px" }} variant="determinate" value={(Number(item.countStudent / item.maxMember) * 100 == 0 ? 1 : Number(item.countStudent / item.maxMember) * 100)}></BorderLinearProgress>
+                    {`${item.countStudent}/${item.maxMember}`}
+                </Box>
+            </TableCell>
+        );
+        cells.push(<TableCell key={6}>{formatNumber(item.price)}</TableCell>);
+        cells.push(
+            <TableCell key={7}>
+                {status.text}
+            </TableCell>
+        );
+        cells.push(<TableCell key={8}>
             <ItemMoreMenu
                 data={item}
                 items={[
@@ -100,13 +105,13 @@ export const ExamTable: FC<IProps & DataTableLayoutProps> = (props) => {
                 ]}
             ></ItemMoreMenu>
         </TableCell>);
-        return <TableRow
-        >{cells}
+        return <TableRow key={item.id}>
+            {cells}
         </TableRow>;
     }
 
     return <DataTableLayout
-    {...props}
+        {...props}
     >
         {props.dataList.map(e => renderRow(e))}
     </DataTableLayout>

@@ -10,28 +10,40 @@ const repo = myPrisma.examTest;
 const tag = "ExamTest";
 
 export const ExamTestRoute = () => {
+    const searchProps = ["name"];
+    const sortProps = ["name", "dateStart", "dateEnd"];
     const route = Router();
     route.use(json());
 
     route.get("/select",
-        RouteBuilder.buildSelectInputParser(["name"], ["name", "dateStart", "dateEnd"], tag),
-        RouteBuilder.buildSelectRoute(repo, tag),
-    );
-
-    route.get("/select/include/exam",
-        RouteBuilder.buildSelectInputParser(["name"], ["name", "dateStart", "dateEnd"], tag),
+        RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag),
         RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, ()=>({ exam: true })),
     );
 
+    route.get("/select/include",
+        RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag),
+        RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, ()=>({ exam: true })),
+    );
+
+    route.get("/overview/select",
+    RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag),
+    RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, ()=>({ exam: true })),
+);
+
     route.get("/select/detail",
-    RouteBuilder.buildSelectInputParser(["name"], ["name", "dateStart", "dateEnd"], tag),
+    RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag),
     RouteBuilder.buildSelectRoute(repo, tag, undefined, undefined, ()=>({ exam: true })),
 );
 
     route.get("/count",
-        RouteBuilder.buildCountInputParser(["name"], tag),
+        RouteBuilder.buildCountInputParser(searchProps, tag),
         RouteBuilder.buildCountRoute(repo, tag),
     );
+
+    route.get("/overview/count",
+    RouteBuilder.buildCountInputParser(searchProps, tag),
+    RouteBuilder.buildCountRoute(repo, tag),
+);
 
     route.post("/insert",
         SessionHandler.roleChecker([0]),
@@ -91,6 +103,9 @@ function checkInput_Update(input: any) {
 
 function customFilter(input: any){
     const rs: any = {};
+    if(!isNaN(input.id)){
+        rs.id = Number(input.id);
+    }
     if(!isNaN(input.examId)){
         rs.examId = Number(input.examId);
     }

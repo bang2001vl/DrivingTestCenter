@@ -17,7 +17,7 @@ const tag = "Exam";
 const ExamRoute = () => {
     const route = (0, express_1.Router)();
     route.use((0, express_1.json)());
-    route.get("/select", _default_1.RouteBuilder.buildSelectInputParser(["name"], ["name", "dateStart", "dateEnd"], tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag));
+    route.get("/select", _default_1.RouteBuilder.buildSelectInputParser(["name"], ["name", "dateStart", "dateEnd"], tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter));
     route.get("/count", _default_1.RouteBuilder.buildCountInputParser(["name"], tag), _default_1.RouteBuilder.buildCountRoute(repo, tag));
     route.post("/insert", session_1.default.roleChecker([0]), _wrapper_1.RouteHandleWrapper.wrapCheckInput(checkInput_Insert, tag), _default_1.RouteBuilder.buildNestInsertManyCheckerRoute("examTest", "examId", examTest_1.ExamTestChecker.checkInput_Insert), _default_1.RouteBuilder.buildInsertRoute(repo, tag));
     route.put("/update", session_1.default.roleChecker([0]), _wrapper_1.RouteHandleWrapper.wrapCheckInput(checkInput_Update, tag), _default_1.RouteBuilder.buildNestInsertManyCheckerRoute("examTest", "examId", examTest_1.ExamTestChecker.checkInput_Insert), _default_1.RouteBuilder.buildDeleteNestedData("examTest", "id"), _default_1.RouteBuilder.buildUpdateRoute(repo, tag));
@@ -57,8 +57,18 @@ function checkInput_Update(input) {
             price: FieldGetter_1.FieldGetter.Number(input, "price"),
         };
         return {
-            key: input.key,
+            key: FieldGetter_1.FieldGetter.Number(input, "key"),
             data
         };
     }
+}
+function customFilter(input) {
+    const rs = {};
+    console.log("here1");
+    console.log("Input: " + JSON.stringify(input, null, 2));
+    if (input.id) {
+        console.log("here2");
+        rs.id = FieldGetter_1.FieldGetter.Number(input, "id", true);
+    }
+    return rs;
 }

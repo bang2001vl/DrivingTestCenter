@@ -16,7 +16,7 @@ export const ExamRoute = () => {
 
     route.get("/select",
         RouteBuilder.buildSelectInputParser(["name"], ["name", "dateStart", "dateEnd"], tag),
-        RouteBuilder.buildSelectRoute(repo, tag),
+        RouteBuilder.buildSelectRoute(repo, tag, customFilter),
     );
 
     route.get("/count",
@@ -83,8 +83,20 @@ function checkInput_Update(input: any) {
         }
 
         return {
-            key: input.key,
+            key: FieldGetter.Number(input, "key"),
             data
         };
     }
+}
+
+function customFilter(input: any){
+    const rs: any = {};
+    console.log("here1");
+    console.log("Input: " + JSON.stringify(input, null, 2));
+    if(input.id){
+        console.log("here2");
+        
+        rs.id = FieldGetter.Number(input, "id", true);
+    }
+    return rs;
 }

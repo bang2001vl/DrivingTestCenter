@@ -11,11 +11,11 @@ interface IProps {
     propsStack?: StackProps,
 }
 export const FormIkAddress: FC<IProps> = (props) => {
-    console.log("Address render", props.formik.values[props.fieldName]);
+    //console.log("Address render", props.formik.values[props.fieldName]);
 
     const address = decodeAddress(props.formik.values[props.fieldName]);
     const lv1s = getDVHC_Lv1();
-    console.log("Render Address", address);
+    //console.log("Render Address", address);
 
     const lv2s = getDVHC_Lv2(address[0]);
     const lv3s = getDVHC_Lv3(address[0], address[1]);

@@ -1,34 +1,96 @@
-import { FC } from "react";
+import { Dialog } from "@material-ui/core";
+import { FC, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { APIService } from "../../api/service";
 import CustomizedTabs from "../../components/tabs";
+import { appConfig } from "../../configs";
+import { useRootDialog } from "../../hooks/rootDialog";
+import useAPI from "../../hooks/useApi";
 import { DialogHelper } from "../../singleton/dialogHelper";
 import { EDIT_METHOD } from "../../_enums";
+import { ExamTestCreate } from "../examTest/examTestCreate";
 import ExamTestPage from "../examTest/examTestPage";
 import { ExamCreateUI } from "./examCreateUI";
 
 interface IProps {
 
 }
-
-export const ExamDetailPage: FC<IProps> = () => {
+export const ExamDetailPage: FC<IProps> = (props) => {
     const [searchParams] = useSearchParams();
+    const [oldData, setOldData] = useState<any>({});
+
+    const rootDialog = useRootDialog();
     const navigate = useNavigate();
+    const api = useAPI();
 
-    const key = searchParams.get("id");
-    if (!key) {
-        navigate("/", { replace: true });
-        DialogHelper.showAlert("Not found id");
-    }
+    useEffect(() => {
+        const key = searchParams.get("id");
+        if (!key) {
+            navigate("/", { replace: true });
+            DialogHelper.showAlert("Not found id");
+        }
+        else {
+            console.log("load old from exam detail page", key);
 
-    return <CustomizedTabs
-        listtab={["Thông tin", "Quản lý ca thi"]}
-    >
-        <ExamCreateUI method={EDIT_METHOD.update} hideTitle/>
-        <ExamTestPage
-            filter={{
-                "examId": key,
-            }}
-            hideTitle
-        />
-    </CustomizedTabs>
+            api.getWithToken(
+                `${appConfig.backendUri}/exam/select?${new URLSearchParams({
+                    searchvalue: "",
+                    searchby: "name",
+                    orderby: "name",
+                    orderdirection: "asc",
+                    start: "0",
+                    count: "1",
+                    id: String(searchParams.get("id")),
+                }).toString()}`,
+            ).then(res => {
+                if (res.result) {
+                    console.log("Set OldData", res.data[0]);
+                    setOldData(res.data[0]);
+                }
+                console.log("Olddata from exam detail page", oldData, res);
+            })
+        }
+    }, [searchParams.get("id")]);
+
+    return <div>
+        <CustomizedTabs
+            listtab={["Thông tin", "Quản lý ca thi"]}
+        >
+            <ExamCreateUI
+                hideTitle
+                method={EDIT_METHOD.update}
+            />
+            <ExamTestPage
+                hideTitle
+                filter={oldData ? {
+                    examId: oldData.id,
+                } : undefined}
+                tableProps={{
+                    onEdit: undefined,
+                }}
+                onClickCreate={(select) => {
+                    console.log("SelectRaw", select);
+                    rootDialog.openDialog({
+                        children: <ExamTestCreate
+                            method={EDIT_METHOD.create}
+                            initValues={oldData ? {
+                                examOption: {
+                                    label: oldData.name,
+                                    value: {
+                                        id: oldData.id,
+                                        name: oldData.name,
+                                    }
+                                }
+                            } : undefined}
+                            onSuccess={() => {
+                                select();
+                                rootDialog.closeDialog();
+                            }}
+                            onClose={() => rootDialog.closeDialog()}
+                        />
+                    });
+                }}
+            />
+        </CustomizedTabs>
+    </div>
 }

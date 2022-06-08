@@ -65,10 +65,10 @@ export const BasicModelPicker: FC<BasicModelPickerProps> = (props) => {
                             boxShadow: state.isFocused ? "none" : "none"
                         }
                     }),
-                    menuList: (base)=>({
+                    option: (base)=>({
                         ...base,
-                        alignItems: "start",
-                    })
+                        textAlign: "left",
+                    }),
                 }}
                 {...props.propSelect}
             />

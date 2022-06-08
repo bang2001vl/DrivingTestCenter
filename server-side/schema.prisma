@@ -80,6 +80,7 @@ model Exam {
     updatedAt    DateTime @updatedAt
 
     examTests ExamTest[]
+    schedule ExamSchedule[]
     @@map("exam")
 }
 
@@ -100,7 +101,7 @@ model ExamTest {
     exam         Exam?                    @relation(fields: [examId], references: [id])
     studentCNNs  CONN_Student_ExamTest[]
     employeeCNNs CONN_Employee_ExamTest[]
-    @@map("examtest")
+    @@map("exam _test")
 }
 
 model Class {
@@ -128,6 +129,7 @@ model ClassSchedule {
     id      Int  @id @default(autoincrement())
     classId Int?
 
+    title String @default("")
     location  String   @db.VarChar(255)
     dateStart DateTime
     dateEnd   DateTime
@@ -137,7 +139,24 @@ model ClassSchedule {
     updatedAt DateTime @updatedAt
 
     classes Class? @relation(fields: [classId], references: [id])
-    @@map("classschedule")
+    @@map("class_schedule")
+}
+
+model ExamSchedule {
+    id      Int  @id @default(autoincrement())
+    examId Int?
+
+    title String @default("")
+    location  String   @db.VarChar(255)
+    dateStart DateTime
+    dateEnd   DateTime
+    notes     String?   @db.VarChar(3000)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    exam Exam? @relation(fields: [examId], references: [id])
+    @@map("exam_schedule")
 }
 
 model Bill {

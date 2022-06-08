@@ -45,8 +45,9 @@ export default function ItemMoreMenu(props: PropType) {
               key={i.label}
               onClick={() => {
                 if(i.onClick){
-                  i.onClick(props.data)
+                  i.onClick(props.data);
                 }
+                setIsOpen(false);
               }}
               sx={{ color: 'text.secondary' }}
             >

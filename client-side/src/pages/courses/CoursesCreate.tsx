@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react"
-import { BasicEditSection } from "../../sections/CRUD/BasicEditSection"
+import { BasicEditSection, BasicEditSectionProps } from "../../sections/CRUD/BasicEditSection"
 import * as yup from "yup"
 import { IFormIK } from "../../_interfaces/formik"
 import { validYupToObject } from "../../_helper/helper"
@@ -28,7 +28,7 @@ interface IProps {
     editKey?: number,
 }
 
-export const CoursesCreate: FC<IProps> = (props) => {
+export const CoursesCreate: FC<IProps & Partial<BasicEditSectionProps>> = (props) => {
     const routeName = "course";
     const navigate = useNavigate();
     const api = useAPI();
@@ -214,6 +214,7 @@ export const CoursesCreate: FC<IProps> = (props) => {
 
             )
         }}
+        {...props}
     >
 
     </BasicEditSection >

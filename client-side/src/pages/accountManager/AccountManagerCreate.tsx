@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react"
-import { BasicEditSection } from "../../sections/CRUD/BasicEditSection"
+import { BasicEditSection, BasicEditSectionProps } from "../../sections/CRUD/BasicEditSection"
 import * as yup from "yup"
 import { IFormIK } from "../../_interfaces/formik"
 import { validYupToObject } from "../../_helper/helper"
@@ -16,63 +16,58 @@ import { FormIkAvatar } from "../../components/FormIK/Avatar"
 import { FormIkDatePicker } from "../../components/FormIK/DatePicker"
 import { FormIkAddress } from "../../components/FormIK/Selectors/Address"
 import { DialogHelper } from "../../singleton/dialogHelper"
+import { FormIkRole } from "../../components/FormIK/Selectors/Role"
+import { FormIkGender } from "../../components/FormIK/Selectors/Gender"
 
 interface IProps {
     method: EDIT_METHOD,
-    editKey?: number,
 }
-export const AccountManagerCreate: FC<IProps> = (props) => {
+
+export const AccountManagerCreate: FC<IProps & Partial<BasicEditSectionProps>> = (props) => {
     const navigate = useNavigate();
     const api = useAPI();
-    const [searchParams] = useSearchParams();
-    const [initValue, setInitValue] = useState({
+
+    const defaultValue = {
         username: "",
         password: "",
         fullname: "",
         birthday: new Date().toISOString(),
         gender: 1,
+        roleId: 1,
         email: "",
         phoneNumber: "",
         address: "",
         avatar: null,
-    });
+    };
 
     const routeName = "account/manager";
 
-    useEffect(() => {
-        if (props.method === EDIT_METHOD.update) {
-            const key = searchParams.get("id") && props.editKey;
-            if (!key) {
-                navigate("/", { replace: true });
-                DialogHelper.showAlert("Not found id");
-            }
-
-            api.getWithToken(
-                `${appConfig.backendUri}/${routeName}/select?${new URLSearchParams({
-                    searchvalue: "",
-                    searchby: "fullname",
-                    orderby: "fullname",
-                    orderdirection: "asc",
-                    start: "0",
-                    count: "1",
-                    id: String(key),
-                }).toString()}`
-            ).then(res => {
-                if (res.result && res.data) {
-                    setInitValue(res.data[0]);
-                }
-                else {
-                    DialogHelper.showAlert(res.errorMessage);
-                }
-            });
+    function handleLoadOldData(searchParams: URLSearchParams) {
+        const key = searchParams.get("id")
+        if (!key) {
+            navigate("/", { replace: true });
+            return Promise.resolve(new MyResponse(false, -1, "Not found id"));
         }
-    }, [props.method, searchParams]);
+
+        return api.getWithToken(
+            `${appConfig.backendUri}/${routeName}/select?${new URLSearchParams({
+                searchvalue: "",
+                searchby: "fullname",
+                orderby: "fullname",
+                orderdirection: "asc",
+                start: "0",
+                count: "1",
+                id: String(key),
+            }).toString()}`
+        )
+    }
 
     const schema = yup.object({
         username: yup.string().required(),
         password: yup.string().required(),
         birthday: yup.string().required(),
         gender: yup.number().positive().required(),
+        roleId: yup.number().positive().required(),
         email: yup.string().email().required(),
         phoneNumber: yup.string().required(),
         address: yup.string().required(),
@@ -88,9 +83,21 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
 
     function handleSubmit(formik: IFormIK) {
         console.log("Handle submit formik values: ", formik.values);
-        const formData = new FormData();
+        const data = {
+            username: formik.values.username,
+            password: formik.values.password,
+            fullname: formik.values.fullname,
+            email: formik.values.email,
+            phoneNumber: formik.values.phoneNumber,
+            address: formik.values.address,
+            birthday: formik.values.birthday,
+            gender: formik.values.gender,
+            roleId: formik.values.roleId,
+            avatar: formik.values.avatar instanceof File ? formik.values.avatar : undefined,
+        }
 
-        Object.keys(formik.values).forEach(key => {
+        const formData = new FormData();
+        Object.keys(data).forEach(key => {
             if (formik.values[key]) {
                 formData.append(key, formik.values[key])
             }
@@ -108,7 +115,6 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
             );
         }
         else {
-            formData.delete("id");
             formData.append("key", formik.values.id);
             return api.putWithToken(
                 `${appConfig.backendUri}/${routeName}/update`,
@@ -132,15 +138,18 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
     }
 
     return <BasicEditSection
-        title="Tạo tài khoản"
-        initValues={initValue}
+        title={props.method === EDIT_METHOD.create ? "Tạo tài khoản" : "Cập nhật tài khoản"}
         onSuccess={handleSuccess}
         onClose={handleClose}
         validation={handleValidate}
         submit={handleSubmit}
+        loadOldData={handleLoadOldData}
+
+        {...props}
+        initValues={{ ...defaultValue, ...props.initValues }}
         formComponent={(formik, cancel, isLoading) => {
             return (
-                <Box style={{ width: "100%"}}>
+                <Box style={{ width: "100%" }}>
                     <Card>
                         <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
                             <Stack direction="row" spacing={5} alignItems="start" justifyContent="start" paddingTop={5} paddingBottom={5} paddingLeft={10} paddingRight={10}>
@@ -153,7 +162,7 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
                                         }
                                     }}
                                 />
-                                <Stack spacing={2} sx={{flex: 1}}>
+                                <Stack spacing={2} sx={{ flex: 1 }}>
                                     <Box sx={{ width: "100%" }}>
                                         <FormIkTextField formik={formik} fieldName="username"
                                             label="Tên đăng nhập"
@@ -178,25 +187,20 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
 
 
                                     <Stack direction="row" spacing={2}>
-                                     
-                                            <FormIkDatePicker formik={formik} fieldName="birthday"
-                                                label="Ngày sinh"
 
-                                            />
-                                        
-                                        <Box sx={{ flex: 1}}>
-                                            <FormIkTextField formik={formik} fieldName="gender"
-                                                label="Giới tính"
-                                                fullWidth
-                                                select
-                                            >
-                                                {["Nữ", "Nam"].map((e, index) => (<MenuItem key={e} value={index}>{String(e)}</MenuItem>))}
-                                            </FormIkTextField>
-                                        </Box>
+                                        <FormIkDatePicker formik={formik} fieldName="birthday"
+                                            label="Ngày sinh"
+
+                                        />
+
+                                        <FormIkGender formik={formik} fieldName="gender"
+                                            label="Giới tính"
+                                        />
+
+                                        <FormIkRole formik={formik} fieldName="roleId"
+                                            label="Vai trò"
+                                        />
                                     </Stack>
-
-
-
 
 
                                     <FormIkTextField formik={formik} fieldName="email"
@@ -222,7 +226,7 @@ export const AccountManagerCreate: FC<IProps> = (props) => {
                                             }
                                         }}
                                     />
-                                    <Stack direction={"row"} spacing={20} style={{ alignSelf: "center", paddingTop: '20px'}}>
+                                    <Stack direction={"row"} spacing={20} style={{ alignSelf: "center", paddingTop: '20px' }}>
                                         <LoadingButton
                                             variant="contained"
                                             onClick={() => formik.handleSubmit()}

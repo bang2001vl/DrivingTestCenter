@@ -42,22 +42,22 @@ interface ISelectable<T = any> {
     value: T
 }
 
-interface TypeProps {
+export interface DataTable4Props {
     searchOptionList: ISelectable<any>[];
     orderOptionList: ISelectable[];
     searchbarText: string | undefined;
     title: string,
     textLabel: string,
     cardColor?: string,
-    onRenderItem: (dataList: any[], emptyView?: JSX.Element) => void,
+    onRenderItem: (dataList: any[], select: ()=>void, emptyView?: JSX.Element) => void,
     select: (params: URLSearchParams) => Promise<MyResponse>,
     count: (params: URLSearchParams) => Promise<MyResponse>,
-    onClickCreate?: () => void,
+    onClickCreate?: (select: ()=>void) => void,
 
-    needReload: boolean,
+    needReload?: boolean,
 }
 
-export default function DataTable4(props: TypeProps) {
+export default function DataTable4(props: DataTable4Props) {
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -129,75 +129,49 @@ export default function DataTable4(props: TypeProps) {
 
     const isUserNotFound = dataList.length === 0;
     console.log("isUserNotFound = " + isUserNotFound);
+    
     const handleCreate = () => {
         if (props.onClickCreate) {
-            props.onClickCreate();
+            props.onClickCreate(select);
         }
     }
     const onRenderTable = () => {
         return (<>
-            < MySearchBar
-                hintText={props.searchbarText}
-                searchOptionList={props.searchOptionList}
-                orderOptionList={props.orderOptionList}
-                onSubmit={(opt) => {
-                    setOptions(opt);
-                }
-                }
-            ></MySearchBar >
-            {/*@ts-ignore*/}
-            < Scrollbar >
-                {/* <TableContainer sx={{ minWidth: 800 }}>
-                <Table>
-                    <DataListHead
-                        headLabel={props.headLabels}
-                    />
-
-                    <TableBody>  {props.onRenderItem(dataList)}
-
-                        {emptyRows > 0 && (
-                            <TableRow style={{ height: 40 * emptyRows }}>
-                                <TableCell colSpan={6} />
-                            </TableRow>
-                        )}
-                    </TableBody>
-                    {isUserNotFound && (
-                        <TableBody>
-                            <TableRow>
-                                <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                                    <SearchNotFound searchQuery={options.searchvalue} />
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    )}
-                </Table>
-            </TableContainer> */}
-                {
-                    props.onRenderItem(dataList, (
-                        dataList.length === 0
+           <MySearchBar
+                        hintText={props.searchbarText}
+                        searchOptionList={props.searchOptionList}
+                        orderOptionList={props.orderOptionList}
+                        onSubmit={(opt) => {
+                            setOptions(opt);
+                        }}
+                    ></MySearchBar>
+                    {/*@ts-ignore*/}
+                    <Scrollbar>
+                        {props.onRenderItem(dataList, select, (
+                            dataList.length === 0
                             ? <Container>
                                 <SearchNotFound searchQuery={options.searchvalue} />
                             </Container>
                             : undefined
-                    ))
-                }
-            </Scrollbar >
+                        ))
+                        }
+                    </Scrollbar>
 
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={maxCount}
-                rowsPerPage={rowPerPage}
-                page={page}
-                onPageChange={(ev, newPage) => {
-                    setPage(newPage);
-                }}
-                onRowsPerPageChange={(ev) => {
-                    const newRowPerPage = ev.target.value;
-                    setRowPerPage(parseInt(newRowPerPage, 10));
-                    setPage(0);
-                }}
-            />
+                    <TablePagination
+                        rowsPerPageOptions={[5, 10, 25]}
+                        component="div"
+                        count={maxCount}
+                        rowsPerPage={rowPerPage}
+                        page={page}
+                        onPageChange={(ev, newPage) => {
+                            setPage(newPage);
+                        }}
+                        onRowsPerPageChange={(ev) => {
+                            const newRowPerPage = ev.target.value;
+                            setRowPerPage(parseInt(newRowPerPage, 10));
+                            setPage(0);
+                        }}
+                    />
         </>
         )
     }
@@ -212,7 +186,13 @@ export default function DataTable4(props: TypeProps) {
                     </Typography>
                     <Button
                         variant="contained"
-                        onClick={() => handleCreate()}
+                        onClick={() => {
+                            if (props.onClickCreate) {
+                                console.log("SelectRaw0", select);
+                                
+                                props.onClickCreate(select);
+                            }
+                        }}
                         startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
                     >
                         Thêm mới

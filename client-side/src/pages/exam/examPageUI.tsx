@@ -6,6 +6,7 @@ import useAPI from "../../hooks/useApi";
 import { DialogHelper } from "../../singleton/dialogHelper";
 import { ExamTable } from "./examTable";
 import DataTable4 from "../../sections/DataTable4";
+import { ExamTestTableProps } from "../examTest/examTestTable";
 
 const EXAM_HEAD_LABEL = [
     { id: 'name', label: 'Tên', alignRight: false },
@@ -41,8 +42,11 @@ const orderOptionList = [
     }
 ];
 
+interface IProps{
+    tableProps?: any,
+}
 
-export default function ExamPageUI() {
+export default function ExamPageUI(props: IProps) {
     const routeName = "exam";
     const api = useAPI();
     const navigate = useNavigate();
@@ -92,7 +96,7 @@ export default function ExamPageUI() {
     }
 
 
-    const renderTable = (dataList: any[], emptyView?: JSX.Element) => {
+    const renderTable = (dataList: any[],select: ()=>void, emptyView?: JSX.Element) => {
         return <ExamTable
             dataList={dataList.map(e => ({
                 ...e,
@@ -112,6 +116,7 @@ export default function ExamPageUI() {
             onEdit={handleEdit}
             onDelete={handleDelete}
             onDetail={handleDetail}
+            {...props.tableProps}
         />
     }
 

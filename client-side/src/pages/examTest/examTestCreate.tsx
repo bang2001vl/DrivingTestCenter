@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react"
-import { BasicEditSection } from "../../sections/CRUD/BasicEditSection"
+import { BasicEditSection, BasicEditSectionProps } from "../../sections/CRUD/BasicEditSection"
 import * as yup from "yup"
 import { IFormIK } from "../../_interfaces/formik"
 import { validYupToObject } from "../../_helper/helper"
@@ -10,16 +10,11 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns"
 import { Box, Button, Card, MenuItem, Stack } from "@mui/material"
 import { FormIkTextField } from "../../components/FormIK/TextField"
 import { EDIT_METHOD } from "../../_enums"
-import { useNavigate, useSearchParams } from "react-router-dom"
-import { MyResponse } from "../../api/service"
-import { FormIkAvatar } from "../../components/FormIK/Avatar"
-import { FormIkDatePicker } from "../../components/FormIK/DatePicker"
-import { FormIkAddress } from "../../components/FormIK/Selectors/Address"
+import { useNavigate} from "react-router-dom"
 import { DialogHelper } from "../../singleton/dialogHelper"
 import { FormIkNumberField } from "../../components/FormIK/NumberField"
 import { FormIkDateTimePicker } from "../../components/FormIK/DateTimePicker"
 import { FormIKExamSelector } from "../../components/FormIK/Selectors/examSelectors"
-import addDays from "date-fns/addDays"
 import isBefore from "date-fns/isBefore"
 import addHours from "date-fns/addHours"
 import { FormIkRoom } from "../../components/FormIK/Selectors/Rooms"
@@ -29,51 +24,43 @@ interface IProps {
     editKey?: number,
 }
 
-export const ExamTestCreate: FC<IProps> = (props) => {
+export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (props) => {
     const routeName = "examtest";
     const navigate = useNavigate();
     const api = useAPI();
-    const [searchParams] = useSearchParams();
-    const [initValue, setInitValue] = useState({
+    const defaultInitValue = {
         examOption: null,
         name: "",
         location: "",
         dateTimeStart: new Date().toISOString(),
         dateTimeEnd: addHours(new Date(), 1).toISOString(),
         maxMember: "",
-    });
+    };
 
-
-    useEffect(() => {
-        if (props.method === EDIT_METHOD.update) {
-            const key = getOldKey();
-            if (!key) {
-                navigate("/", { replace: true });
-                DialogHelper.showAlert("Not found id");
-            }
-
-            api.getWithToken(
-                `${appConfig.backendUri}/${routeName}/select?${new URLSearchParams({
-                    searchvalue: "",
-                    searchby: "name",
-                    orderby: "name",
-                    orderdirection: "asc",
-                    start: "0",
-                    count: "1",
-                    id: String(key),
-                }).toString()}`
-            ).then(res => {
-                if (res.result && res.data) {
-                    setInitValue(res.data[0]);
-                }
-                else {
-                    DialogHelper.showAlert(res.errorMessage);
-                }
-            });
+    const loadOldData = (params: URLSearchParams)=>{
+        const key = params.get("id");
+        if (!key) {
+            navigate("/", { replace: true });
+            DialogHelper.showAlert("Not found id");
         }
-    }, [props.method, searchParams]);
-
-    const getOldKey = () => (searchParams.get("id"));
+        return api.getWithToken(
+            `${appConfig.backendUri}/${routeName}/select?${new URLSearchParams({
+                searchvalue: "",
+                searchby: "name",
+                orderby: "name",
+                orderdirection: "asc",
+                start: "0",
+                count: "1",
+                id: String(key),
+            }).toString()}`
+        ).then(res => {
+            if(res.result && res.data){
+                const exam = res.data[0].exam;
+                res.data[0].examOption = {label: exam.name, value:exam}
+            }
+            return res;
+        })
+    }
 
     const schema = yup.object({
         name: yup.string().required("Name must not be null"),
@@ -120,7 +107,7 @@ export const ExamTestCreate: FC<IProps> = (props) => {
             );
         }
         else {
-            data.key = String(getOldKey());
+            data.key = String(formik.values.id);
             return api.putWithToken(
                 `${appConfig.backendUri}/${routeName}/update`,
                 data,
@@ -139,12 +126,15 @@ export const ExamTestCreate: FC<IProps> = (props) => {
 
     const marginTop = 1;
     return <BasicEditSection
-        title="Tạo Ca Thi"
-        initValues={initValue}
+        title={props.method === EDIT_METHOD.create ? "Tạo Ca Thi" : "Thông tin ca thi"}
         onSuccess={handleSuccess}
         onClose={handleClose}
         validation={handleValidate}
         submit={handleSubmit}
+        loadOldData={loadOldData}
+
+        {...props}
+        initValues={{...defaultInitValue, ...props.initValues}}
         formComponent={(formik, cancel, isLoading) => {
             return (
                 <Card style={{ alignItems: "center", justifyContent: 'center', textAlign: "center", marginTop: '15px', padding: "5%" }} >

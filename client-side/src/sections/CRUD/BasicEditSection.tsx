@@ -17,7 +17,9 @@ export interface BasicEditSectionProps<T extends FormikValues = FormikValues, Ol
     formComponent: (formik: IFormIK<T>, cancel: () => void, isLoading: boolean) => JSX.Element,
     title: string,
     submit: (formik: IFormIK<T>) => Promise<MyResponse>,
+    method: EDIT_METHOD,
     validation?: (formik: IFormIK<T>) => any,
+    loadOldData?: (searchParams: URLSearchParams)=>Promise<MyResponse<any[]>>,
     oldData?: OldDataType,
     onSuccess?: () => void,
     onClose?: () => void,
@@ -25,6 +27,7 @@ export interface BasicEditSectionProps<T extends FormikValues = FormikValues, Ol
 
 export const BasicEditSection: FC<BasicEditSectionProps> = (props) => {
     const [isLoading, setIsLoading] = useState(false);
+    const [searchParams] = useSearchParams();
 
     const formik = useFormik({
         initialValues: props.initValues,
@@ -35,13 +38,26 @@ export const BasicEditSection: FC<BasicEditSectionProps> = (props) => {
 
     useEffect(() => {
         loadInitValue();
-    }, [props.initValues]);
+        if(props.method === EDIT_METHOD.update){
+            if(props.loadOldData){
+                props.loadOldData(searchParams)
+                .then(res =>{
+                    if(res.result && res.data){
+                        formik.setValues(res.data[0]);
+                    }
+                    else{
+                        DialogHelper.showAlert(res.errorMessage);
+                    }
+                });
+            }
+        }
+    }, [props.initValues, searchParams]);
 
     const loadInitValue = ()=>{
         if (props.initValues) {
             Object.keys(props.initValues).forEach(key => {
                 formik.setFieldValue(key, props.initValues[key]);
-                console.log(formik.values);
+                //console.log(formik.values);
             });
         }
     }

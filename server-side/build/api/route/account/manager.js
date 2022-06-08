@@ -85,6 +85,7 @@ function checkInput_Insert(input) {
             address: FieldGetter_1.FieldGetter.String(input, "address"),
             birthday: FieldGetter_1.FieldGetter.Date(input, "birthday"),
             gender: FieldGetter_1.FieldGetter.Number(input, "gender"),
+            roleId: FieldGetter_1.FieldGetter.Number(input, "roleId"),
         };
         return {
             data
@@ -102,6 +103,7 @@ function checkInput_Update(input) {
             address: FieldGetter_1.FieldGetter.String(input, "address"),
             birthday: FieldGetter_1.FieldGetter.Date(input, "birthday"),
             gender: FieldGetter_1.FieldGetter.Number(input, "gender"),
+            roleId: FieldGetter_1.FieldGetter.Number(input, "roleId"),
         };
         return {
             key: FieldGetter_1.FieldGetter.Number(input, "key"),

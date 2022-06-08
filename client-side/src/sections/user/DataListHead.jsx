@@ -23,9 +23,9 @@ export default function DataListHead({
   return (
     <TableHead>
       <TableRow>
-        {headLabel.map((headCell) => (
+        {headLabel.map((headCell, index) => (
           <TableCell
-            key={headCell.id}
+            key={index}
             align={headCell.alignRight ? 'right' : 'left'}
           >
           

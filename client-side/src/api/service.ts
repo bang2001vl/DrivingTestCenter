@@ -42,34 +42,38 @@ export class APIService {
     
     constructor(cancelToken?: CancelToken, onHandleReponse?: (response: MyResponse)=> any){
         this.onHandleReponse = onHandleReponse;
-        this.axios = axios.create({
-            //baseURL: appConfig.backendUri,
-            cancelToken: cancelToken,
-            timeout: 1000,
-        });
-        this.axios.interceptors.request.use(request => {
-            console.log('Starting Request', JSON.stringify(request, null, 2))
-            return request
-          })
+        this.axios = axios;
+        // this.axios = axios.create({
+        //     //baseURL: appConfig.backendUri,
+        //     cancelToken: cancelToken,
+        //     timeout: 1000,
+        // });
+        // this.axios.interceptors.request.use(request => {
+        //     console.log('Starting Request', JSON.stringify(request, null, 2))
+        //     return request
+        //   })
     }
 
     private handleReponse(response: AxiosResponse) {
         console.log(response);
 
-        if (!response) {
-            return new MyResponse(false, -1, "Not receive response");
-        }
-
-        const myResponse = MyResponse.fromJson(response.data);
-        if (myResponse.errorCode === 401) {
-            return UNAUTHORIZED_RESPONSE;
-        }
-
+        const myResponse = this._handleResponse(response);
         if(this.onHandleReponse){
             this.onHandleReponse(myResponse);
         }
         console.log(myResponse);
         
+        return myResponse;
+    }
+
+    private _handleResponse(response: AxiosResponse) {
+        if (!response) {
+            return new MyResponse(false, -1, "Not receive response");
+        }
+        const myResponse = MyResponse.fromJson(response.data);
+        if (myResponse.errorCode === 401) {
+            return UNAUTHORIZED_RESPONSE;
+        }
         return myResponse;
     }
 

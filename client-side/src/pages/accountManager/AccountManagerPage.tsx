@@ -84,7 +84,7 @@ export default function AccountManagerPage() {
     }
 
 
-    const renderTable = (dataList: any[], emptyView?: JSX.Element) => {
+    const renderTable = (dataList: any[],select: ()=>void, emptyView?: JSX.Element) => {
         return <AccountManagerTable
             dataList={dataList}
             emptyView={emptyView}
