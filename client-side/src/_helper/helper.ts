@@ -6,37 +6,35 @@ export function createBEPublicURI(localURI: string) {
 
 export function formatNumber(num: number | string | undefined) {
     if (!num) return undefined;
-    return Number(num).toLocaleString('en-US')
+    return Number(num).toLocaleString('en-US');
 }
 
 export function validYupToObject<T = any>(values: T, schema: any) {
-    const errors: any = {};
-    for(let key in Object.keys(values)){
-        try {
-            schema.validateAt(key, values)
-                .catch((err: any) => {
-                    errors[key] = err.message;
-                });
-        }
-        catch (ex) {
-
-        }
+    try {
+        schema.validateSync(values, { abortEarly: false });
+        return {};
     }
-    return errors;
+    catch (err: any) {
+        let errors: any = {};
+        console.log("Error Innner", JSON.stringify(err.inner, null, 2));
+        err.inner.forEach((e: any) => {
+            errors = { ...errors, [e.path]: e.message };
+        });
+        return errors;
+    };
 }
 
 export function validYupToArray<T = any>(values: T, schema: any) {
-    const errors: any[] = [];
-    for(let key in Object.keys(values)){
-        try {
-            schema.validateAt(key, values)
-                .catch((err: any) => {
-                    errors.push(err.message);
-                });
-        }
-        catch (ex) {
-
-        }
+    try {
+        schema.validateSync(values, { abortEarly: false });
+        return [];
     }
-    return errors;
+    catch (err: any) {
+        let errors: any = [];
+        console.log("Error Innner", JSON.stringify(err.inner, null, 2));
+        err.inner.forEach((e: any) => {
+            errors.push(`${e.path}: ${e.message}`);
+        });
+        return errors;
+    };
 }
