@@ -15,7 +15,6 @@ import { CoursesCreate } from "./CoursesCreate";
 interface IProps {
 
 }
-let tempSelect = ()=>{};
 export const CourseDetailPage: FC<IProps> = (props) => {
     const [searchParams] = useSearchParams();
     const [oldData, setOldData] = useState<any>({});
@@ -51,7 +50,7 @@ export const CourseDetailPage: FC<IProps> = (props) => {
     }, [searchParams.get("id")]);
 
     return <div>
-           <Typography variant="h3" gutterBottom style={{ color: "#3C557A", marginLeft: "10px" }}>
+        <Typography variant="h3" gutterBottom style={{ color: "#3C557A", marginLeft: "10px" }}>
             Chỉnh sửa lớp học
         </Typography>
         <CustomizedTabs
@@ -69,24 +68,23 @@ export const CourseDetailPage: FC<IProps> = (props) => {
                 } : undefined}
                 tableProps={{
                     onEdit: undefined,
-                    onDelete: async (item)=>{
-                        const data = {
-                            classId: oldData.id,
-                            employeeIdList: [item.id],
-                        }
-                        const res = await api.postWithToken(`${appConfig.backendUri}/cnn/delete/class/employees`, data);
-                        if (res.result) {
-                            rootDialog.closeDialog();
-                            if(tempSelect){tempSelect();}
-                            DialogHelper.showAlert("Success");
-                        }
-                        else {
-                            DialogHelper.showAlert(res.errorMessage);
-                        }
+                }}
+                onDelete={async (item, select) => {
+                    const data = {
+                        classId: oldData.id,
+                        employeeIdList: [item.id],
+                    }
+                    const res = await api.postWithToken(`${appConfig.backendUri}/cnn/delete/class/employees`, data);
+                    if (res.result) {
+                        rootDialog.closeDialog();
+                        select();
+                        DialogHelper.showAlert("Success");
+                    }
+                    else {
+                        DialogHelper.showAlert(res.errorMessage);
                     }
                 }}
                 onClickCreate={(select) => {
-                    tempSelect = select;
                     rootDialog.openDialog({
                         children: <StudentPicker
                             isMulti
@@ -125,24 +123,23 @@ export const CourseDetailPage: FC<IProps> = (props) => {
                 } : undefined}
                 tableProps={{
                     onEdit: undefined,
-                    onDelete: async (item)=>{
-                        const data = {
-                            classId: oldData.id,
-                            employeeIdList: [item.id],
-                        }
-                        const res = await api.postWithToken(`${appConfig.backendUri}/cnn/delete/class/employees`, data);
-                        if (res.result) {
-                            rootDialog.closeDialog();
-                            if(tempSelect){tempSelect();}
-                            DialogHelper.showAlert("Xóa tài khoản thành công!");
-                        }
-                        else {
-                            DialogHelper.showAlert(res.errorMessage);
-                        }
+                }}
+                onDelete={async (item, select) => {
+                    const data = {
+                        classId: oldData.id,
+                        employeeIdList: [item.id],
+                    }
+                    const res = await api.postWithToken(`${appConfig.backendUri}/cnn/delete/class/employees`, data);
+                    if (res.result) {
+                        rootDialog.closeDialog();
+                        select();
+                        DialogHelper.showAlert("Xóa tài khoản thành công!");
+                    }
+                    else {
+                        DialogHelper.showAlert(res.errorMessage);
                     }
                 }}
                 onClickCreate={(select) => {
-                    tempSelect = select;
                     rootDialog.openDialog({
                         children: <EmployeePicker
                             isMulti

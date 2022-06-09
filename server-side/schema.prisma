@@ -187,6 +187,9 @@ model CONN_Student_ExamTest {
     studentId    Int
     examTestId   Int
 
+    result Int @default(0)
+    note String @db.VarChar(1000) @default("")
+    
     createdAt DateTime @default(now())
 
     examTest   ExamTest   @relation(fields: [examTestId], references: [id])

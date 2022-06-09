@@ -49,18 +49,19 @@ export interface DataTable4Props {
     title: string,
     textLabel: string,
     cardColor?: string,
-    onRenderItem: (dataList: any[], select: ()=>void, emptyView?: JSX.Element) => void,
+    onRenderItem: (dataList: any[], select: () => void, emptyView?: JSX.Element) => void,
     select: (params: URLSearchParams) => Promise<MyResponse>,
     count: (params: URLSearchParams) => Promise<MyResponse>,
-    onClickCreate?: (select: ()=>void) => void,
+    onClickCreate?: (select: () => void) => void,
+    onClickLoadExcel?: (select: () => void) => void,
 
     needReload?: boolean,
 }
 
-export const DataTable4 = forwardRef((props: DataTable4Props, ref)=>{
+export const DataTable4 = forwardRef((props: DataTable4Props, ref) => {
     console.log("REF", ref);
-    
-    useImperativeHandle(ref, ()=>({
+
+    useImperativeHandle(ref, () => ({
         select
     }))
 
@@ -134,7 +135,7 @@ export const DataTable4 = forwardRef((props: DataTable4Props, ref)=>{
 
     const isUserNotFound = dataList.length === 0;
     console.log("isUserNotFound = " + isUserNotFound);
-    
+
     const handleCreate = () => {
         if (props.onClickCreate) {
             props.onClickCreate(select);
@@ -142,66 +143,83 @@ export const DataTable4 = forwardRef((props: DataTable4Props, ref)=>{
     }
     const onRenderTable = () => {
         return (<>
-           <MySearchBar
-                        hintText={props.searchbarText}
-                        searchOptionList={props.searchOptionList}
-                        orderOptionList={props.orderOptionList}
-                        onSubmit={(opt) => {
-                            setOptions(opt);
-                        }}
-                    ></MySearchBar>
-                    {/*@ts-ignore*/}
-                    <Scrollbar>
-                        {props.onRenderItem(dataList, select, (
-                            dataList.length === 0
-                            ? <Container>
-                                <SearchNotFound searchQuery={options.searchvalue} />
-                            </Container>
-                            : undefined
-                        ))
-                        }
-                    </Scrollbar>
+            <MySearchBar
+                hintText={props.searchbarText}
+                searchOptionList={props.searchOptionList}
+                orderOptionList={props.orderOptionList}
+                onSubmit={(opt) => {
+                    setOptions(opt);
+                }}
+            ></MySearchBar>
+            {/*@ts-ignore*/}
+            <Scrollbar>
+                {props.onRenderItem(dataList, select, (
+                    dataList.length === 0
+                        ? <Container>
+                            <SearchNotFound searchQuery={options.searchvalue} />
+                        </Container>
+                        : undefined
+                ))
+                }
+            </Scrollbar>
 
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component="div"
-                        count={maxCount}
-                        rowsPerPage={rowPerPage}
-                        page={page}
-                        onPageChange={(ev, newPage) => {
-                            setPage(newPage);
-                        }}
-                        onRowsPerPageChange={(ev) => {
-                            const newRowPerPage = ev.target.value;
-                            setRowPerPage(parseInt(newRowPerPage, 10));
-                            setPage(0);
-                        }}
-                    />
+            <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={maxCount}
+                rowsPerPage={rowPerPage}
+                page={page}
+                onPageChange={(ev, newPage) => {
+                    setPage(newPage);
+                }}
+                onRowsPerPageChange={(ev) => {
+                    const newRowPerPage = ev.target.value;
+                    setRowPerPage(parseInt(newRowPerPage, 10));
+                    setPage(0);
+                }}
+            />
         </>
         )
     }
 
     return (
         // @ts-ignore
-        <Page title={props.title} style={{paddingLeft: "20px"}}>
+        <Page title={props.title} style={{ paddingLeft: "20px" }}>
             <Container style={{ maxWidth: '1920px' }}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1.5}>
                     <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
                         {props.textLabel}
                     </Typography>
-                    <Button
-                        variant="contained"
-                        onClick={() => {
-                            if (props.onClickCreate) {
-                                console.log("SelectRaw0", select);
-                                
-                                props.onClickCreate(select);
-                            }
-                        }}
-                        startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
-                    >
-                        Thêm mới
-                    </Button>
+                    <Stack direction={"row"} spacing={2}>
+                        {
+                            props.onClickLoadExcel && (
+                                <Button
+                                    variant="contained"
+                                    onClick={() => {
+                                        if (props.onClickLoadExcel) {
+                                            props.onClickLoadExcel(select);
+                                        }
+                                    }}
+                                    startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
+                                >
+                                    Import Excel
+                                </Button>
+                            )
+                        }
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                if (props.onClickCreate) {
+                                    console.log("SelectRaw0", select);
+
+                                    props.onClickCreate(select);
+                                }
+                            }}
+                            startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
+                        >
+                            Thêm mới
+                        </Button>
+                    </Stack>
                 </Stack>
                 {(props.cardColor === undefined) ? <Card>
                     {onRenderTable()}

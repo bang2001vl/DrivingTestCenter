@@ -1,8 +1,10 @@
 import { Dialog, Typography } from "@material-ui/core";
 import { FC, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import readXlsxFile from "read-excel-file";
 import { APIService } from "../../api/service";
 import { EmployeePicker } from "../../components/Picker/employee";
+import { ExcelPicker } from "../../components/Picker/excelPicker";
 import { StudentPicker } from "../../components/Picker/student";
 import CustomizedTabs from "../../components/tabs";
 import { appConfig } from "../../configs";
@@ -16,7 +18,6 @@ import { ExamTestCreate } from "../examTest/examTestCreate";
 interface IProps {
 
 }
-let tempSelect = ()=>{};
 export const ExamTestDetailPage: FC<IProps> = (props) => {
     const [searchParams] = useSearchParams();
     const [oldData, setOldData] = useState<any>({});
@@ -55,9 +56,9 @@ export const ExamTestDetailPage: FC<IProps> = (props) => {
     }, [searchParams.get("id")]);
 
     return <div>
-         <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
-                        Chỉnh sửa ca thi
-                    </Typography>
+        <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
+            Chỉnh sửa ca thi
+        </Typography>
         <CustomizedTabs
             listtab={["Thông tin", "Quản lý học viên", "Quản lý giảng viên"]}
         >
@@ -73,24 +74,23 @@ export const ExamTestDetailPage: FC<IProps> = (props) => {
                 } : undefined}
                 tableProps={{
                     onEdit: undefined,
-                    onDelete: async (item)=>{
-                        const data = {
-                            examTestId: oldData.id,
-                            employeeIdList: [item.id],
-                        }
-                        const res = await api.postWithToken(`${appConfig.backendUri}/cnn/delete/examTest/employees`, data);
-                        if (res.result) {
-                            rootDialog.closeDialog();
-                            if(tempSelect){tempSelect();}
-                            DialogHelper.showAlert("Success");
-                        }
-                        else {
-                            DialogHelper.showAlert(res.errorMessage);
-                        }
+                }}
+                onDelete={async (item, select) => {
+                    const data = {
+                        examTestId: oldData.id,
+                        employeeIdList: [item.id],
+                    }
+                    const res = await api.postWithToken(`${appConfig.backendUri}/cnn/delete/examTest/employees`, data);
+                    if (res.result) {
+                        rootDialog.closeDialog();
+                        select();
+                        DialogHelper.showAlert("Success");
+                    }
+                    else {
+                        DialogHelper.showAlert(res.errorMessage);
                     }
                 }}
                 onClickCreate={(select) => {
-                    tempSelect = select;
                     rootDialog.openDialog({
                         children: <StudentPicker
                             isMulti
@@ -129,24 +129,23 @@ export const ExamTestDetailPage: FC<IProps> = (props) => {
                 } : undefined}
                 tableProps={{
                     onEdit: undefined,
-                    onDelete: async (item)=>{
-                        const data = {
-                            examTestId: oldData.id,
-                            employeeIdList: [item.id],
-                        }
-                        const res = await api.postWithToken(`${appConfig.backendUri}/cnn/delete/examTest/employees`, data);
-                        if (res.result) {
-                            rootDialog.closeDialog();
-                            if(tempSelect){tempSelect();}
-                            DialogHelper.showAlert("Success");
-                        }
-                        else {
-                            DialogHelper.showAlert(res.errorMessage);
-                        }
+                }}
+                onDelete={async (item, select) => {
+                    const data = {
+                        examTestId: oldData.id,
+                        employeeIdList: [item.id],
+                    }
+                    const res = await api.postWithToken(`${appConfig.backendUri}/cnn/delete/examTest/employees`, data);
+                    if (res.result) {
+                        rootDialog.closeDialog();
+                        select();
+                        DialogHelper.showAlert("Success");
+                    }
+                    else {
+                        DialogHelper.showAlert(res.errorMessage);
                     }
                 }}
                 onClickCreate={(select) => {
-                    tempSelect = select;
                     rootDialog.openDialog({
                         children: <EmployeePicker
                             isMulti

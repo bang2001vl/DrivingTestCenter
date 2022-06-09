@@ -42,6 +42,7 @@ const orderOptionList = [
 ];
 
 interface IProps{
+    onDelete?: (data: any,select: ()=>void)=> any,
     hideTitle?: boolean,
     filter? : any,
     tableProps? : Partial<AccountManagerTableProps>,
@@ -53,6 +54,20 @@ export default function AccountManagerPage(props: IProps & Partial<BasicPageProp
     const routeName = "account/manager";
     const api = useAPI();
     const navigate = useNavigate();
+
+    const handleDelete = async (data: any,select: ()=>void) => {
+        const id = data.id;
+        const res = await api.deleteWithToken(
+            `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
+        );
+        if (res.result) {
+            DialogHelper.showAlert("Thành công");
+            select();
+        }
+        else {
+            DialogHelper.showAlert(res.errorMessage);
+        }
+    }
 
     return (
         <BasicPage
@@ -75,17 +90,12 @@ export default function AccountManagerPage(props: IProps & Partial<BasicPageProp
                     onEdit={(data) => {
                         navigate("edit?id="+data.id);
                     }}
-                    onDelete={async (data) => {
-                        const id = data.id;
-                        const res = await api.deleteWithToken(
-                            `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
-                        );
-                        if (res.result) {
-                            DialogHelper.showAlert("Thành công");
-                            select();
+                    onDelete={(data)=>{
+                        if(props.onDelete){
+                            props.onDelete(data, select);
                         }
-                        else {
-                            DialogHelper.showAlert(res.errorMessage);
+                        else{
+                            handleDelete(data, select);
                         }
                     }}
                     {...props.tableProps}

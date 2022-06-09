@@ -1,7 +1,9 @@
 import { Dialog, Typography } from "@material-ui/core";
 import { FC, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import readXlsxFile from "read-excel-file";
 import { APIService } from "../../api/service";
+import { ExcelPicker } from "../../components/Picker/excelPicker";
 import CustomizedTabs from "../../components/tabs";
 import { appConfig } from "../../configs";
 import { useRootDialog } from "../../hooks/rootDialog";
@@ -90,6 +92,23 @@ export const ExamDetailPage: FC<IProps> = (props) => {
                                 rootDialog.closeDialog();
                             }}
                             onClose={() => rootDialog.closeDialog()}
+                        />
+                    });
+                }}
+                onClickLoadExcel={(select) => {
+                    rootDialog.openDialog({
+                        children: <ExcelPicker
+                            title="Nhập Excel"
+                            templateURI="/static/template/test.xlsx"
+                            onSubmit={(files) => {
+                                rootDialog.closeDialog();
+                                if (files.length > 0) {
+                                    readXlsxFile(files[0])
+                                    .then((rows) => {
+                                        console.log("Excel", rows);
+                                    });
+                                }
+                            }}
                         />
                     });
                 }}
