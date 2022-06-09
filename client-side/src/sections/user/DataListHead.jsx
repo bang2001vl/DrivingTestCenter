@@ -25,6 +25,7 @@ export default function DataListHead({
       <TableRow>
         {headLabel.map((headCell, index) => (
           <TableCell
+            fullWidth
             key={index}
             align={headCell.alignRight ? 'right' : 'left'}
           >

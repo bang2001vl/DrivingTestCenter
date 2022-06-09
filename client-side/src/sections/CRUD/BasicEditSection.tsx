@@ -19,7 +19,7 @@ export interface BasicEditSectionProps<T extends FormikValues = FormikValues, Ol
     submit: (formik: IFormIK<T>) => Promise<MyResponse>,
     method: EDIT_METHOD,
     validation?: (formik: IFormIK<T>) => any,
-    loadOldData?: (searchParams: URLSearchParams)=>Promise<MyResponse<any[]>>,
+    loadOldData?: (searchParams: URLSearchParams) => Promise<MyResponse<any[]>>,
     oldData?: OldDataType,
     onSuccess?: () => void,
     onClose?: () => void,
@@ -38,22 +38,22 @@ export const BasicEditSection: FC<BasicEditSectionProps> = (props) => {
 
     useEffect(() => {
         loadInitValue();
-        if(props.method === EDIT_METHOD.update){
-            if(props.loadOldData){
+        if (props.method === EDIT_METHOD.update) {
+            if (props.loadOldData) {
                 props.loadOldData(searchParams)
-                .then(res =>{
-                    if(res.result && res.data){
-                        formik.setValues(res.data[0]);
-                    }
-                    else{
-                        DialogHelper.showAlert(res.errorMessage);
-                    }
-                });
+                    .then(res => {
+                        if (res.result && res.data) {
+                            formik.setValues(res.data[0]);
+                        }
+                        else {
+                            DialogHelper.showAlert(res.errorMessage);
+                        }
+                    });
             }
         }
     }, [props.initValues, searchParams]);
 
-    const loadInitValue = ()=>{
+    const loadInitValue = () => {
         if (props.initValues) {
             Object.keys(props.initValues).forEach(key => {
                 formik.setFieldValue(key, props.initValues[key]);
@@ -87,15 +87,18 @@ export const BasicEditSection: FC<BasicEditSectionProps> = (props) => {
     }
 
     const handleCancel = () => {
-        if (props.onClose) {
-            props.onClose();
+        const result = DialogHelper.showConfirm('Bạn chắc chắn muốn hủy thao tác?');
+        if (result) {
+            if (props.onClose) {
+                props.onClose();
+            }
         }
     }
 
     return (
         // @ts-ignore
         <Page  >
-            <Container style={{maxWidth: "1920px"}}>
+            <Container style={{ maxWidth: "1920px" }}>
                 <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
                     {props.title}
                 </Typography>

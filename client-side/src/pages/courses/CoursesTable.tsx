@@ -18,7 +18,8 @@ interface IData {
     dateStart: Date,
     dateEnd: Date,
     maxMember: number,
-    countMember: number
+    countMember: number,
+    employeeCNNs: any[];
 }
 
 export type CourseTableProps = IData;
@@ -38,6 +39,7 @@ export const CoursesTable: FC<IProps> = (props) => {
             onEdit={props.onEdit} 
             onDetail={props.onDetail}
             countMember={item.countMember}>
+            employeeCNNs={item.employeeCNNs}
             </CourseCard>
         </Grid>
     }

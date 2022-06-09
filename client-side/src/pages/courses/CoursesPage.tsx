@@ -48,7 +48,6 @@ export default function CoursesPage(props: IProps & Partial<BasicPageProps>) {
     const routeName = "course";
     const api = useAPI();
     const navigate = useNavigate();
-
     return (
         <BasicPage
             routeNameFE={routeNameFE}
@@ -75,6 +74,7 @@ export default function CoursesPage(props: IProps & Partial<BasicPageProps>) {
                         dateStart: new Date(e.dateStart),
                         dateEnd: new Date(e.dateEnd),
                         countMember: e.countMember,
+                     employeeCNNs: e.employeeCNNs,
                     }))}
                     onDetail={(data) => {
                         navigate("detail?id=" + data.id);

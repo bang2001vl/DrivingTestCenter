@@ -79,21 +79,25 @@ export default function ExamTestPage(props: IProps & Partial<BasicPageProps>) {
                         navigate(`/${routeNameFE}/detail?id=` + data.id);
                     }}
                     onDelete={async (data) => {
-                        const id = data.id;
-                        const res = await api.deleteWithToken(
-                            `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
-                        );
-                        if (res.result) {
-                            DialogHelper.showAlert("Success");
-                            select();
+                        const result = DialogHelper.showConfirm('Bạn chắc chắn muốn xóa ca thi này?');
+                        if (result) {
+                            const id = data.id;
+                            const res = await api.deleteWithToken(
+                                `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
+                            );
+                            if (res.result) {
+                                DialogHelper.showAlert("Xóa thành công!");
+                                select();
+                            }
+                            else {
+                                DialogHelper.showAlert(res.errorMessage);
+                            }
                         }
-                        else {
-                            DialogHelper.showAlert(res.errorMessage);
-                        }
-                    }}
+                    }
+                    }
                     {...props.tableProps}
                 />
-            }} 
+            }}
             {...props}
         />
     )

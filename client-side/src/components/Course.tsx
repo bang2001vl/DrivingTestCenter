@@ -14,8 +14,9 @@ export interface CourseProps {
     maxMember: number,
     countMember: number,
     item?: any,
-    onDelete?: (data: any) => void,
-    onEdit?: (data: any) => void,
+    employeeCNNs: any[],
+    onEdit?: () => void,
+    onDelete?: () => void,
     onDetail?: (data: any) => void,
 }
 
@@ -78,7 +79,7 @@ export const CourseCard: FC<CourseProps> = (props) => {
                     {props.name}
                 </Typography>
                 <Stack direction='row' spacing={0.5} alignItems='center'>
-                    <Circle style={{color: getStatus().color, fontSize:'8px'}}></Circle>
+                    <Circle style={{ color: getStatus().color, fontSize: '8px' }}></Circle>
                     <Typography
                         variant="subtitle2"
                         color={getStatus().color} >
@@ -122,7 +123,10 @@ export const CourseCard: FC<CourseProps> = (props) => {
         </Stack>
         <Typography variant="subtitle2" sx={{ color: '#00DB99', fontSize: '13', marginTop: "15px" }}>Giảng viên</Typography>
         <Stack>
-            <Avatar style={{ height: "30px", width: "30px" }}></Avatar>
+            {props.employeeCNNs.map((employee, index) =>
+             {return <Avatar key={index} style={{ height: "30px", width: "30px" }}></Avatar>})
+            }
+
         </Stack>
 
     </Card>
