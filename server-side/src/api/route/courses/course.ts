@@ -22,7 +22,12 @@ export const CourseRoute = () => {
         RouteBuilder.buildSelectRoute(repo, tag, customFilter),
     );
 
-    route.get("/select/include/",
+    route.get("/select/include",
+        RouteBuilder.buildSelectInputParser(searchFields, orderFields, tag),
+        RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, customInclude),
+    );
+
+    route.get("/overview/select",
         RouteBuilder.buildSelectInputParser(searchFields, orderFields, tag),
         RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, customInclude),
     );

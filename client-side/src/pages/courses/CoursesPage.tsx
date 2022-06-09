@@ -51,7 +51,7 @@ export default function CoursesPage(props: IProps & Partial<BasicPageProps>) {
     return (
         <BasicPage
             routeNameFE={routeNameFE}
-            routeSelect={"course"}
+            routeSelect={"course/overview"}
 
             searchOptionList={searchOptionList}
             orderOptionList={orderOptionList}

@@ -11,6 +11,13 @@ export const SessionRoute = () => {
     const route = Router();
     route.use(json());
 
+    route.get("/check",
+    SessionHandler.sessionMiddleware,
+    RouteHandleWrapper.wrapMiddleware(async (req, res) => {
+        res.json(buildResponseSuccess([res.locals.session]));
+    }),
+);
+
     route.get("/list",
         SessionHandler.sessionMiddleware,
         RouteHandleWrapper.wrapMiddleware(async (req, res) => {
