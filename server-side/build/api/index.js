@@ -36,7 +36,9 @@ const examTest_1 = require("./route/examTest/examTest");
 const manager_1 = require("./route/account/manager");
 const course_1 = require("./route/courses/course");
 const student_1 = require("./route/student");
-const cnnStudentClass_1 = require("./route/cnnStudentClass");
+const cnn_1 = require("./route/cnn");
+const bill_1 = require("./route/bill");
+const statistic_1 = require("./route/statistic");
 function ApiServer() {
     const app = (0, express_1.default)();
     app.use((0, cors_1.default)());
@@ -48,7 +50,9 @@ function ApiServer() {
     app.use("/user", (0, manager_1.AccountManagerRoute)());
     app.use("/course", (0, course_1.CourseRoute)());
     app.use("/student", (0, student_1.StudentRoute)());
-    app.use("/cnn", (0, cnnStudentClass_1.CNNStudentClassRoute)());
+    app.use("/cnn", (0, cnn_1.CNNRoute)());
+    app.use("/bill", (0, bill_1.BillRoute)());
+    app.use("/statistic", (0, statistic_1.StatisticRoute)());
     app.use((req, res, next) => {
         if (res.locals.error) {
             res.json(res.locals.error);

@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExamTestChecker = exports.ExamTestRoute = void 0;
+const isBefore_1 = __importDefault(require("date-fns/isBefore"));
 const express_1 = require("express");
 const prisma_1 = require("../../../prisma");
 const FieldGetter_1 = require("../../handler/FieldGetter");
@@ -40,6 +41,9 @@ function checkInput_Insert(input) {
             dateTimeEnd: FieldGetter_1.FieldGetter.Date(input, "dateTimeEnd", true),
             maxMember: FieldGetter_1.FieldGetter.Number(input, "maxMember", true),
         };
+        if (!(0, isBefore_1.default)(data.dateTimeStart, data.dateTimeEnd)) {
+            throw (0, utilities_1.buildResponseError)(1, "DateStartTime must smaller than DateTimeEnd");
+        }
         return {
             data
         };

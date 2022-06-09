@@ -25,6 +25,7 @@ const utilities_1 = require("../utilities");
 const _default_1 = require("../_default");
 const _wrapper_1 = require("../_wrapper");
 const manager_1 = require("./manager");
+const nativeflutter_1 = require("./nativeflutter");
 const repo = prisma_1.myPrisma.account;
 const tag = "Account";
 const DEFAULT_UPLOAD_FOLDER = path_1.default.resolve(config_1.default.publicFolder, "uploads", "avatar");
@@ -43,6 +44,7 @@ const upload = (0, multer_1.default)({
 const AccountRoute = () => {
     const route = (0, express_1.Router)();
     route.use("/manager", (0, manager_1.AccountManagerRoute)());
+    route.use("/nativeflutter", (0, nativeflutter_1.NativeFlutterRoute)());
     route.get("/info/self", session_1.default.sessionMiddleware, addAccountId, _wrapper_1.RouteHandleWrapper.wrapHandleInput((input) => __awaiter(void 0, void 0, void 0, function* () {
         const result = yield repo.findFirst({
             where: { id: input.accountId },

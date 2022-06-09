@@ -23,6 +23,9 @@ const tag = "Session";
 const SessionRoute = () => {
     const route = (0, express_1.Router)();
     route.use((0, express_1.json)());
+    route.get("/check", session_1.default.sessionMiddleware, _wrapper_1.RouteHandleWrapper.wrapMiddleware((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        res.json((0, utilities_1.buildResponseSuccess)([res.locals.session]));
+    })));
     route.get("/list", session_1.default.sessionMiddleware, _wrapper_1.RouteHandleWrapper.wrapMiddleware((req, res) => __awaiter(void 0, void 0, void 0, function* () {
         //helper.logger.traceWithTag(tag, JSON.stringify(res.locals.session, null, 2));
         const accountId = res.locals.session.accountId;

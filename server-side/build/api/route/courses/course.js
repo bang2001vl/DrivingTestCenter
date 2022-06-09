@@ -19,7 +19,8 @@ const CourseRoute = () => {
     const searchFields = ["name"];
     const orderFields = ["name", "dateStart", "dateEnd", "createdAt"];
     route.get("/select", _default_1.RouteBuilder.buildSelectInputParser(searchFields, orderFields, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter));
-    route.get("/select/include/", _default_1.RouteBuilder.buildSelectInputParser(searchFields, orderFields, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, customInclude));
+    route.get("/select/include", _default_1.RouteBuilder.buildSelectInputParser(searchFields, orderFields, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, customInclude));
+    route.get("/overview/select", _default_1.RouteBuilder.buildSelectInputParser(searchFields, orderFields, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, customInclude));
     route.get("/count", _default_1.RouteBuilder.buildCountInputParser(["name"], tag), _default_1.RouteBuilder.buildCountRoute(repo, tag, customFilter));
     route.post("/insert", session_1.default.roleChecker([0]), _wrapper_1.RouteHandleWrapper.wrapCheckInput(checkInput_Insert, tag), _default_1.RouteBuilder.buildInsertRoute(repo, tag));
     route.put("/update", session_1.default.roleChecker([0]), _wrapper_1.RouteHandleWrapper.wrapCheckInput(checkInput_Update, tag), _default_1.RouteBuilder.buildUpdateRoute(repo, tag));

@@ -68,12 +68,37 @@ function customSelectFilter(input) {
     const rs = {};
     if (input.roleId) {
         rs.roleId = FieldGetter_1.FieldGetter.Number(input, "roleId", true);
+        if (rs.roleId === 1) {
+            if (input.examTestId) {
+                rs.joingTest = { some: { examTestId: FieldGetter_1.FieldGetter.Number(input, "examTestId", true) } };
+            }
+            if (input.notHaveExamTestId) {
+                rs.joingTest = Object.assign(Object.assign({}, rs.joingTest), { none: { examTestId: FieldGetter_1.FieldGetter.Number(input, "notHaveExamTestId", true) } });
+            }
+            if (input.classId) {
+                rs.studingClass = { some: { classId: FieldGetter_1.FieldGetter.Number(input, "classId", true) } };
+            }
+            if (input.notHaveClassId) {
+                rs.studingClass = Object.assign(Object.assign({}, rs.studingClass), { none: { classId: FieldGetter_1.FieldGetter.Number(input, "notHaveClassId", true) } });
+            }
+        }
+        else if (rs.roleId === 2) {
+            if (input.examTestId) {
+                rs.workingTest = { some: { examTestId: FieldGetter_1.FieldGetter.Number(input, "examTestId", true) } };
+            }
+            if (input.notHaveExamTestId) {
+                rs.workingTest = Object.assign(Object.assign({}, rs.workingTest), { none: { examTestId: FieldGetter_1.FieldGetter.Number(input, "notHaveExamTestId", true) } });
+            }
+            if (input.classId) {
+                rs.teachingClass = { some: { classId: FieldGetter_1.FieldGetter.Number(input, "classId", true) } };
+            }
+            if (input.notHaveClassId) {
+                rs.teachingClass = Object.assign(Object.assign({}, rs.teachingClass), { none: { classId: FieldGetter_1.FieldGetter.Number(input, "notHaveClassId", true) } });
+            }
+        }
     }
-    if (input.examTestId) {
-        rs.joingTest = { some: { examTestId: FieldGetter_1.FieldGetter.Number(input, "examTestId", true) } };
-    }
-    if (input.classId) {
-        rs.studingClass = { some: { classId: FieldGetter_1.FieldGetter.Number(input, "classId", true) } };
+    if (input.id) {
+        rs.id = FieldGetter_1.FieldGetter.Number(input, "id", true);
     }
     return rs;
 }

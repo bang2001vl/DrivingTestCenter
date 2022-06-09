@@ -1,8 +1,9 @@
+import isBefore from "date-fns/isBefore";
 import { json, Router, urlencoded } from "express";
 import { myPrisma } from "../../../prisma";
 import { FieldGetter } from "../../handler/FieldGetter";
 import SessionHandler from "../../handler/session";
-import { parseInputDeleted } from "../utilities";
+import { buildResponseError, parseInputDeleted } from "../utilities";
 import { RouteBuilder } from "../_default";
 import { InputSource, RouteHandleWrapper } from "../_wrapper";
 
@@ -75,6 +76,10 @@ function checkInput_Insert(input: any) {
             dateTimeStart: FieldGetter.Date(input, "dateTimeStart", true),
             dateTimeEnd: FieldGetter.Date(input, "dateTimeEnd", true),
             maxMember: FieldGetter.Number(input, "maxMember", true),
+        }
+
+        if(!isBefore(data.dateTimeStart!, data.dateTimeEnd!)){
+            throw buildResponseError(1, "DateStartTime must smaller than DateTimeEnd");
         }
 
         return {
