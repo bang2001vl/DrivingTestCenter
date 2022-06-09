@@ -11,46 +11,40 @@ import { Box, Button, Card, MenuItem, Stack } from "@mui/material"
 import { FormIkTextField } from "../../components/FormIK/TextField"
 import { EDIT_METHOD } from "../../_enums"
 import { useNavigate, useSearchParams } from "react-router-dom"
-import { MyResponse } from "../../api/service"
-import { FormIkAvatar } from "../../components/FormIK/Avatar"
 import { FormIkDatePicker } from "../../components/FormIK/DatePicker"
-import { FormIkAddress } from "../../components/FormIK/Selectors/Address"
 import { DialogHelper } from "../../singleton/dialogHelper"
 import { FormIkNumberField } from "../../components/FormIK/NumberField"
-import { FormIkDateTimePicker } from "../../components/FormIK/DateTimePicker"
-import { FormIKExamSelector } from "../../components/FormIK/Selectors/examSelectors"
 import addDays from "date-fns/addDays"
 import isBefore from "date-fns/isBefore"
-import addHours from "date-fns/addHours"
+import { FormIkRoom } from "../../components/FormIK/Selectors/Rooms"
 
 interface IProps {
     method: EDIT_METHOD,
     editKey?: number,
+    hideTitle?: boolean,
 }
 
 export const CoursesCreate: FC<IProps & Partial<BasicEditSectionProps>> = (props) => {
     const routeName = "course";
     const navigate = useNavigate();
     const api = useAPI();
-    const [searchParams] = useSearchParams();
-    const [initValue, setInitValue] = useState({
+    const defaultValue = {
         name: "",
         location: "",
         dateStart: new Date().toISOString(),
         dateEnd: addDays(new Date(), 1).toISOString(),
         maxMember: "",
-    });
+    };
 
 
-    useEffect(() => {
-        if (props.method === EDIT_METHOD.update) {
-            const key = getOldKey();
+    const loadOldData = (params: URLSearchParams)=>{
+        const key = params.get("id");
             if (!key) {
                 navigate("/", { replace: true });
                 DialogHelper.showAlert("Not found id");
             }
 
-            api.getWithToken(
+            return api.getWithToken(
                 `${appConfig.backendUri}/${routeName}/select?${new URLSearchParams({
                     searchvalue: "",
                     searchby: "name",
@@ -60,18 +54,8 @@ export const CoursesCreate: FC<IProps & Partial<BasicEditSectionProps>> = (props
                     count: "1",
                     id: String(key),
                 }).toString()}`
-            ).then(res => {
-                if (res.result && res.data) {
-                    setInitValue(res.data[0]);
-                }
-                else {
-                    DialogHelper.showAlert(res.errorMessage);
-                }
-            });
-        }
-    }, [props.method, searchParams]);
-
-    const getOldKey = () => (searchParams.get("id"));
+            );
+    }
 
     const schema = yup.object({
         name: yup.string().required("Name must not be null"),
@@ -114,7 +98,7 @@ export const CoursesCreate: FC<IProps & Partial<BasicEditSectionProps>> = (props
             );
         }
         else {
-            data.key = String(getOldKey());
+            data.key = String(formik.values.id);
             return api.putWithToken(
                 `${appConfig.backendUri}/${routeName}/update`,
                 data,
@@ -133,12 +117,15 @@ export const CoursesCreate: FC<IProps & Partial<BasicEditSectionProps>> = (props
 
     const marginTop = 1;
     return <BasicEditSection
-        title="Tạo Lớp Học"
-        initValues={initValue}
+        title={props.hideTitle ? "" : (props.method === EDIT_METHOD.create) ? "Tạo lớp Học" : "Cập nhật lớp học"}
         onSuccess={handleSuccess}
         onClose={handleClose}
         validation={handleValidate}
         submit={handleSubmit}
+        loadOldData={loadOldData}
+
+        {...props}
+        initValues={{...defaultValue, ...props.initValues}}
         formComponent={(formik, cancel, isLoading) => {
             return (
                 <Card style={{ alignItems: "center", justifyContent: 'center', textAlign: "center", marginTop: '15px', padding: "5%" }} >
@@ -162,7 +149,7 @@ export const CoursesCreate: FC<IProps & Partial<BasicEditSectionProps>> = (props
                             </Stack>
                             <Stack direction="row" spacing={2}>
                                 <Box sx={{ width: "50%" }}>
-                                    <FormIkTextField formik={formik} fieldName="location"
+                                    <FormIkRoom formik={formik} fieldName="location"
                                         fullWidth
                                         label="Nơi học"
                                         sx={{ marginTop }}

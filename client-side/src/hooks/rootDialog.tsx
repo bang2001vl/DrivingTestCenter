@@ -59,7 +59,7 @@ export const useRootDialog = () => {
     // const [handleClose, setHandleClose] = useRecoilState(handleCloseAtom);
     const [childrenElement, setChildrenElement] = useRecoilState(childrenElementAtom);
     return {
-        openDialog(props: {children: JSX.Element, title?: JSX.Element, handleClose?: (event: {}, reason: "backdropClick" | "escapeKeyDown") => void }) {
+        openDialog(props: { children: JSX.Element, title?: JSX.Element, handleClose?: (event: {}, reason: "backdropClick" | "escapeKeyDown") => void }) {
             // title = props.title;
             // children = props.children;
             // if(!props.handleClose){
@@ -100,20 +100,20 @@ interface IProps {
 
 export const DialogLayout: React.FC<IProps> = (props) => {
     return (
-        <Dialog 
-        onClose={props.handleClose} open={props.open} 
-        PaperProps={{ style: { overflowY: 'visible' } }}
+        <Dialog
+            onClose={props.handleClose} open={props.open}
+            PaperProps={{ style: { overflowY: 'visible' } }}
         >
-            <DialogTitle>
+            {/* <DialogTitle>
                 <Stack>
                     <Box alignSelf={"center"}>
                         {props.title}
                     </Box>
                 </Stack>
-            </DialogTitle>
+            </DialogTitle> */}
 
-            <DialogContent 
-            style={{ overflowY: 'visible' }}
+            <DialogContent
+                style={{ overflowY: 'visible' }}
             >
                 {props.children}
             </DialogContent>

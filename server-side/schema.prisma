@@ -101,7 +101,7 @@ model ExamTest {
     exam         Exam?                    @relation(fields: [examId], references: [id])
     studentCNNs  CONN_Student_ExamTest[]
     employeeCNNs CONN_Employee_ExamTest[]
-    @@map("exam _test")
+    @@map("exam_test")
 }
 
 model Class {

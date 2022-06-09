@@ -1,11 +1,9 @@
-import { Icon } from "@iconify/react";
-import { useEffect, useState } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 import { appConfig } from "../../configs";
 import useAPI from "../../hooks/useApi";
 import { DialogHelper } from "../../singleton/dialogHelper";
-import DataTable4 from "../../sections/DataTable4";
-import { CoursesTable } from "./CoursesTable";
+import { CoursesTable, CourseTableProps } from "./CoursesTable";
+import { BasicPage, BasicPageProps } from "../_builder/PageBuilder";
 
 // const HEAD_LABEL = [
 //     { id: 'name', label: 'Name', alignRight: false },
@@ -41,79 +39,62 @@ const orderOptionList = [
     }
 ];
 
-export default function CoursesPage() {
+interface IProps {
+    tableProps?: Partial<CourseTableProps>,
+}
+
+export default function CoursesPage(props: IProps & Partial<BasicPageProps>) {
+    const routeNameFE = "dashboard/course";
     const routeName = "course";
     const api = useAPI();
-    const [loadChild, setLoadChild] = useState(false);
     const navigate = useNavigate();
-    const reload = ()=>{
-        setLoadChild(!loadChild);
-    }
 
-    const handleSelect = (params: URLSearchParams)=>{
-        return api.get(
-            `${appConfig.backendUri}/${routeName}/select/include?${params.toString()}`
-        );
-    }
-
-    const handleCount = (params: URLSearchParams)=>{
-        return api.get(
-            `${appConfig.backendUri}/${routeName}/count?${params.toString()}`
-        );
-    }
-
-    const handleCreate = ()=>{
-        navigate("create");
-    }
-
-    const handleEdit = (data: any) => {
-        navigate("edit?id="+data.id);
-    }
-    
-    const handleDelete = async (data: any) => {
-        const id = data.id;
-        const res = await api.deleteWithToken(
-            `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
-        );
-        if (res.result) {
-            DialogHelper.showAlert("Success");
-            reload();
-        }
-        else {
-            DialogHelper.showAlert(res.errorMessage);
-        }
-    }
-
-    const renderTable = (dataList: any[]) => {
-        return <CoursesTable
-            dataList={dataList.map(e => ({
-                ...e,
-                id: Number(e.id),
-                name: e.name,
-                price: Number(e.price),
-                location: e.location,
-                dateStart: new Date(e.dateStart),
-                dateEnd: new Date(e.dateEnd),
-                countMember: e.countMember,
-            }))}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-        />
-    }
     return (
-        <DataTable4
+        <BasicPage
+            routeNameFE={routeNameFE}
+            routeSelect={"course"}
+
             searchOptionList={searchOptionList}
             orderOptionList={orderOptionList}
+
             searchbarText='Tìm tên lớp học'
-            title="Dashboard | Classes"
-            textLabel="Lớp học"
-            needReload={loadChild}
+            webTitle="Dashboard | Classes"
+            pageTitle="Lớp học"
+
             cardColor='transparent'
-            onRenderItem={renderTable} 
-            count={handleCount}
-            select={handleSelect}
-            onClickCreate={handleCreate}
-            />
-        // <p>ádasd</p>
+            {...props}
+            onRenderItem={(dataList, select, emptyView) => {
+                if(dataList.length < 1) return emptyView ? emptyView : <></>;
+                return <CoursesTable
+                    dataList={dataList.map(e => ({
+                        ...e,
+                        id: Number(e.id),
+                        name: e.name,
+                        price: Number(e.price),
+                        location: e.location,
+                        dateStart: new Date(e.dateStart),
+                        dateEnd: new Date(e.dateEnd),
+                        countMember: e.countMember,
+                    }))}
+                    onDetail={(data) => {
+                        navigate("detail?id=" + data.id);
+                    }}
+                    onDelete={async (data: any) => {
+                        const id = data.id;
+                        const res = await api.deleteWithToken(
+                            `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
+                        );
+                        if (res.result) {
+                            DialogHelper.showAlert("Success");
+                            select();
+                        }
+                        else {
+                            DialogHelper.showAlert(res.errorMessage);
+                        }
+                    }}
+                    {...props.tableProps}
+                />
+            }}
+        />
     )
 }

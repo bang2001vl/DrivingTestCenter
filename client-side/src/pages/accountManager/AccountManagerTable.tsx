@@ -1,6 +1,7 @@
 import { Avatar, Stack, Table, TableBody, TableCell, TableContainer, TableRow } from "@mui/material";
 import format from "date-fns/format";
 import parseISO from "date-fns/parseISO";
+import { type } from "os";
 import { FC } from "react";
 import SearchNotFound from "../../components/SearchNotFound";
 import { appConfig } from "../../configs";
@@ -29,7 +30,9 @@ interface IData {
     avatarURI?: string;
 }
 
-export const AccountManagerTable: FC<IProps & DataTableLayoutProps> = (props) => {
+export type AccountManagerTableProps = IProps & Partial<DataTableLayoutProps>;
+
+export const AccountManagerTable: FC<AccountManagerTableProps> = (props) => {
     function getGender(data: IData) {
         if (data.gender === 0) {
             return "Nữ";

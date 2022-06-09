@@ -7,32 +7,90 @@ import { RouteHandleWrapper } from "../_wrapper";
 
 const tag = "CNN_Student_Class";
 
-export const CNNStudentClassRoute = () => {
+export const CNNRoute = () => {
     const route = Router();
 
     route.use(json());
 
+    //
+    /// **** Student-Class
+    //
     route.post("/join/student/classes",
         SessionHandler.roleChecker([0]),
         ...buildInsertOneManyRoute(myPrisma.cONN_Student_Class, "studentId", "classId"),
     );
-
     route.post("/join/class/students",
         SessionHandler.roleChecker([0]),
         ...buildInsertOneManyRoute(myPrisma.cONN_Student_Class, "classId", "studentId"),
     );
+    route.post("/delete/student/classes",
+        SessionHandler.roleChecker([0]),
+        ...buildDeleteOneManyRoute(myPrisma.cONN_Student_Class, "studentId", "classId"),
+    );
+    route.post("/delete/class/students",
+        SessionHandler.roleChecker([0]),
+        ...buildDeleteOneManyRoute(myPrisma.cONN_Student_Class, "classId", "studentId"),
+    );
 
+    //
+    /// **** Student-Test
+    //
     route.post("/join/student/examtests",
         SessionHandler.roleChecker([0]),
         ...buildInsertOneManyRoute(myPrisma.cONN_Student_ExamTest, "studentId", "examTestId"),
     );
-
     route.post("/join/examtest/students",
         SessionHandler.roleChecker([0]),
         ...buildInsertOneManyRoute(myPrisma.cONN_Student_ExamTest, "examTestId", "studentId"),
     );
+    route.post("/delete/student/examtests",
+        SessionHandler.roleChecker([0]),
+        ...buildDeleteOneManyRoute(myPrisma.cONN_Student_ExamTest, "studentId", "examTestId"),
+    );
+    route.post("/delete/examtest/students",
+        SessionHandler.roleChecker([0]),
+        ...buildDeleteOneManyRoute(myPrisma.cONN_Student_ExamTest, "examTestId", "studentId"),
+    );
 
+    ///
+    /// **** Employee-Class
+    ///
+    route.post("/join/employee/classes",
+        SessionHandler.roleChecker([0]),
+        ...buildInsertOneManyRoute(myPrisma.cONN_Employee_Class, "employeeId", "classId"),
+    );
+    route.post("/join/class/employees",
+        SessionHandler.roleChecker([0]),
+        ...buildInsertOneManyRoute(myPrisma.cONN_Employee_Class, "classId", "employeeId"),
+    );
+    route.post("/delete/employee/classes",
+        SessionHandler.roleChecker([0]),
+        ...buildDeleteOneManyRoute(myPrisma.cONN_Employee_Class, "employeeId", "classId"),
+    );
+    route.post("/delete/class/employees",
+        SessionHandler.roleChecker([0]),
+        ...buildDeleteOneManyRoute(myPrisma.cONN_Employee_Class, "classId", "employeeId"),
+    );
 
+    ///
+    /// **** Employee-Test
+    ///
+    route.post("/join/employee/examtests",
+        SessionHandler.roleChecker([0]),
+        ...buildInsertOneManyRoute(myPrisma.cONN_Employee_ExamTest, "employeeId", "examTestId"),
+    );
+    route.post("/join/examtest/employees",
+        SessionHandler.roleChecker([0]),
+        ...buildInsertOneManyRoute(myPrisma.cONN_Employee_ExamTest, "examTestId", "employeeId"),
+    );
+    route.post("/delete/employee/examtests",
+        SessionHandler.roleChecker([0]),
+        ...buildDeleteOneManyRoute(myPrisma.cONN_Employee_ExamTest, "employeeId", "examTestId"),
+    );
+    route.post("/delete/examtest/employees",
+        SessionHandler.roleChecker([0]),
+        ...buildDeleteOneManyRoute(myPrisma.cONN_Employee_ExamTest, "examTestId", "employeeId"),
+    );
 
     return route;
 }

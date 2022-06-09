@@ -9,7 +9,7 @@ DELIMITER $$
         DECLARE examtestPrice INT;
         DECLARE reason VARCHAR(256);
 		SELECT fullname INTO studentName FROM account WHERE id=studentId; 
-		SELECT name, examId INTO examtestName, examtestParentId FROM examtest WHERE id=examtestId; 
+		SELECT name, examId INTO examtestName, examtestParentId FROM exam_test WHERE id=examtestId; 
 		SELECT price INTO examtestPrice FROM exam WHERE id=examtestParentId;
         SET reason = CONCAT("[Auto-generated] Đóng lệ phí ca thi: ", examtestName, "Người đóng: ", studentName, ".");
 -- 		SELECT studentId, examtestId, studentName, examtestName, examtestParentId, examtestPrice, reason;

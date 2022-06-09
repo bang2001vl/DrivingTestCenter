@@ -21,6 +21,8 @@ import { AccountManagerCreate } from "../pages/accountManager/AccountManagerCrea
 import CoursesPage from "../pages/courses/CoursesPage";
 import { CoursesCreate } from "../pages/courses/CoursesCreate";
 import { ExamDetailPage } from "../pages/exam/examDetailPage";
+import { ExamTestDetailPage } from "../pages/examTest/examTestDetail";
+import { CourseDetailPage } from "../pages/courses/CourseDetailPage";
 
 export default function RootRouter() {
   return useRoutes([
@@ -38,10 +40,12 @@ export default function RootRouter() {
         { path: 'session', element: <ExamTestPage /> },
         { path: 'session/create', element: <ExamTestCreate method={EDIT_METHOD.create} /> },
         { path: 'session/edit', element: <ExamTestCreate method={EDIT_METHOD.update} /> },
+        { path: 'session/detail', element: <ExamTestDetailPage /> },
 
         { path: 'course', element: <CoursesPage /> },
         { path: 'course/create', element: <CoursesCreate method={EDIT_METHOD.create} /> },
         { path: 'course/edit', element: <CoursesCreate method={EDIT_METHOD.update} /> },
+        { path: 'course/detail', element: <CourseDetailPage /> },
 
         { path: 'lecture', element: <LecturesPage /> },
 

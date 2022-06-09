@@ -3,8 +3,6 @@ import { appConfig } from "../../configs";
 import useAPI from "../../hooks/useApi";
 import { DialogHelper } from "../../singleton/dialogHelper";
 import { ExamTestTable, ExamTestTableProps } from "./examTestTable";
-import DataTable4 from "../../sections/DataTable4";
-import { useState } from "react";
 import { BasicPage, BasicPageProps } from "../_builder/PageBuilder";
 
 const HEAD_LABEL = [
@@ -57,11 +55,14 @@ export default function ExamTestPage(props: IProps & Partial<BasicPageProps>) {
         <BasicPage
             routeSelect={"examtest/overview"}
             routeNameFE={routeNameFE}
+            
             searchOptionList={searchOptionList}
             orderOptionList={orderOptionList}
+
             searchbarText='Tìm tên ca thi'
             webTitle={"Dashboard | Session"}
             pageTitle={props.hideTitle ? "" : "Ca thi"}
+            
             onRenderItem={(dataList, select, emptyView) => {
                 return <ExamTestTable
                     dataList={dataList.map(e => ({
@@ -73,6 +74,9 @@ export default function ExamTestPage(props: IProps & Partial<BasicPageProps>) {
                     emptyView={emptyView}
                     onEdit={(data) => {
                         navigate(`/${routeNameFE}/edit?id=` + data.id);
+                    }}
+                    onDetail={(data) => {
+                        navigate(`/${routeNameFE}/detail?id=` + data.id);
                     }}
                     onDelete={async (data) => {
                         const id = data.id;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { generatePath, useNavigate } from "react-router-dom";
 // material
 import {
@@ -57,7 +57,12 @@ export interface DataTable4Props {
     needReload?: boolean,
 }
 
-export default function DataTable4(props: DataTable4Props) {
+export const DataTable4 = forwardRef((props: DataTable4Props, ref)=>{
+    console.log("REF", ref);
+    
+    useImperativeHandle(ref, ()=>({
+        select
+    }))
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -204,4 +209,4 @@ export default function DataTable4(props: DataTable4Props) {
             </Container>
         </Page>
     );
-}
+})

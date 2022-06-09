@@ -36,6 +36,11 @@ export class MyResponse<D = any> {
 
 const UNAUTHORIZED_RESPONSE = new MyResponse(false, 401, "Need login");
 
+axios.interceptors.request.use(request => {
+        console.log('Starting Request', JSON.stringify(request, null, 2))
+        return request
+      });
+
 export class APIService {
     axios: Axios;
     private onHandleReponse?: (response: MyResponse)=> any;

@@ -16,6 +16,7 @@ import { IFormIK } from "../../_interfaces/formik";
 import { validYupToObject } from "../../_helper/helper";
 import { BasicEditSection, BasicEditSectionProps } from "../../sections/CRUD/BasicEditSection";
 import { MyResponse } from "../../api/service";
+import { FormIkType } from "../../components/FormIK/Selectors/Type";
 
 
 interface IProps {
@@ -104,6 +105,7 @@ export const ExamCreateUI: FC<IProps> = (props: IProps & Partial<BasicEditSectio
             errors.dateClose = "Date close must bigger than date open";
         }
 
+        console.log("Errors", errors);
         if (Object.keys(errors).length > 0) {
             formik.setErrors(errors);
             return errors;
@@ -175,7 +177,7 @@ export const ExamCreateUI: FC<IProps> = (props: IProps & Partial<BasicEditSectio
 
                         </Box>
                         <Box sx={{ minWidth: "50%" }}>
-                            <FormIkTextField formik={formik} fieldName="type"
+                            <FormIkType formik={formik} fieldName="type"
                                 fullWidth
                                 label="Type"
                                 style={{ marginTop }}

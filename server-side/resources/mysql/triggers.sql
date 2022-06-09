@@ -5,7 +5,7 @@ DELIMITER $$
 	FOR EACH ROW
 	BEGIN
 		CALL create_bill_student_examtest(NEW.studentId, NEW.examTestId);
-		UPDATE examTest SET countStudent=countStudent+1 WHERE id=NEW.examTestId;
+		UPDATE exam_test SET countStudent=countStudent+1 WHERE id=NEW.examTestId;
 	END$$
 
  DELIMITER ;

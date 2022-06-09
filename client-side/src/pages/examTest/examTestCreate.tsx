@@ -22,6 +22,7 @@ import { FormIkRoom } from "../../components/FormIK/Selectors/Rooms"
 interface IProps {
     method: EDIT_METHOD,
     editKey?: number,
+    hideTitle?: boolean,
 }
 
 export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (props) => {
@@ -126,7 +127,7 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
 
     const marginTop = 1;
     return <BasicEditSection
-        title={props.method === EDIT_METHOD.create ? "Tạo Ca Thi" : "Thông tin ca thi"}
+        title={props.hideTitle ? "" : (props.method === EDIT_METHOD.create ? "Tạo Ca Thi" : "Thông tin ca thi")}
         onSuccess={handleSuccess}
         onClose={handleClose}
         validation={handleValidate}
