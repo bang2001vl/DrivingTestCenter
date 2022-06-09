@@ -23,6 +23,7 @@ import { CoursesCreate } from "../pages/courses/CoursesCreate";
 import { ExamDetailPage } from "../pages/exam/examDetailPage";
 import { ExamTestDetailPage } from "../pages/examTest/examTestDetail";
 import { CourseDetailPage } from "../pages/courses/CourseDetailPage";
+import BillPage from "../pages/bill/BillPage";
 
 export default function RootRouter() {
   return useRoutes([
@@ -53,7 +54,7 @@ export default function RootRouter() {
         { path: 'account/manager/create', element: <AccountManagerCreate method={EDIT_METHOD.create} /> },
         { path: 'account/manager/edit', element: <AccountManagerCreate method={EDIT_METHOD.update} /> },
 
-        { path: 'receipt', element: <ReceiptsPage /> },
+        { path: 'bill', element: <BillPage /> },
         { path: 'report', element: <ReportsPage /> },
       ]
     },

@@ -56,7 +56,7 @@ export const ExamTestDetailPage: FC<IProps> = (props) => {
 
     return <div>
         <CustomizedTabs
-            listtab={["Thông tin", "Quản lý học viên"]}
+            listtab={["Thông tin", "Quản lý học viên", "Quản lý giảng viên"]}
         >
             <ExamTestCreate
                 hideTitle

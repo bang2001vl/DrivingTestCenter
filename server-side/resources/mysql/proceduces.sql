@@ -19,6 +19,7 @@ DELIMITER $$
 			testId = examTestId,
             totalPrice = examtestPrice,
 			reason = reason,
+			createdAt = UTC_TIMESTAMP(),
 			updatedAt = UTC_TIMESTAMP();
 	END$$
 
@@ -43,6 +44,7 @@ DELIMITER $$
 			classId = classId,
             totalPrice = classPrice,
 			reason = reason,
+			createdAt = UTC_TIMESTAMP(),
 			updatedAt = UTC_TIMESTAMP();
 	END$$
 

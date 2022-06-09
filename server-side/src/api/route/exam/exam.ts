@@ -12,15 +12,17 @@ const tag = "Exam";
 
 export const ExamRoute = () => {
     const route = Router();
+    const searchProps = ["name"];
+    const orderProps = ["name", "dateStart", "dateEnd"];
     route.use(json());
 
     route.get("/select",
-        RouteBuilder.buildSelectInputParser(["name"], ["name", "dateStart", "dateEnd"], tag),
+        RouteBuilder.buildSelectInputParser(searchProps, orderProps, tag),
         RouteBuilder.buildSelectRoute(repo, tag, customFilter),
     );
 
     route.get("/count",
-        RouteBuilder.buildCountInputParser(["name"], tag),
+        RouteBuilder.buildCountInputParser(searchProps, tag),
         RouteBuilder.buildCountRoute(repo, tag),
     );
 

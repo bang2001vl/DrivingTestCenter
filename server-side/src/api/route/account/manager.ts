@@ -100,7 +100,7 @@ function customSelectFilter(input: any) {
                 rs.joingTest = { some: { examTestId: FieldGetter.Number(input, "examTestId", true) } };
             }
             if (input.notHaveExamTestId) {
-                rs.joingTest = { ...rs.joingTest, none: { classId: FieldGetter.Number(input, "notHaveExamTestId", true) } };
+                rs.joingTest = { ...rs.joingTest, none: { examTestId: FieldGetter.Number(input, "notHaveExamTestId", true) } };
             }
             if (input.classId) {
                 rs.studingClass = { some: { classId: FieldGetter.Number(input, "classId", true) } };
@@ -114,7 +114,7 @@ function customSelectFilter(input: any) {
                 rs.workingTest = { some: { examTestId: FieldGetter.Number(input, "examTestId", true) } };
             }
             if (input.notHaveExamTestId) {
-                rs.workingTest = { ...rs.workingTest, none: { classId: FieldGetter.Number(input, "notHaveExamTestId", true) } };
+                rs.workingTest = { ...rs.workingTest, none: { examTestId: FieldGetter.Number(input, "notHaveExamTestId", true) } };
             }
             if (input.classId) {
                 rs.teachingClass = { some: { classId: FieldGetter.Number(input, "classId", true) } };

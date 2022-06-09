@@ -10,6 +10,7 @@ import { AccountManagerRoute } from "./route/account/manager";
 import { CourseRoute } from "./route/courses/course";
 import { StudentRoute } from "./route/student";
 import { CNNRoute } from "./route/cnn";
+import { BillRoute } from "./route/bill";
 
 export function ApiServer() {
     const app = express();
@@ -27,6 +28,7 @@ export function ApiServer() {
     app.use("/course", CourseRoute());
     app.use("/student", StudentRoute());
     app.use("/cnn", CNNRoute());
+    app.use("/bill", BillRoute());
 
     app.use((req, res, next) => {
         if (res.locals.error) {

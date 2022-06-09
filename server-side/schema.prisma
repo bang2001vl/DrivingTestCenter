@@ -166,8 +166,8 @@ model Bill {
     testId Int?
 
     totalPrice Int
-    reason     String @db.VarChar(255) @default("")
-    notes String @db.VarChar(3000) @default("")
+    code String @db.VarChar(255) @default("")
+    reason     String @db.VarChar(3000) @default("")
     status     Int    @default(0)
 
     beginAt DateTime @default(now())
