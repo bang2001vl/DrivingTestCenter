@@ -25,6 +25,8 @@ model Account {
     email   String @db.VarChar(256)
     phoneNumber String  @db.VarChar(20)
     address   String   @db.VarChar(1000)
+    latestDelete Int @default(0)
+    updateTime Int @default(0)
     avatarURI String?  @db.VarChar(256)
 
     createdAt DateTime @default(now()) @db.DateTime(0)
@@ -230,11 +232,13 @@ model CONN_Employee_Class {
 
 model RevenueReportDaily {
     id      Int  @id @default(autoincrement())
-    year Int
-    month   Int
-    day  Int
+    ryear Int
+    rmonth   Int
+    rday  Int
+    rdate DateTime
 
-    totalRevenue  BigInt   @default(0)
+    totalRevenue  Int   @default(0)
 
+    @@unique([ryear,rmonth,rday])
     @@map("revenue_report_daily")
 }

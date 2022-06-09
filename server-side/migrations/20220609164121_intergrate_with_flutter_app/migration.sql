@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `account` ADD COLUMN `latestDelete` INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN `updateTime` INTEGER NOT NULL DEFAULT 0;

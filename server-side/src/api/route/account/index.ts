@@ -10,6 +10,7 @@ import { pushToOldImage, handleCleanUp, parsePathToPublicRelative } from "../uti
 import { RouteBuilder } from "../_default";
 import { RouteHandleWrapper } from "../_wrapper";
 import { AccountManagerRoute } from "./manager";
+import { NativeFlutterRoute } from "./nativeflutter";
 
 const repo = myPrisma.account;
 const tag = "Account";
@@ -32,6 +33,7 @@ export const AccountRoute = () => {
     const route = Router();
 
     route.use("/manager", AccountManagerRoute());
+    route.use("/nativeflutter", NativeFlutterRoute());
 
     route.get("/info/self",
         SessionHandler.sessionMiddleware,

@@ -51,6 +51,10 @@ DELIMITER $$
 	FOR EACH ROW
 	BEGIN
 		SET NEW.code = CAST(uuid_short() AS CHAR);
+
+		INSERT INTO revenue_report_daily(ryear,rmonth,rday,rdate,totalRevenue)
+		VALUES(YEAR(UTC_TIMESTAMP),MONTH(UTC_TIMESTAMP),DAY(UTC_TIMESTAMP),UTC_TIMESTAMP,NEW.totalPrice) 
+		ON DUPLICATE KEY UPDATE totalRevenue=totalRevenue+NEW.totalPrice;
 	END$$
 
  DELIMITER ;
