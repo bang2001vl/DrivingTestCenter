@@ -8,6 +8,7 @@ import { AccountManagerTable, AccountManagerTableProps } from "./AccountManagerT
 import { BasicPage, BasicPageProps } from "../_builder/PageBuilder";
 
 const HEAD_LABEL = [
+    { id: 'avt', label: '', alignRight: false },
     { id: 'name', label: 'Họ và tên', alignRight: false },
   //  { id: 'gender', label: 'Giới tính', alignRight: false },
     { id: 'email', label: 'Email', alignRight: false },
@@ -17,7 +18,7 @@ const HEAD_LABEL = [
     { id: '' }
 ]
 const searchOptionList = [{
-    label: "Name",
+    label: "Tên",
     value: {
         searchby: "fullname"
     }
@@ -25,14 +26,14 @@ const searchOptionList = [{
 
 const orderOptionList = [
     {
-        label: "Name (A-Z)",
+        label: "Tên (A-Z)",
         value: {
             orderby: "fullname",
             orderdirection: "asc"
         }
     },
     {
-        label: "Name (Z-A)",
+        label: "Tên (Z-A)",
         value: {
             orderby: "fullname",
             orderdirection: "desc"
@@ -80,7 +81,7 @@ export default function AccountManagerPage(props: IProps & Partial<BasicPageProp
                             `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
                         );
                         if (res.result) {
-                            DialogHelper.showAlert("Success");
+                            DialogHelper.showAlert("Thành công");
                             select();
                         }
                         else {

@@ -16,7 +16,7 @@ import { BasicPage, BasicPageProps } from "../_builder/PageBuilder";
 //     { id: '' }
 // ]
 const searchOptionList = [{
-    label: "Name",
+    label: "Tên",
     value: {
         searchby: "name"
     }
@@ -24,14 +24,14 @@ const searchOptionList = [{
 
 const orderOptionList = [
     {
-        label: "Name (A-Z)",
+        label: "Tên (A-Z)",
         value: {
             orderby: "name",
             orderdirection: "asc"
         }
     },
     {
-        label: "Name (Z-A)",
+        label: "Tên (Z-A)",
         value: {
             orderby: "name",
             orderdirection: "desc"
@@ -51,7 +51,7 @@ export default function CoursesPage(props: IProps & Partial<BasicPageProps>) {
     return (
         <BasicPage
             routeNameFE={routeNameFE}
-            routeSelect={"course/overview"}
+            routeSelect={"course"}
 
             searchOptionList={searchOptionList}
             orderOptionList={orderOptionList}
@@ -76,7 +76,7 @@ export default function CoursesPage(props: IProps & Partial<BasicPageProps>) {
                         countMember: e.countStudent,
                         employeeCNNs: e.employeeCNNs,
                     }))}
-                    onDetail={(data) => {
+                    onEdit={(data) => {
                         navigate("detail?id=" + data.id);
                     }}
                     onDelete={async (data: any) => {
@@ -85,7 +85,7 @@ export default function CoursesPage(props: IProps & Partial<BasicPageProps>) {
                             `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
                         );
                         if (res.result) {
-                            DialogHelper.showAlert("Success");
+                            DialogHelper.showAlert("Thành công");
                             select();
                         }
                         else {

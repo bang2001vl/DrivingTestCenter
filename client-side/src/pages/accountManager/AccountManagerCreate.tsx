@@ -63,14 +63,14 @@ export const AccountManagerCreate: FC<IProps & Partial<BasicEditSectionProps>> =
     }
 
     const schema = yup.object({
-        username: yup.string().required(),
-        password: yup.string().required(),
-        birthday: yup.string().required(),
-        gender: yup.number().positive().required(),
-        roleId: yup.number().positive().required(),
-        email: yup.string().email().required(),
-        phoneNumber: yup.string().required(),
-        address: yup.string().required(),
+        username: yup.string().required("Tên người dùng không được để trống!"),
+        password: yup.string().required('Mật khẩu không được để trống!'),
+        birthday: yup.string().required('Ngày sinh không được để trống!'),
+        gender: yup.number().positive().required('Giới tính không được để trống!'),
+        roleId: yup.number().positive().required('Vai trò không được để trống!'),
+        email: yup.string().email().required('Email không được để trống!'),
+        phoneNumber: yup.string().required('Số điện thoại không được để trống!'),
+        address: yup.string().required('Địa chỉ không được để trống!'),
     });
 
     function handleValidate(formik: IFormIK) {
@@ -192,14 +192,23 @@ export const AccountManagerCreate: FC<IProps & Partial<BasicEditSectionProps>> =
                                             label="Ngày sinh"
 
                                         />
+                                        <Box sx={{ width: "25%" }}>
+                                            <FormIkGender formik={formik} fieldName="gender"
+                                                label="Giới tính"
+                                                fullWidth
+                                            />
 
-                                        <FormIkGender formik={formik} fieldName="gender"
-                                            label="Giới tính"
-                                        />
+                                        </Box>
+                                        <Box sx={{ width: "25%" }}>
+                                            <FormIkRole formik={formik} fieldName="roleId"
+                                                label="Vai trò"
+                                                fullWidth
+                                            />
 
-                                        <FormIkRole formik={formik} fieldName="roleId"
-                                            label="Vai trò"
-                                        />
+                                        </Box>
+
+
+
                                     </Stack>
 
 
@@ -232,7 +241,7 @@ export const AccountManagerCreate: FC<IProps & Partial<BasicEditSectionProps>> =
                                             onClick={() => formik.handleSubmit()}
                                             sx={{ width: "120px" }}
                                         >
-                                            Xác nhận
+                                            Lưu
                                         </LoadingButton>
 
                                         <Button

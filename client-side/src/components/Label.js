@@ -62,7 +62,7 @@ const RootStyle = styled('span')(({ theme, ownerState }) => {
 
 // ----------------------------------------------------------------------
 
-export default function Label({ color = 'default', variant = 'ghost', children, ...other }) {
+export default function LabelCustom({ color = 'default', variant = 'ghost', children, ...other }) {
   return (
     <RootStyle ownerState={{ color, variant }} {...other}>
       {children}
@@ -70,7 +70,7 @@ export default function Label({ color = 'default', variant = 'ghost', children, 
   );
 }
 
-Label.propTypes = {
+LabelCustom.propTypes = {
   children: PropTypes.node,
   color: PropTypes.oneOf([
     'default',

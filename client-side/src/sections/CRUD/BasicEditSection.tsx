@@ -11,6 +11,7 @@ import { appConfig } from "../../configs";
 import { DialogHelper } from "../../singleton/dialogHelper";
 import { IFormIK } from "../../_interfaces/formik";
 import { useSearchParams } from "react-router-dom";
+import { BuildReportAlert } from "../../singleton/alertConfirm";
 
 export interface BasicEditSectionProps<T extends FormikValues = FormikValues, OldDataType = any> {
     initValues: T,
@@ -79,6 +80,7 @@ export const BasicEditSection: FC<BasicEditSectionProps> = (props) => {
             DialogHelper.showAlert(result.errorMessage);
         }
         else {
+         //   BuildReportAlert("error","Thành công", "Đã lưu kì thi thành công!" );
             //DialogHelper.showAlert("Success");
             if (props.onSuccess) {
                 props.onSuccess();
@@ -98,7 +100,7 @@ export const BasicEditSection: FC<BasicEditSectionProps> = (props) => {
     return (
         // @ts-ignore
         <Page  >
-            <Container style={{ maxWidth: "1920px" }}>
+            <Container style={{ maxWidth: "1920px", margin:'0px', padding: "20px" }}>
                 <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
                     {props.title}
                 </Typography>

@@ -27,7 +27,7 @@ export const ExamDetailPage: FC<IProps> = (props) => {
         const key = searchParams.get("id");
         if (!key) {
             navigate("/", { replace: true });
-            DialogHelper.showAlert("Not found id");
+            DialogHelper.showAlert("Không thể tìm thấy kì thi!");
         }
         else {
             console.log("load old from exam detail page", key);
@@ -53,9 +53,9 @@ export const ExamDetailPage: FC<IProps> = (props) => {
     }, [searchParams.get("id")]);
 
     return <div>
-          <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
-                        Chỉnh sửa kì thi
-                    </Typography>
+        <Typography variant="h3" gutterBottom style={{ color: "#3C557A", marginLeft: "10px" }}>
+            Chỉnh sửa kì thi
+        </Typography>
         <CustomizedTabs
             listtab={["Thông tin", "Quản lý ca thi"]}
         >

@@ -92,7 +92,7 @@ export const MySearchBar: FC<IProps> = (props) => {
     <Stack direction={"row"} alignItems="center" spacing={2}>
       <FormControl>
         <TextField
-          label="Search by"
+          label="Tìm kiếm theo"
           value={searchOption ? searchOption : props.searchOptionList[0].value}
           onChange={(event) => setSearchOption(event.target.value)}
           select
@@ -110,7 +110,7 @@ export const MySearchBar: FC<IProps> = (props) => {
 
       <FormControl>
         <TextField
-          label="Order By"
+          label="Sắp xếp theo"
           value={orderOption ? orderOption : props.orderOptionList[0].value}
           onChange={(event) => {
             setOrderOption(event.target.value); 

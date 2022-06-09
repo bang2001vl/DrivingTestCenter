@@ -183,7 +183,7 @@ export const DataTable4 = forwardRef((props: DataTable4Props, ref)=>{
 
     return (
         // @ts-ignore
-        <Page title={props.title} >
+        <Page title={props.title} style={{paddingLeft: "20px"}}>
             <Container style={{ maxWidth: '1920px' }}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1.5}>
                     <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>

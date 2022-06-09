@@ -16,7 +16,7 @@ export const FormIkRole: FC<IProps & TextFieldProps> = (props) => {
     return <FormIkSelect
         options={[
             {
-                label: "Học sinh",
+                label: "Học viên",
                 value: 1
             },
             {

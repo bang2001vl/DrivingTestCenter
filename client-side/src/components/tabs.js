@@ -90,7 +90,7 @@ export default function CustomizedTabs({ listtab, children }) {
   };
 
   return (
-    <Box marginTop={3}>
+    <Box marginTop={3} marginLeft={1}>
       {/* <AppBar position="static"> */}
         <StyledTabs
           value={value}

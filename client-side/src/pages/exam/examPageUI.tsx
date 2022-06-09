@@ -19,7 +19,7 @@ const EXAM_HEAD_LABEL = [
     { id: '' }
 ]
 const searchOptionList = [{
-    label: "Name",
+    label: "Tên",
     value: {
         searchby: "name"
     }
@@ -27,14 +27,14 @@ const searchOptionList = [{
 
 const orderOptionList = [
     {
-        label: "Name (A-Z)",
+        label: "Tên (A-Z)",
         value: {
             orderby: "name",
             orderdirection: "asc"
         }
     },
     {
-        label: "Name (Z-A)",
+        label: "Tên (Z-A)",
         value: {
             orderby: "name",
             orderdirection: "desc"
@@ -74,7 +74,7 @@ export default function ExamPageUI(props: IProps) {
     }
     
     const handleEdit = (data: any) => {
-        navigate("edit?id="+data.id);
+        navigate("detail?id="+data.id);
     }
 
     const handleDetail = (data: any) => {
@@ -118,7 +118,6 @@ export default function ExamPageUI(props: IProps) {
             emptyView={emptyView}
             onEdit={handleEdit}
             onDelete={handleDelete}
-            onDetail={handleDetail}
             {...props.tableProps}
         />
     }
