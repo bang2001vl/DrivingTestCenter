@@ -123,7 +123,7 @@ export const CourseCard: FC<CourseProps> = (props) => {
         </Stack>
         <Typography variant="subtitle2" sx={{ color: '#00DB99', fontSize: '13', marginTop: "15px" }}>Giảng viên</Typography>
         <Stack>
-            {props.employeeCNNs.map((employee, index) =>
+            {props.employeeCNNs?.map((employee, index) =>
              {return <Avatar key={index} style={{ height: "30px", width: "30px" }}></Avatar>})
             }
 

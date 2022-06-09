@@ -63,7 +63,7 @@ export default function CoursesPage(props: IProps & Partial<BasicPageProps>) {
             cardColor='transparent'
             {...props}
             onRenderItem={(dataList, select, emptyView) => {
-                if(dataList.length < 1) return emptyView ? emptyView : <></>;
+                if (dataList.length < 1) return emptyView ? emptyView : <></>;
                 return <CoursesTable
                     dataList={dataList.map(e => ({
                         ...e,
@@ -73,8 +73,8 @@ export default function CoursesPage(props: IProps & Partial<BasicPageProps>) {
                         location: e.location,
                         dateStart: new Date(e.dateStart),
                         dateEnd: new Date(e.dateEnd),
-                        countMember: e.countMember,
-                     employeeCNNs: e.employeeCNNs,
+                        countMember: e.countStudent,
+                        employeeCNNs: e.employeeCNNs,
                     }))}
                     onDetail={(data) => {
                         navigate("detail?id=" + data.id);
