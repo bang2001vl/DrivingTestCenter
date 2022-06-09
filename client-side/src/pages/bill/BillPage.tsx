@@ -75,7 +75,7 @@ export default function BillPage(props: IProps & Partial<BasicPageProps>) {
             searchOptionList={searchOptionList}
             orderOptionList={orderOptionList}
 
-            searchbarText='Tìm tên ca thi'
+            searchbarText='Tìm hóa đơn'
             webTitle={"Dashboard | Bill"}
             pageTitle={props.hideTitle ? "" : "Hóa đơn"}
             
