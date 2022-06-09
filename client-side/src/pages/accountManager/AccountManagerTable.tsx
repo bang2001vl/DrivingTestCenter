@@ -1,4 +1,4 @@
-import { Avatar, Stack, Table, TableBody, TableCell, TableContainer, TableRow } from "@mui/material";
+import { Avatar, Stack, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
 import format from "date-fns/format";
 import parseISO from "date-fns/parseISO";
 import { FC } from "react";
@@ -60,15 +60,16 @@ export const AccountManagerTable: FC<IProps & DataTableLayoutProps> = (props) =>
         const cells = new Array();
         cells.push(<TableCell>
             <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                <Avatar src={item.avatarURI ? createBEPublicURI(item.avatarURI) : appConfig.defaultImageURI} style={{ width: 25, height: 25 }} />
-
-                <label>{item.fullname}</label>
+                <Avatar src={item.avatarURI ? createBEPublicURI(item.avatarURI) : appConfig.defaultImageURI} style={{ width: 30, height: 30 }} />
+                <Typography variant="subtitle2">
+                {item.fullname}
+            </Typography>
             </Stack>
         </TableCell>);
-        cells.push(<TableCell>{getGender(item)}</TableCell>);
+       // cells.push(<TableCell>{getGender(item)}</TableCell>);
         cells.push(<TableCell>{item.email}</TableCell>);
         cells.push(<TableCell>{item.phoneNumber}</TableCell>);
-        cells.push(<TableCell>{item.address}</TableCell>);
+        cells.push(<TableCell >{item.address}</TableCell>);
         // cells.push(<TableCell>{format(parseISO(item.createdAt), timeFormat)}</TableCell>);
         cells.push(<TableCell>
 

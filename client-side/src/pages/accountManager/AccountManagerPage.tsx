@@ -8,8 +8,8 @@ import DataTable4 from "../../sections/DataTable4";
 import { AccountManagerTable } from "./AccountManagerTable";
 
 const HEAD_LABEL = [
-    { id: 'name', label: 'Tên', alignRight: false },
-    { id: 'gender', label: 'Giới tính', alignRight: false },
+    { id: 'name', label: 'Họ và tên', alignRight: false },
+  //  { id: 'gender', label: 'Giới tính', alignRight: false },
     { id: 'email', label: 'Email', alignRight: false },
     { id: 'phoneNumber', label: 'Số điện thoại', alignRight: false },
     { id: 'address', label: 'Địa chỉ', alignRight: false },

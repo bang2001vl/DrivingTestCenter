@@ -1,4 +1,4 @@
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { format, isAfter, isBefore } from "date-fns";
 import { type } from "os";
 import { FC } from "react";
@@ -44,7 +44,10 @@ export const ExamTestTable: FC<ExamTestTableProps> = (props) => {
         let dateFormat = "dd/MM/yyyy";
 
         const cells = [];
-        cells.push(<TableCell>{data.name}</TableCell>);
+        cells.push(<TableCell>
+            <Typography variant="subtitle2" noWrap>
+                {data.name}
+            </Typography></TableCell>);
         cells.push(<TableCell>{data.exam.name}</TableCell>);
         cells.push(<TableCell>{data.exam.type}</TableCell>);
         cells.push(<TableCell>{`${format(data.dateTimeStart, timeFormat)} - ${format(data.dateTimeEnd, timeFormat)}`}</TableCell>);
@@ -68,7 +71,7 @@ export const ExamTestTable: FC<ExamTestTableProps> = (props) => {
         </TableRow>;
     }
 
-    const buildActions = ()=>{
+    const buildActions = () => {
         const actions = [];
         if (props.onDelete) {
             actions.push({

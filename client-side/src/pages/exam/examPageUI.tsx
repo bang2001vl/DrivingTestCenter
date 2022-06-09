@@ -82,17 +82,20 @@ export default function ExamPageUI(props: IProps) {
     }
 
     const handleDelete = async (data: any) => {
+        const result = DialogHelper.showConfirm('Bạn chắc chắn muốn xóa ca thi này?');
+                        if (result) {
         const id = data.id;
         const res = await api.deleteWithToken(
             `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
         );
         if (res.result) {
-            DialogHelper.showAlert("Success");
+            DialogHelper.showAlert("Xóa thành công!");
             reload();
         }
         else {
             DialogHelper.showAlert(res.errorMessage);
         }
+    }
     }
 
 

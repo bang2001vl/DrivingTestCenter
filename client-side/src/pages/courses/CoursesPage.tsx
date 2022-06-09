@@ -94,11 +94,13 @@ export default function CoursesPage() {
                 location: e.location,
                 dateStart: new Date(e.dateStart),
                 dateEnd: new Date(e.dateEnd),
-                countMember: e.countMember,
+                countMember: e.countStudent,
+                 employeeCNNs: e.employeeCNNs,
             }))}
             onEdit={handleEdit}
             onDelete={handleDelete}
         />
+      //  return <p>{JSON.stringify(dataList, null, 4)}</p>;
     }
     return (
         <DataTable4

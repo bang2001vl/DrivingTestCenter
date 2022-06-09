@@ -1,5 +1,5 @@
 import { Label } from "@mui/icons-material";
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { format, isAfter, isBefore } from "date-fns";
 import { FC } from "react";
 import { BorderLinearProgress } from "../../components/LinearProgress";
@@ -65,7 +65,11 @@ export const ExamTable: FC<IProps & DataTableLayoutProps> = (props) => {
         const status = getStatus(item);
 
         const cells = new Array();
-        cells.push(<TableCell key={1}>{item.name}</TableCell>);
+        cells.push(<TableCell key={1}>
+            <Typography variant="subtitle2">
+                {item.name}
+            </Typography>
+        </TableCell>);
         cells.push(<TableCell key={2}>{item.type}</TableCell>);
         cells.push(<TableCell key={3}>{`${format(item.dateOpen, timeFormat)} - ${format(item.dateClose, timeFormat)}`}</TableCell>);
         cells.push(<TableCell key={4}>{`${format(item.dateStart, timeFormat)} - ${format(item.dateEnd, timeFormat)}`}</TableCell>);
