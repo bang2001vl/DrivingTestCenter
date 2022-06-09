@@ -64,10 +64,7 @@ function checkInput_Update(input) {
 }
 function customFilter(input) {
     const rs = {};
-    console.log("here1");
-    console.log("Input: " + JSON.stringify(input, null, 2));
     if (input.id) {
-        console.log("here2");
         rs.id = FieldGetter_1.FieldGetter.Number(input, "id", true);
     }
     return rs;

@@ -33,7 +33,7 @@ export const FieldGetter = {
     }),
     Array: buildGetter((data) => {
         if(Array.isArray(data)){
-            return Array(data);
+            return data;
         }
     }),
     Date: buildGetter(data => {

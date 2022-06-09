@@ -95,7 +95,7 @@ function checkInput_Update(input: any) {
         }
 
         return {
-            key: input.key,
+            key: FieldGetter.Number(input, "key", true),
             data
         };
     }

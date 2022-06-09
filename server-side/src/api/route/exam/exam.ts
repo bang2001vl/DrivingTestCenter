@@ -91,11 +91,7 @@ function checkInput_Update(input: any) {
 
 function customFilter(input: any){
     const rs: any = {};
-    console.log("here1");
-    console.log("Input: " + JSON.stringify(input, null, 2));
-    if(input.id){
-        console.log("here2");
-        
+    if(input.id){        
         rs.id = FieldGetter.Number(input, "id", true);
     }
     return rs;

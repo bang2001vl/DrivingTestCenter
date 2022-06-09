@@ -56,7 +56,7 @@ function checkInput_Update(input) {
             maxMember: FieldGetter_1.FieldGetter.Number(input, "maxMember", false),
         };
         return {
-            key: input.key,
+            key: FieldGetter_1.FieldGetter.Number(input, "key", true),
             data
         };
     }

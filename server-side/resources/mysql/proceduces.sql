@@ -18,7 +18,8 @@ DELIMITER $$
 			studentId = studentId,
 			testId = examTestId,
             totalPrice = examtestPrice,
-			reason = reason;
+			reason = reason,
+			updatedAt = UTC_TIMESTAMP();
 	END$$
 
 DELIMITER ;
@@ -39,9 +40,10 @@ DELIMITER $$
 		INSERT INTO bill
 		SET
 			studentId = studentId,
-			testId = examTestId,
-            totalPrice = examtestPrice,
-			reason = reason;
+			classId = classId,
+            totalPrice = classPrice,
+			reason = reason,
+			updatedAt = UTC_TIMESTAMP();
 	END$$
 
 DELIMITER ;

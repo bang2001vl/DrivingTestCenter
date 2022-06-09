@@ -2,34 +2,27 @@ import { json, Router, urlencoded } from "express";
 import { myPrisma } from "../../../prisma";
 import { FieldGetter } from "../../handler/FieldGetter";
 import SessionHandler from "../../handler/session";
-import { buildResponseError, parseInputDeleted } from "../utilities";
+import { parseInputDeleted } from "../utilities";
 import { RouteBuilder } from "../_default";
 import { InputSource, RouteHandleWrapper } from "../_wrapper";
 
-const repo = myPrisma.class;
-const tag = "Course";
+const repo = myPrisma.classSchedule;
+const tag = "ClassSchedule";
 
-
-export const CourseRoute = () => {
+export const ClassScheduleRoute = () => {
+    const searchProps: any = [];
+    const sortProps = ["location", "dateStart", "dateEnd"];
     const route = Router();
     route.use(json());
 
-    const searchFields = ["name"];
-    const orderFields = ["name", "dateStart", "dateEnd", "createdAt"];
-
     route.get("/select",
-        RouteBuilder.buildSelectInputParser(searchFields, orderFields, tag),
-        RouteBuilder.buildSelectRoute(repo, tag, customFilter),
-    );
-
-    route.get("/select/include/",
-        RouteBuilder.buildSelectInputParser(searchFields, orderFields, tag),
+        RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag),
         RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, customInclude),
     );
 
     route.get("/count",
-        RouteBuilder.buildCountInputParser(["name"], tag),
-        RouteBuilder.buildCountRoute(repo, tag, customFilter),
+        RouteBuilder.buildCountInputParser(searchProps, tag),
+        RouteBuilder.buildCountRoute(repo, tag),
     );
 
     route.post("/insert",
@@ -56,13 +49,12 @@ export const CourseRoute = () => {
 function checkInput_Insert(input: any) {
     if (input) {
         let data = {
-            name: FieldGetter.String(input, "name", true),
+            classId: FieldGetter.Number(input, "classId", true),
             location: FieldGetter.String(input, "location", true),
             dateStart: FieldGetter.Date(input, "dateStart", true),
             dateEnd: FieldGetter.Date(input, "dateEnd", true),
-            maxMember: FieldGetter.Number(input, "maxMember", true),
-            price: FieldGetter.Number(input, "price", true),
-            rules: FieldGetter.String(input, "rules", false),
+            notes: FieldGetter.String(input, "notes", false),
+            title: FieldGetter.String(input, "title", false),
         }
 
         return {
@@ -74,12 +66,12 @@ function checkInput_Insert(input: any) {
 function checkInput_Update(input: any) {
     if (input) {
         let data = {
-            name: FieldGetter.String(input, "name", false),
-            location: FieldGetter.String(input, "location", false),
-            dateTimeStart: FieldGetter.Date(input, "dateTimeStart", false),
-            dateTimeEnd: FieldGetter.Date(input, "dateTimeEnd", false),
-            maxMember: FieldGetter.Number(input, "maxMember", false),
-            rules: FieldGetter.String(input, "rules", false),
+            classId: FieldGetter.Number(input, "classId", true),
+            location: FieldGetter.String(input, "location", true),
+            dateStart: FieldGetter.Date(input, "dateStart", true),
+            dateEnd: FieldGetter.Date(input, "dateEnd", true),
+            notes: FieldGetter.String(input, "notes", false),
+            title: FieldGetter.String(input, "title", false),
         }
 
         return {
@@ -91,23 +83,28 @@ function checkInput_Update(input: any) {
 
 function customFilter(input: any) {
     const rs: any = {};
-    if (!isNaN(Number(input.accountId))) {
-        rs.accountId = Number(input.accountId)
+    if (input.classId) {
+        rs.classId = FieldGetter.Number(input, "classId", true);
+    }
+    if (input.dateTimeStart && input.dateTimeEnd) {
+        rs.dateTimeStart = {gt: FieldGetter.Date(input, "dateTimeStart", true)};
+        rs.dateTimeEnd = {lt: FieldGetter.Date(input, "dateTimeEnd", true)};
     }
     return rs;
 }
 
 function customInclude(input: any) {
     const rs: any = {};
-    // Employee
-    rs.employeeCNNs = {
-        select: { employee: true },
-        take: 10
+    if (typeof input.inlude === "string") {
+        const json = JSON.parse(input.include);
+        if (json.class) {
+            rs.class = true;
+        }
     }
     return rs;
 }
 
-export const CourseRouteChecker = {
+export const classScheduleChecker = {
     checkInput_Insert,
     checkInput_Update,
 }

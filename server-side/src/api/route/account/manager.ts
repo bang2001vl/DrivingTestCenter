@@ -93,11 +93,14 @@ export const AccountManagerRoute = () => {
 
 function customSelectFilter(input: any){
     const rs: any ={};
-    if (!isNaN(Number(input.roleId))) {
-        rs.roleId = Number(input.roleId);
+    if (input.roleId) {
+        rs.roleId = FieldGetter.Number(input, "roleId", true);
     }
-    if (!isNaN(Number(input.id))) {
-        rs.id = Number(input.id);
+    if (input.examTestId) {
+        rs.joingTest = {some: {examTestId: FieldGetter.Number(input, "examTestId", true)}};
+    }
+    if (input.classId) {
+        rs.studingClass = {some: {classId: FieldGetter.Number(input, "classId", true)}};
     }
     return rs;
 }

@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RouteBuilder = void 0;
+const FieldGetter_1 = require("../handler/FieldGetter");
 const utilities_1 = require("./utilities");
 const _wrapper_1 = require("./_wrapper");
 exports.RouteBuilder = {
@@ -69,15 +70,19 @@ exports.RouteBuilder = {
             const filter = customFilter ? customFilter(input) : undefined;
             const select = customSelect ? customSelect(input) : undefined;
             const include = customInclude ? customInclude(input) : undefined;
+            const searchWhere = (input.searchby && input.searchvalue) ? {
+                [searchby]: (!searchvalue || searchvalue === '') ? undefined : {
+                    contains: searchvalue
+                }
+            } : undefined;
+            const orderBy = (input.orderby && input.orderdirection) ? [
+                {
+                    [orderby]: orderdirection,
+                },
+            ] : undefined;
             const result = yield repo.findMany({
-                where: Object.assign({ [searchby]: (!searchvalue || searchvalue === '') ? undefined : {
-                        contains: searchvalue
-                    } }, filter),
-                orderBy: [
-                    {
-                        [orderby]: orderdirection,
-                    },
-                ],
+                where: Object.assign(Object.assign({}, searchWhere), filter),
+                orderBy,
                 skip: start,
                 take: count,
                 select,
@@ -101,33 +106,37 @@ exports.RouteBuilder = {
     },
     buildCountInputParser(searchProperties, tag) {
         return _wrapper_1.RouteHandleWrapper.wrapCheckInput((input) => {
-            if (input
-                && typeof input.searchby === "string"
-                && typeof input.searchvalue === "string"
-                && searchProperties.includes(input.searchby)) {
-                return input;
+            if (input.searchby && input.searchvalue) {
+                input.searchby = FieldGetter_1.FieldGetter.String(input, "searchby", true);
+                input.searchvalue = FieldGetter_1.FieldGetter.String(input, "searchvalue", true);
+                if (!searchProperties.includes(input.searchby)) {
+                    throw (0, utilities_1.buildResponseError)(-1, "Invalid searchby");
+                }
             }
-            return undefined;
+            return input;
         }, tag, _wrapper_1.InputSource.query);
     },
     buildSelectInputParser(searchProperties, orderProperties, tag) {
         const checkFunc = () => { console.log("passed"); return true; };
         return _wrapper_1.RouteHandleWrapper.wrapCheckInput((input) => {
-            if (input
-                && typeof input.searchby === "string"
-                && typeof input.searchvalue === "string"
-                && typeof input.orderby === "string"
-                && typeof input.orderdirection === "string"
-                && searchProperties.includes(input.searchby)
-                && orderProperties.includes(input.orderby)
-                && (input.orderdirection === "asc" || input.orderdirection === "desc")
-                && !isNaN(input.start)
-                && !isNaN(input.count)) {
-                input.start = parseInt(input.start);
-                input.count = parseInt(input.count);
-                return input;
+            console.log(input);
+            if (input.searchby && input.searchvalue) {
+                input.searchby = FieldGetter_1.FieldGetter.String(input, "searchby", true);
+                input.searchvalue = FieldGetter_1.FieldGetter.String(input, "searchvalue", true);
+                if (!searchProperties.includes(input.searchby)) {
+                    throw (0, utilities_1.buildResponseError)(-1, "Invalid searchby");
+                }
             }
-            return undefined;
+            if (input.orderby && input.orderdirection) {
+                input.orderby = FieldGetter_1.FieldGetter.String(input, "orderby", true);
+                input.orderdirection = FieldGetter_1.FieldGetter.String(input, "orderdirection", true);
+                if (!orderProperties.includes(input.orderby)) {
+                    throw (0, utilities_1.buildResponseError)(-1, "Invalid orderby");
+                }
+            }
+            input.start = 0 || FieldGetter_1.FieldGetter.Number(input, "start");
+            input.count = undefined || FieldGetter_1.FieldGetter.Number(input, "start");
+            return input;
         }, tag, _wrapper_1.InputSource.query);
     },
     buildKeysParser(tag, primarykeyType = "number", inputSource = _wrapper_1.InputSource.body) {

@@ -8,14 +8,12 @@ apiServer.listen(appConfig.port_http, ()=>{
     helper.logger.traceWithTag("Server", `Listening on port ${appConfig.port_http}`);
 });
 
-// myPrisma.class.findMany({
-//     include: {
-//         employeeCNNs: {
-//             select: {employee: true}
-//         },
-//         _count: {
-//             select: {
-//                 studentCNNs: true,
+// myPrisma.account.findMany({
+//     where: {
+//         roleId: 1,
+//         joingTest: {
+//             some: {
+//                 examTestId: 1
 //             }
 //         }
 //     }
