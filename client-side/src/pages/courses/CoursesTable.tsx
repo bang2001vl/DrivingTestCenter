@@ -35,11 +35,11 @@ export const CoursesTable: FC<IProps> = (props) => {
             dateEnd={item.dateEnd} 
             maxMember={item.maxMember} 
             item={item} 
-            onDelete={props.onDelete} 
+            onDelete={props.onDelete}
             onEdit={props.onEdit} 
             onDetail={props.onDetail}
-            countMember={item.countMember}>
-            employeeCNNs={item.employeeCNNs}
+            countMember={item.countMember}
+            employeeCNNs={item.employeeCNNs}>
             </CourseCard>
         </Grid>
     }

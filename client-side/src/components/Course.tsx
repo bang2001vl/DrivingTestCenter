@@ -15,8 +15,8 @@ export interface CourseProps {
     countMember: number,
     item?: any,
     employeeCNNs: any[],
-    onEdit?: () => void,
-    onDelete?: () => void,
+    onDelete?: (data: any) => void,
+    onEdit?: (data: any) => void,
     onDetail?: (data: any) => void,
 }
 
