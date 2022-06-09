@@ -124,8 +124,11 @@ function customSelectFilter(input: any) {
             }
         }
 
-        return rs;
     }
+    if (input.id) {
+        rs.id = FieldGetter.Number(input, "id", true);
+    }
+    return rs;
 }
 
 function checkInput_Insert(input: any) {
