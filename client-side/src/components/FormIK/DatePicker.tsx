@@ -1,5 +1,7 @@
-import { DatePicker, DatePickerProps } from "@mui/lab"
+import { DatePicker, DatePickerProps, LocalizationProvider } from "@mui/lab"
 import { TextField } from "@mui/material"
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { vi } from "date-fns/locale"
 import { FC } from "react"
 
 interface IProps<TDate = unknown> extends Partial<DatePickerProps<TDate>> {
@@ -12,7 +14,8 @@ export const FormIkDatePicker: FC<IProps> = (props) => {
     }
     delete customProps.formik;
     delete customProps.fieldName;
-    return <DatePicker
+    return <LocalizationProvider locale={vi} dateAdapter={AdapterDateFns}>
+    <DatePicker
         inputFormat="dd/MM/yyyy"
 
         value={new Date(props.formik.values[props.fieldName])}
@@ -30,4 +33,5 @@ export const FormIkDatePicker: FC<IProps> = (props) => {
         />}
 
     />
+      </LocalizationProvider>
 }

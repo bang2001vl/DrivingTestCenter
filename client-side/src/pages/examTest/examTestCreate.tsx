@@ -64,22 +64,22 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
     }
 
     const schema = yup.object({
-        name: yup.string().required("Name must not be null"),
-        location: yup.string().required(),
-        dateTimeStart: yup.string().required(),
-        dateTimeEnd: yup.string().required(),
-        maxMember: yup.number().typeError("Must be number").required(),
+        name: yup.string().required("Tên không được để trống!"),
+        location: yup.string().required("Phòng thi không được để trống!"),
+        dateTimeStart: yup.string().required("Ngày bắt đầu không được để trống!"),
+        dateTimeEnd: yup.string().required("Ngày kết thúc không được để trống!"),
+        maxMember: yup.number().typeError("Bắt buộc nhập số!").required("Số lượng tối đa không được để trống!"),
     });
 
     function handleValidate(formik: IFormIK) {
         const errors = validYupToObject(formik.values, schema);
 
         if (!isBefore(new Date(formik.values.dateTimeStart), new Date(formik.values.dateTimeEnd))) {
-            errors.dateClose = "Date time start must bigger than date time end";
+            errors.dateClose = "Ngày bắt đầu không được lớn hơn ngày kết thúc!";
         }
 
         if (!formik.values.examOption) {
-            errors.examOption = "This field is required";
+            errors.examOption = "Kì thi không được để trống!";
         }
 
         if (Object.keys(errors).length > 0) {
@@ -143,13 +143,13 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
                         <Stack direction="row" spacing={2}>
                             <FormIkTextField formik={formik} fieldName="name"
                                 fullWidth
-                                label="Name"
+                                label="Tên ca thi"
 
                             />
 
                             < Box sx={{ minWidth: "50%" }}>
                                 <FormIKExamSelector formik={formik} fieldName="examOption"
-                                    placeholder="Exam"
+                                    placeholder="Kì thi"
                                     propFormControl={{
                                         fullWidth: true,
                                         sx: { height: "100%" }
@@ -161,14 +161,14 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
                             <Box sx={{ width: "50%" }}>
                                 <FormIkRoom formik={formik} fieldName="location"
                                     fullWidth
-                                    label="Location"
+                                    label="Phòng thi"
                                     sx={{ marginTop, textAlign: "start" }}
                                 />
                             </Box>
                             <Box sx={{ minWidth: "50%" }}>
                                 <FormIkNumberField formik={formik} fieldName="maxMember"
                                     fullWidth
-                                    label="Max Member"
+                                    label="Số lượng tối đa"
                                     sx={{ marginTop }}
                                 />
                             </Box>
@@ -177,12 +177,12 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
                         <Stack direction="row" spacing={2} paddingTop={2}>
                             <Box sx={{ width: "50%" }}>
                                 <FormIkDateTimePicker formik={formik} fieldName="dateTimeStart"
-                                    label="Date Time Start"
+                                    label="Ngày bắt đầu"
                                 />
                             </Box>
                             <Box sx={{ minWidth: "50%" }}>
                                 <FormIkDateTimePicker formik={formik} fieldName="dateTimeEnd"
-                                    label="Date Time End"
+                                    label="Ngày kết thúc"
 
                                 />
                             </Box>
@@ -195,7 +195,7 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
                                     onClick={() => formik.handleSubmit()}
                                     sx={{ width: "120px", height: "43px" }}
                                 >
-                                    Xác nhận
+                                    Lưu
                                 </LoadingButton>
 
                                 <Button

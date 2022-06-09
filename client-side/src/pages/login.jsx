@@ -7,6 +7,7 @@ import AuthLayout from '../layouts/AuthLayout';
 // components
 import Page from '../components/Page';
 import LoginForm from '../sections/LoginForm';
+import login from '../assets/images/login.png'
 
 // ----------------------------------------------------------------------
 
@@ -53,7 +54,7 @@ export default function Login() {
         <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
           Chào mừng trở lại,
         </Typography>
-        <img src="/static/login.png" alt="login" />
+        <img src={login} alt="login" />
       </SectionStyle>
 
       <Container maxWidth="sm">

@@ -3,6 +3,7 @@ import { format, isAfter, isBefore } from "date-fns";
 import { type } from "os";
 import { FC } from "react";
 import internal from "stream";
+import LabelCustom from "../../components/Label";
 import { BorderLinearProgress } from "../../components/LinearProgress";
 import { DataTableLayout, DataTableLayoutProps } from "../../sections/CRUD/BasicDataTable";
 import DataListHead from "../../sections/user/DataListHead";
@@ -31,20 +32,31 @@ export const ExamTestTable: FC<ExamTestTableProps> = (props) => {
     function getStatus(data: IData) {
         const now = new Date();
         if (isAfter(data.dateTimeStart, now)) {
-            return "Coming"
+            return {
+                text: "Chưa thi",
+                color: "primary"
+            }
         }
         else if (isAfter(data.dateTimeEnd, now)) {
-            return "Happening"
+            return {
+                text: "Đang thi",
+                color: "secondary"
+            }
+            
         }
         else {
-            return "Finish"
+            return {
+                text: "Kết thúc",
+                color: "error"
+            }
+            
         }
     }
 
     function renderRow(data: IData) {
         let timeFormat = "HH:mm";
         let dateFormat = "dd/MM/yyyy";
-
+        const status = getStatus(data);
         const cells = [];
         cells.push(<TableCell>
             <Typography variant="subtitle2" noWrap>
@@ -61,14 +73,17 @@ export const ExamTestTable: FC<ExamTestTableProps> = (props) => {
                 <BorderLinearProgress style={{ margin: '3px', marginRight: "5", width: "50px" }} variant="determinate" value={(Number(data.countStudent / data.maxMember) * 100 == 0 ? 1 : Number(data.countStudent / data.maxMember) * 100)}></BorderLinearProgress>
                 {`${data.countStudent}/${data.maxMember}`}
             </Box></TableCell>);
-        cells.push(<TableCell>  {getStatus(data)}</TableCell>);
+        cells.push(<TableCell>
+            <LabelCustom variant="ghost" color={status.color}>
+                {status.text}
+            </LabelCustom></TableCell>);
         cells.push(<TableCell>
             <ItemMoreMenu
                 data={data}
                 items={buildActions()}
             ></ItemMoreMenu>
         </TableCell>);
-        return <TableRow
+        return <TableRow hover={true}
         >{cells}
         </TableRow>;
     }
@@ -77,39 +92,40 @@ export const ExamTestTable: FC<ExamTestTableProps> = (props) => {
         const actions = [];
         if (props.onAddStudent) {
             actions.push({
-                label: "Thêm học sinh",
+                label: "Thêm mới",
                 iconURI: "eva:person-add-outline",
-                onClick: props.onDelete
-            });
-        }
-        if (props.onDelete) {
-            actions.push({
-                label: "Xóa ca thi",
-                iconURI: "eva:trash-2-outline",
                 onClick: props.onDelete
             });
         }
         if (props.onEdit) {
             actions.push({
-                label: "Sửa ca thi",
+                label: "Chỉnh sửa",
                 iconURI: "eva:edit-fill",
                 onClick: props.onEdit
             });
         }
+        if (props.onDelete) {
+            actions.push({
+                label: "Xóa",
+                iconURI: "eva:trash-2-outline",
+                onClick: props.onDelete
+            });
+        }
+    
         if (props.onAddStudent) {
             actions.push({
-                label: "Thêm học sinh",
+                label: "Thêm mới",
                 iconURI: "eva:person-add-outline",
                 onClick: props.onAddStudent
             });
         }
-        if (props.onDetail) {
-            actions.push({
-                label: "Chi tiết",
-                iconURI: "eva:info-outline",
-                onClick: props.onDetail
-            });
-        }
+        // if (props.onDetail) {
+        //     actions.push({
+        //         label: "Chi tiết",
+        //         iconURI: "eva:info-outline",
+        //         onClick: props.onDetail
+        //     });
+        // }
         return actions;
     }
 

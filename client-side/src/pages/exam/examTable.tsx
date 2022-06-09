@@ -2,6 +2,7 @@ import { Label } from "@mui/icons-material";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { format, isAfter, isBefore } from "date-fns";
 import { FC } from "react";
+import LabelCustom from "../../components/Label";
 import { BorderLinearProgress } from "../../components/LinearProgress";
 import { DataTableLayout, DataTableLayoutProps } from "../../sections/CRUD/BasicDataTable";
 import DataListHead from "../../sections/user/DataListHead";
@@ -31,31 +32,31 @@ export const ExamTable: FC<IProps & DataTableLayoutProps> = (props) => {
         if (isAfter(data.dateOpen, now)) {
             return {
                 text: "Chưa mở",
-                color: "#1BB3E3",
+                color: "default",
             }
         }
         else if (isAfter(data.dateClose, now)) {
             return {
                 text: "Đang mở",
-                color: "#00DB99",
+                color: "primary",
             };
         }
         else if (isAfter(data.dateStart, now)) {
             return {
                 text: "Đã đóng",
-                color: "#D31BE3",
+                color: "warning",
             };
         }
         else if (isAfter(data.dateEnd, now)) {
             return {
                 text: "Đang thi",
-                color: "#E3931B",
+                color: "secondary",
             };
         }
         else {
             return {
                 text: "Kết thúc",
-                color: "#E31B1B",
+                color: "error",
             };
         }
     }
@@ -84,7 +85,10 @@ export const ExamTable: FC<IProps & DataTableLayoutProps> = (props) => {
         cells.push(<TableCell key={6}>{formatNumber(item.price)}</TableCell>);
         cells.push(
             <TableCell key={7}>
-                {status.text}
+                <LabelCustom variant="ghost" color={status.color}>
+                    {status.text}
+                </LabelCustom>
+
             </TableCell>
         );
         cells.push(<TableCell key={8}>
@@ -92,24 +96,24 @@ export const ExamTable: FC<IProps & DataTableLayoutProps> = (props) => {
                 data={item}
                 items={[
                     {
-                        label: "Edit",
+                        label: "Chỉnh sửa",
                         iconURI: "eva:edit-fill",
                         onClick: props.onEdit
                     },
+                    // {
+                    //     label: "Detail",
+                    //     iconURI: "eva:info-outline",
+                    //     onClick: props.onDetail
+                    // },
                     {
-                        label: "Detail",
-                        iconURI: "eva:info-outline",
-                        onClick: props.onDetail
-                    },
-                    {
-                        label: "Delete",
+                        label: "Xóa",
                         iconURI: "eva:trash-2-outline",
                         onClick: props.onDelete
                     },
                 ]}
             ></ItemMoreMenu>
         </TableCell>);
-        return <TableRow key={item.id}>
+        return <TableRow key={item.id} hover={true}>
             {cells}
         </TableRow>;
     }

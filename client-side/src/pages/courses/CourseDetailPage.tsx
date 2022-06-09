@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import { FC, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { EmployeePicker } from "../../components/Picker/employee";
@@ -50,6 +51,9 @@ export const CourseDetailPage: FC<IProps> = (props) => {
     }, [searchParams.get("id")]);
 
     return <div>
+           <Typography variant="h3" gutterBottom style={{ color: "#3C557A", marginLeft: "10px" }}>
+            Chỉnh sửa lớp học
+        </Typography>
         <CustomizedTabs
             listtab={["Thông tin", "Quản lý học viên", , "Quản lý giảng viên"]}
         >
@@ -86,7 +90,7 @@ export const CourseDetailPage: FC<IProps> = (props) => {
                     rootDialog.openDialog({
                         children: <StudentPicker
                             isMulti
-                            title="Chọn học sinh"
+                            title="Chọn học viên"
                             filterClassId={oldData.id}
                             onSubmit={async (selected) => {
                                 const data = {
@@ -102,7 +106,7 @@ export const CourseDetailPage: FC<IProps> = (props) => {
                                 if (res.result) {
                                     rootDialog.closeDialog();
                                     select();
-                                    DialogHelper.showAlert("Success");
+                                    DialogHelper.showAlert("Thành công");
                                 }
                                 else {
                                     DialogHelper.showAlert(res.errorMessage);
@@ -130,7 +134,7 @@ export const CourseDetailPage: FC<IProps> = (props) => {
                         if (res.result) {
                             rootDialog.closeDialog();
                             if(tempSelect){tempSelect();}
-                            DialogHelper.showAlert("Success");
+                            DialogHelper.showAlert("Xóa tài khoản thành công!");
                         }
                         else {
                             DialogHelper.showAlert(res.errorMessage);
@@ -158,7 +162,7 @@ export const CourseDetailPage: FC<IProps> = (props) => {
                                 if (res.result) {
                                     rootDialog.closeDialog();
                                     select();
-                                    DialogHelper.showAlert("Success");
+                                    DialogHelper.showAlert("Thành công");
                                 }
                                 else {
                                     DialogHelper.showAlert(res.errorMessage);

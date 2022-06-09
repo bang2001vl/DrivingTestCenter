@@ -41,7 +41,7 @@ export const CoursesCreate: FC<IProps & Partial<BasicEditSectionProps>> = (props
         const key = params.get("id");
             if (!key) {
                 navigate("/", { replace: true });
-                DialogHelper.showAlert("Not found id");
+                DialogHelper.showAlert("Không tìm thấy lớp học!");
             }
 
             return api.getWithToken(
@@ -58,19 +58,20 @@ export const CoursesCreate: FC<IProps & Partial<BasicEditSectionProps>> = (props
     }
 
     const schema = yup.object({
-        name: yup.string().required("Name must not be null"),
-        location: yup.string().required(),
-        dateStart: yup.string().required(),
-        dateEnd: yup.string().required(),
-        maxMember: yup.number().typeError("Must be number").required(),
+        name: yup.string().required("Tên lớp không được để trống!"),
+        location: yup.string().required('Phòng học không được để trống!'),
+        dateStart: yup.string().required('Ngày bắt đầu không được để trống!'),
+        dateEnd: yup.string().required('Ngyà kết thúc không được để trống!'),
+        maxMember: yup.number().typeError("Bắc buộc nhập số").required('Số lượng tối đa không được để trống!'),
     });
 
     function handleValidate(formik: IFormIK) {
         const errors = validYupToObject(formik.values, schema);
 
         if (!isBefore(new Date(formik.values.dateStart), new Date(formik.values.dateEnd))) {
-            errors.dateClose = "Date time start must bigger than date time end";
+            errors.dateClose = "Ngày kết thúc phải lớn hơn ngày bắt đầu!";
         }
+
 
         if (Object.keys(errors).length > 0) {
             formik.setErrors(errors);

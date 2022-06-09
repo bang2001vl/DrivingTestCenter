@@ -3,6 +3,7 @@ import format from "date-fns/format";
 import parseISO from "date-fns/parseISO";
 import { type } from "os";
 import { FC } from "react";
+import LabelCustom from "../../components/Label";
 import SearchNotFound from "../../components/SearchNotFound";
 import { appConfig } from "../../configs";
 import { DataTableLayout, DataTableLayoutProps } from "../../sections/CRUD/BasicDataTable";
@@ -44,15 +45,17 @@ export const AccountManagerTable: FC<AccountManagerTableProps> = (props) => {
         if (data.roleId === 0) {
             return {
                 text: "Admin",
-                // color:....
+                color: "success"
             };
         } else if (data.roleId === 1) {
             return {
                 text: "Học viên",
+                color: "secondary"
             };
         } else {
             return {
                 text: "Giảng viên",
+                color: "warning"
             };
         }
     }
@@ -62,42 +65,45 @@ export const AccountManagerTable: FC<AccountManagerTableProps> = (props) => {
         const role = getRole(item);
         const cells = new Array();
         cells.push(<TableCell>
-            <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                <Avatar src={item.avatarURI ? createBEPublicURI(item.avatarURI) : appConfig.defaultImageURI} style={{ width: 30, height: 30 }} />
-                <Typography variant="subtitle2">
+            <Avatar src={item.avatarURI ? createBEPublicURI(item.avatarURI) : appConfig.defaultImageURI} style={{ width: 30, height: 30 }} />
+        </TableCell>);
+        cells.push(<TableCell>
+            <Typography variant="subtitle2">
                 {item.fullname}
             </Typography>
-            </Stack>
         </TableCell>);
-       // cells.push(<TableCell>{getGender(item)}</TableCell>);
+        // cells.push(<TableCell>{getGender(item)}</TableCell>);
         cells.push(<TableCell>{item.email}</TableCell>);
         cells.push(<TableCell>{item.phoneNumber}</TableCell>);
-        cells.push(<TableCell >{item.address}</TableCell>);
+        cells.push(<TableCell width='30%'>{item.address}</TableCell>);
         // cells.push(<TableCell>{format(parseISO(item.createdAt), timeFormat)}</TableCell>);
         cells.push(<TableCell>
 
-            {role.text}
 
+            <LabelCustom variant="ghost" color={role.color}>
+                {role.text}
+            </LabelCustom>
 
         </TableCell>);
         cells.push(<TableCell>
             <ItemMoreMenu
                 data={item}
                 items={[
-                    {
-                        label: "Delete",
-                        iconURI: "eva:trash-2-outline",
-                        onClick: props.onDelete
-                    },
-                    {
-                        label: "Edit",
+                     {
+                        label: "Chỉnh sửa",
                         iconURI: "eva:edit-fill",
                         onClick: props.onEdit
                     },
+                    {
+                        label: "Xóa",
+                        iconURI: "eva:trash-2-outline",
+                        onClick: props.onDelete
+                    },
+                   
                 ]}
             ></ItemMoreMenu>
         </TableCell>);
-        return <TableRow
+        return <TableRow hover={true}
         >{cells}
         </TableRow>;
     }

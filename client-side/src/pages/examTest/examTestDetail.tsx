@@ -1,4 +1,4 @@
-import { Dialog } from "@material-ui/core";
+import { Dialog, Typography } from "@material-ui/core";
 import { FC, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { APIService } from "../../api/service";
@@ -55,6 +55,9 @@ export const ExamTestDetailPage: FC<IProps> = (props) => {
     }, [searchParams.get("id")]);
 
     return <div>
+         <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
+                        Chỉnh sửa ca thi
+                    </Typography>
         <CustomizedTabs
             listtab={["Thông tin", "Quản lý học viên", "Quản lý giảng viên"]}
         >

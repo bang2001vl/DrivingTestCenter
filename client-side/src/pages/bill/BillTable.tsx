@@ -36,7 +36,7 @@ export const BillTable: FC<BillTableProps> = (props) => {
                 items={buildActions()}
             ></ItemMoreMenu>
         </TableCell>);
-        return <TableRow
+        return <TableRow hover={true}
         >{cells}
         </TableRow>;
     }

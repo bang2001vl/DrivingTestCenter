@@ -17,7 +17,7 @@ const HEAD_LABEL = [
     { id: '', label: '', alignRight: false },
 ]
 const searchOptionList = [{
-    label: "Name",
+    label: "Tên",
     value: {
         searchby: "name"
     }
@@ -25,14 +25,14 @@ const searchOptionList = [{
 
 const orderOptionList = [
     {
-        label: "Name (A-Z)",
+        label: "Tên (A-Z)",
         value: {
             orderby: "name",
             orderdirection: "asc"
         }
     },
     {
-        label: "Name (Z-A)",
+        label: "Tên (Z-A)",
         value: {
             orderby: "name",
             orderdirection: "desc"
@@ -73,9 +73,6 @@ export default function ExamTestPage(props: IProps & Partial<BasicPageProps>) {
                     headLabels={HEAD_LABEL}
                     emptyView={emptyView}
                     onEdit={(data) => {
-                        navigate(`/${routeNameFE}/edit?id=` + data.id);
-                    }}
-                    onDetail={(data) => {
                         navigate(`/${routeNameFE}/detail?id=` + data.id);
                     }}
                     onDelete={async (data) => {

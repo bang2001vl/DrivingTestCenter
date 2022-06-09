@@ -17,6 +17,7 @@ import { validYupToObject } from "../../_helper/helper";
 import { BasicEditSection, BasicEditSectionProps } from "../../sections/CRUD/BasicEditSection";
 import { MyResponse } from "../../api/service";
 import { FormIkType } from "../../components/FormIK/Selectors/Type";
+import { BuildReportAlert } from "../../singleton/alertConfirm";
 
 
 interface IProps {
@@ -71,7 +72,7 @@ export const ExamCreateUI: FC<IProps> = (props: IProps & Partial<BasicEditSectio
     const schema = yup.object({
         name: yup
             .string()
-            .required("Name must not be null"),
+            .required("Tên không được để trống!"),
         type: yup
             .string()
             .required(),
@@ -171,7 +172,7 @@ export const ExamCreateUI: FC<IProps> = (props: IProps & Partial<BasicEditSectio
                         <Box sx={{ width: "50%" }}>
                             <FormIkTextField formik={formik} fieldName="name"
                                 fullWidth
-                                label="Name"
+                                label="Tên kì thi"
                                 style={{ marginTop }}
                             />
 
@@ -179,7 +180,7 @@ export const ExamCreateUI: FC<IProps> = (props: IProps & Partial<BasicEditSectio
                         <Box sx={{ minWidth: "50%" }}>
                             <FormIkType formik={formik} fieldName="type"
                                 fullWidth
-                                label="Type"
+                                label="Loại bằng"
                                 style={{ marginTop }}
                             />
                         </Box>
@@ -189,14 +190,14 @@ export const ExamCreateUI: FC<IProps> = (props: IProps & Partial<BasicEditSectio
                         <Box sx={{ width: "50%" }}>
                             <FormIkNumberField formik={formik} fieldName="price"
                                 fullWidth
-                                label="Fees"
+                                label="Lệ phí"
                                 style={{ marginTop: 1 }}
                             />
                         </Box>
                         <Box sx={{ minWidth: "50%" }}>
                             <FormIkNumberField formik={formik} fieldName="maxMember"
                                 fullWidth
-                                label="Max Member"
+                                label="Số lượng tối đa"
                                 style={{ marginTop }}
                             />
                         </Box>
@@ -208,24 +209,24 @@ export const ExamCreateUI: FC<IProps> = (props: IProps & Partial<BasicEditSectio
                         <Stack direction="row">
                             <Box sx={{ p: 1, width: "50%" }}>
                                 <FormIkDatePicker formik={formik} fieldName="dateOpen"
-                                    label="Open Register"
+                                    label="Ngày mở đăng ký"
                                 />
                             </Box>
 
                             <Box sx={{ p: 1, width: "50%" }}>
                                 <FormIkDatePicker formik={formik} fieldName="dateClose"
-                                    label="Close Register"
+                                    label="Ngày đóng đăng ký"
                                 />
                             </Box>
                             <Box sx={{ p: 1, width: "50%" }}>
                                 <FormIkDatePicker formik={formik} fieldName="dateStart"
-                                    label="Start Exam"
+                                    label="Ngày thi"
                                 />
                             </Box>
 
                             <Box sx={{ p: 1, width: "50%" }}>
                                 <FormIkDatePicker formik={formik} fieldName="dateEnd"
-                                    label="End Exam"
+                                    label="Ngày kết thúc"
                                 />
                             </Box>
                         </Stack>
@@ -236,7 +237,7 @@ export const ExamCreateUI: FC<IProps> = (props: IProps & Partial<BasicEditSectio
                             fullWidth
                             multiline
                             minRows={3}
-                            label="Description"
+                            label="Chi tiết"
                         />
                     </Box>
 
@@ -247,7 +248,7 @@ export const ExamCreateUI: FC<IProps> = (props: IProps & Partial<BasicEditSectio
                                 onClick={() => formik.handleSubmit()}
                                 sx={{ width: "120px", height: "43px" }}
                             >
-                                Xác nhận
+                                Lưu
                             </LoadingButton>
 
                             <Button

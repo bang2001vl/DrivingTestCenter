@@ -47,20 +47,21 @@ export const CourseCard: FC<CourseProps> = (props) => {
 
     const getActions = ()=>{
         const actions = [];
+        if(props.onEdit){
+            actions.push({
+                label: "Chỉnh sửa",
+                iconURI: "eva:edit-fill",
+                onClick: props.onEdit
+            });
+        }
         if(props.onDelete){
             actions.push({
-                label: "Delete",
+                label: "Xóa",
                 iconURI: "eva:trash-2-outline",
                 onClick: props.onDelete
             });
         }
-        if(props.onEdit){
-            actions.push({
-                label: "Edit",
-                iconURI: "eva:edit-fill",
-                onClick: props.onDetail
-            });
-        }
+        
         if(props.onDetail){
             actions.push({
                 label: "Detail",
@@ -124,7 +125,7 @@ export const CourseCard: FC<CourseProps> = (props) => {
         <Typography variant="subtitle2" sx={{ color: '#00DB99', fontSize: '13', marginTop: "15px" }}>Giảng viên</Typography>
         <Stack>
             {props.employeeCNNs?.map((employee, index) =>
-             {return <Avatar key={index} style={{ height: "30px", width: "30px" }}></Avatar>})
+             {return <Avatar src={employee.avataURL} key={index} style={{ height: "30px", width: "30px" }}></Avatar>})
             }
 
         </Stack>
