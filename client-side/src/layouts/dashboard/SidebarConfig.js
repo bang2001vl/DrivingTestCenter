@@ -35,7 +35,7 @@ const sidebarConfig = [
   },
   {
     title: 'Hóa đơn',
-    path: '/dashboard/receipt',
+    path: '/dashboard/bill',
     icon: getIcon('bxs:receipt')
   },
   {

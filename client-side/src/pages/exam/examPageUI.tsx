@@ -5,7 +5,7 @@ import { appConfig } from "../../configs";
 import useAPI from "../../hooks/useApi";
 import { DialogHelper } from "../../singleton/dialogHelper";
 import { ExamTable } from "./examTable";
-import DataTable4 from "../../sections/DataTable4";
+import {DataTable4} from "../../sections/DataTable4";
 import { ExamTestTableProps } from "../examTest/examTestTable";
 
 const EXAM_HEAD_LABEL = [

@@ -4,8 +4,8 @@ import { generatePath, useNavigate } from "react-router-dom";
 import { appConfig } from "../../configs";
 import useAPI from "../../hooks/useApi";
 import { DialogHelper } from "../../singleton/dialogHelper";
-import DataTable4 from "../../sections/DataTable4";
-import { AccountManagerTable } from "./AccountManagerTable";
+import { AccountManagerTable, AccountManagerTableProps } from "./AccountManagerTable";
+import { BasicPage, BasicPageProps } from "../_builder/PageBuilder";
 
 const HEAD_LABEL = [
     { id: 'name', label: 'Họ và tên', alignRight: false },
@@ -40,73 +40,56 @@ const orderOptionList = [
     }
 ];
 
-export default function AccountManagerPage() {
+interface IProps{
+    hideTitle?: boolean,
+    filter? : any,
+    tableProps? : Partial<AccountManagerTableProps>,
+}
+
+export default function AccountManagerPage(props: IProps & Partial<BasicPageProps>) {
+    console.log("REF3", props.ref);
+    const routeNameFE = "dashboard/account/manager";
     const routeName = "account/manager";
     const api = useAPI();
-    const [loadChild, setLoadChild] = useState(false);
     const navigate = useNavigate();
-    const reload = ()=>{
-        setLoadChild(!loadChild);
-    }
-
-    const handleSelect = (params: URLSearchParams)=>{
-        return api.get(
-            `${appConfig.backendUri}/${routeName}/select?${params.toString()}`
-        );
-    }
-
-    const handleCount = (params: URLSearchParams)=>{
-        return api.get(
-            `${appConfig.backendUri}/${routeName}/count?${params.toString()}`
-        );
-    }
-
-    const handleCreate = ()=>{
-        navigate("create");
-    }
-
-    const handleEdit = (data: any) => {
-        navigate("edit?id="+data.id);
-    }
-    
-    const handleDelete = async (data: any) => {
-        const id = data.id;
-        const res = await api.deleteWithToken(
-            `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
-        );
-        if (res.result) {
-            DialogHelper.showAlert("Success");
-            reload();
-        }
-        else {
-            DialogHelper.showAlert(res.errorMessage);
-        }
-    }
-
-
-    const renderTable = (dataList: any[],select: ()=>void, emptyView?: JSX.Element) => {
-        return <AccountManagerTable
-            dataList={dataList}
-            emptyView={emptyView}
-            headLabels={HEAD_LABEL}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-        />
-    }
 
     return (
-        <DataTable4
+        <BasicPage
+            routeNameFE={routeNameFE}
+            routeSelect={routeName}
+
+            searchbarText='Tìm tên tài khoản'
+            webTitle={props.title ? props.title : "Dashboard | Account"}
+            pageTitle={props.hideTitle ? "" : "Tài khoản"}
+
             searchOptionList={searchOptionList}
             orderOptionList={orderOptionList}
-            searchbarText='Tìm tên tài khoản'
-            title="Dashboard | Account"
-            textLabel="Tài khoản"
-            needReload={loadChild}
 
-            onRenderItem={renderTable} 
-            count={handleCount}
-            select={handleSelect}
-            onClickCreate={handleCreate}
+            {...props}
+            onRenderItem={(dataList ,select , emptyView ) => {
+                return <AccountManagerTable
+                    dataList={dataList}
+                    emptyView={emptyView}
+                    headLabels={HEAD_LABEL}
+                    onEdit={(data) => {
+                        navigate("edit?id="+data.id);
+                    }}
+                    onDelete={async (data) => {
+                        const id = data.id;
+                        const res = await api.deleteWithToken(
+                            `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
+                        );
+                        if (res.result) {
+                            DialogHelper.showAlert("Success");
+                            select();
+                        }
+                        else {
+                            DialogHelper.showAlert(res.errorMessage);
+                        }
+                    }}
+                    {...props.tableProps}
+                />
+            }} 
             />
 
     )

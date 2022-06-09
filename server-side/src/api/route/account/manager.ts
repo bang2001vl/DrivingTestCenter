@@ -55,9 +55,9 @@ export const AccountManagerRoute = () => {
     );
 
     route.get("/count",
-    RouteBuilder.buildCountInputParser(["fullname"], tag),
-    RouteBuilder.buildCountRoute(repo, tag, customSelectFilter),
-);
+        RouteBuilder.buildCountInputParser(["fullname"], tag),
+        RouteBuilder.buildCountRoute(repo, tag, customSelectFilter),
+    );
 
     route.post("/insert",
         SessionHandler.roleChecker([0]),
@@ -91,18 +91,41 @@ export const AccountManagerRoute = () => {
     return route;
 }
 
-function customSelectFilter(input: any){
-    const rs: any ={};
+function customSelectFilter(input: any) {
+    const rs: any = {};
     if (input.roleId) {
         rs.roleId = FieldGetter.Number(input, "roleId", true);
+        if (rs.roleId === 1) {
+            if (input.examTestId) {
+                rs.joingTest = { some: { examTestId: FieldGetter.Number(input, "examTestId", true) } };
+            }
+            if (input.notHaveExamTestId) {
+                rs.joingTest = { ...rs.joingTest, none: { examTestId: FieldGetter.Number(input, "notHaveExamTestId", true) } };
+            }
+            if (input.classId) {
+                rs.studingClass = { some: { classId: FieldGetter.Number(input, "classId", true) } };
+            }
+            if (input.notHaveClassId) {
+                rs.studingClass = { ...rs.studingClass, none: { classId: FieldGetter.Number(input, "notHaveClassId", true) } };
+            }
+        }
+        else if (rs.roleId === 2) {
+            if (input.examTestId) {
+                rs.workingTest = { some: { examTestId: FieldGetter.Number(input, "examTestId", true) } };
+            }
+            if (input.notHaveExamTestId) {
+                rs.workingTest = { ...rs.workingTest, none: { examTestId: FieldGetter.Number(input, "notHaveExamTestId", true) } };
+            }
+            if (input.classId) {
+                rs.teachingClass = { some: { classId: FieldGetter.Number(input, "classId", true) } };
+            }
+            if (input.notHaveClassId) {
+                rs.teachingClass = { ...rs.teachingClass, none: { classId: FieldGetter.Number(input, "notHaveClassId", true) } };
+            }
+        }
+
+        return rs;
     }
-    if (input.examTestId) {
-        rs.joingTest = {some: {examTestId: FieldGetter.Number(input, "examTestId", true)}};
-    }
-    if (input.classId) {
-        rs.studingClass = {some: {classId: FieldGetter.Number(input, "classId", true)}};
-    }
-    return rs;
 }
 
 function checkInput_Insert(input: any) {

@@ -10,8 +10,10 @@ import ItemMoreMenu from "../../sections/user/ItemMoreMenu";
 import { formatNumber } from "../../_helper/helper";
 interface IProps {
     dataList: IData[];
+    onAddStudent?: (data: IData) => void,
     onEdit?: (data: IData) => void,
     onDelete?: (data: IData) => void,
+    onDetail?: (data: IData) => void,
 }
 interface IData {
     id: number,
@@ -73,18 +75,39 @@ export const ExamTestTable: FC<ExamTestTableProps> = (props) => {
 
     const buildActions = () => {
         const actions = [];
+        if (props.onAddStudent) {
+            actions.push({
+                label: "Thêm học sinh",
+                iconURI: "eva:person-add-outline",
+                onClick: props.onDelete
+            });
+        }
         if (props.onDelete) {
             actions.push({
-                label: "Delete",
+                label: "Xóa ca thi",
                 iconURI: "eva:trash-2-outline",
                 onClick: props.onDelete
             });
         }
         if (props.onEdit) {
             actions.push({
-                label: "Edit",
+                label: "Sửa ca thi",
                 iconURI: "eva:edit-fill",
                 onClick: props.onEdit
+            });
+        }
+        if (props.onAddStudent) {
+            actions.push({
+                label: "Thêm học sinh",
+                iconURI: "eva:person-add-outline",
+                onClick: props.onAddStudent
+            });
+        }
+        if (props.onDetail) {
+            actions.push({
+                label: "Chi tiết",
+                iconURI: "eva:info-outline",
+                onClick: props.onDetail
             });
         }
         return actions;

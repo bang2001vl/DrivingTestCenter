@@ -1,4 +1,4 @@
-import { Circle } from "@mui/icons-material";
+import { Circle, RsvpTwoTone } from "@mui/icons-material";
 import { Typography, Card, Stack, Box, Divider, Avatar } from "@mui/material";
 import { format, isAfter, isBefore } from "date-fns";
 import { FC, useRef, useState } from "react";
@@ -17,7 +17,7 @@ export interface CourseProps {
     employeeCNNs: any[],
     onEdit?: () => void,
     onDelete?: () => void,
-
+    onDetail?: (data: any) => void,
 }
 
 export const CourseCard: FC<CourseProps> = (props) => {
@@ -45,6 +45,32 @@ export const CourseCard: FC<CourseProps> = (props) => {
         }
     }
 
+    const getActions = ()=>{
+        const actions = [];
+        if(props.onDelete){
+            actions.push({
+                label: "Delete",
+                iconURI: "eva:trash-2-outline",
+                onClick: props.onDelete
+            });
+        }
+        if(props.onEdit){
+            actions.push({
+                label: "Edit",
+                iconURI: "eva:edit-fill",
+                onClick: props.onDetail
+            });
+        }
+        if(props.onDetail){
+            actions.push({
+                label: "Detail",
+                iconURI: "eva:person-add-outline",
+                onClick: props.onDetail
+            });
+        }
+        return actions;
+    }
+
     return <Card sx={{ minHeight: 200, p: 2 }} >
         <Stack direction='row' justifyContent='space-between'>
 
@@ -65,18 +91,7 @@ export const CourseCard: FC<CourseProps> = (props) => {
 
             <ItemMoreMenu
                 data={props.item}
-                items={[
-                    {
-                        label: "Delete",
-                        iconURI: "eva:trash-2-outline",
-                        onClick: props.onDelete
-                    },
-                    {
-                        label: "Edit",
-                        iconURI: "eva:edit-fill",
-                        onClick: props.onEdit
-                    },
-                ]}
+                items={getActions()}
             ></ItemMoreMenu>
 
         </Stack>

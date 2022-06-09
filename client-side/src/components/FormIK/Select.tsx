@@ -25,6 +25,10 @@ export const FormIkSelect: FC<FormIkSelectProps & TextFieldProps> = (props) => {
         error={props.formik.touched[props.fieldName] && Boolean(props.formik.errors[props.fieldName])}
         helperText={props.formik.touched[props.fieldName] && props.formik.errors[props.fieldName]}
         {...customProps}
+        style={{
+            ...props.style,
+            textAlign: "left",
+        }}
     >
         {props.options.map(e=>(<MenuItem key={e.label} value={e.value}>{e.label}</MenuItem>))}
     </TextField>
