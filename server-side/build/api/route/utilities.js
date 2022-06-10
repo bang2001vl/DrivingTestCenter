@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -95,7 +104,9 @@ const handleCleanUp = (req, res, next) => {
         if (res.locals.oldImages) {
             // Delete old images when success
             res.locals.oldImages.forEach((publicURI) => {
-                (0, fs_1.unlinkSync)(path_1.default.resolve(config_1.default.publicFolder, publicURI));
+                if (publicURI) {
+                    (0, fs_1.unlinkSync)(path_1.default.resolve(config_1.default.publicFolder, publicURI));
+                }
             });
         }
     }
@@ -114,12 +125,14 @@ function uploadWrapper(upload) {
 }
 exports.uploadWrapper = uploadWrapper;
 function checkNestedInput_Insert(nestData, mainKey, checker) {
-    const fakeId = 1;
-    const checked = checker(Object.assign(Object.assign({}, nestData), { [mainKey]: fakeId }));
-    if (!checked) {
-        return undefined;
-    }
-    delete checked.data[mainKey];
-    return checked;
+    return __awaiter(this, void 0, void 0, function* () {
+        const fakeId = 1;
+        const checked = yield checker(Object.assign(Object.assign({}, nestData), { [mainKey]: fakeId }));
+        if (!checked) {
+            return undefined;
+        }
+        delete checked.data[mainKey];
+        return checked;
+    });
 }
 exports.checkNestedInput_Insert = checkNestedInput_Insert;

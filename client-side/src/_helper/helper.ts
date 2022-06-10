@@ -9,6 +9,16 @@ export function formatNumber(num: number | string | undefined) {
     return Number(num).toLocaleString('en-US');
 }
 
+export function objectToFormData(data: any) {
+    const formData = new FormData();
+    Object.keys(data).forEach(key => {
+        if (data[key] !== null && data[key] !== undefined) {
+            formData.append(key, data[key])
+        }
+    });
+    return formData;
+}
+
 export function validYupToObject<T = any>(values: T, schema: any) {
     try {
         schema.validateSync(values, { abortEarly: false });

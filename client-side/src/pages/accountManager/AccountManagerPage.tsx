@@ -6,6 +6,9 @@ import useAPI from "../../hooks/useApi";
 import { DialogHelper } from "../../singleton/dialogHelper";
 import { AccountManagerTable, AccountManagerTableProps } from "./AccountManagerTable";
 import { BasicPage, BasicPageProps } from "../_builder/PageBuilder";
+import { useRootDialog } from "../../hooks/rootDialog";
+import { ExcelPicker } from "../../components/Picker/excelPicker";
+import { AccountManagerController } from "../../api/controllers/accountManagerController";
 
 const HEAD_LABEL = [
     { id: 'avt', label: '', alignRight: false },
@@ -54,11 +57,12 @@ export default function AccountManagerPage(props: IProps & Partial<BasicPageProp
     const routeName = "account/manager";
     const api = useAPI();
     const navigate = useNavigate();
+    const rootDialog = useRootDialog();
 
     const handleDelete = async (data: any,select: ()=>void) => {
         const id = data.id;
         const res = await api.deleteWithToken(
-            `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
+            `${appConfig.backendUri}/${routeName}/delete?key=${String(id)}`
         );
         if (res.result) {
             DialogHelper.showAlert("Thành công");
@@ -101,6 +105,27 @@ export default function AccountManagerPage(props: IProps & Partial<BasicPageProp
                     {...props.tableProps}
                 />
             }} 
+            onClickLoadExcel={(select) => {
+                rootDialog.openDialog({
+                    children: <ExcelPicker
+                        title="Nhập Excel"
+                        templateURI="/static/template/account.xlsx"
+                        onSubmit={async (files) => {
+                            rootDialog.closeDialog();
+                            if (files.length > 0) {
+                                const res  = await new AccountManagerController().insertFromExcelToDB(files[0], api);
+                                if(res.result){
+                                    DialogHelper.showAlert("Success");
+                                    select();
+                                }
+                                else{
+                                    DialogHelper.showAlert(res.errorMessage);
+                                }
+                            }
+                        }}
+                    />
+                });
+            }}
             />
 
     )

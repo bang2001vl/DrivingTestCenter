@@ -135,7 +135,7 @@ exports.RouteBuilder = {
                 }
             }
             input.start = 0 || FieldGetter_1.FieldGetter.Number(input, "start");
-            input.count = undefined || FieldGetter_1.FieldGetter.Number(input, "start");
+            input.count = undefined || FieldGetter_1.FieldGetter.Number(input, "count");
             return input;
         }, tag, _wrapper_1.InputSource.query);
     },
@@ -174,7 +174,7 @@ exports.RouteBuilder = {
             }
         }, tag, inputSource);
     },
-    buildKeyParser(tag, primarykeyType = "number", inputSource = _wrapper_1.InputSource.body) {
+    buildKeyParser(tag, primarykeyType = "number", inputSource = _wrapper_1.InputSource.query) {
         return _wrapper_1.RouteHandleWrapper.wrapCheckInput((input) => {
             if (input
                 && !isNaN(input.key)) {

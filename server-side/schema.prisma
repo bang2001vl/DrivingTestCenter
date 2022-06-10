@@ -24,7 +24,7 @@ model Account {
     gender    Int
     email   String @db.VarChar(256)
     phoneNumber String  @db.VarChar(20)
-    address   String   @db.VarChar(1000)
+    address   String   @db.VarChar(1000) @default("")
     latestDelete Int @default(0)
     updateTime Int @default(0)
     avatarURI String?  @db.VarChar(256)
@@ -100,7 +100,7 @@ model ExamTest {
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
 
-    exam         Exam?                    @relation(fields: [examId], references: [id])
+    exam         Exam?                    @relation(fields: [examId], references: [id], onDelete: Cascade)
     studentCNNs  CONN_Student_ExamTest[]
     employeeCNNs CONN_Employee_ExamTest[]
     @@map("exam_test")
@@ -140,7 +140,7 @@ model ClassSchedule {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    classes Class? @relation(fields: [classId], references: [id])
+    classes Class? @relation(fields: [classId], references: [id], onDelete: Cascade)
     @@map("class_schedule")
 }
 
@@ -157,7 +157,7 @@ model ExamSchedule {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    exam Exam? @relation(fields: [examId], references: [id])
+    exam Exam? @relation(fields: [examId], references: [id], onDelete: Cascade)
     @@map("exam_schedule")
 }
 
@@ -192,8 +192,8 @@ model CONN_Student_ExamTest {
     
     createdAt DateTime @default(now())
 
-    examTest   ExamTest   @relation(fields: [examTestId], references: [id])
-    student    Account    @relation(fields: [studentId], references: [id])
+    examTest   ExamTest   @relation(fields: [examTestId], references: [id], onDelete: Cascade)
+    student    Account    @relation(fields: [studentId], references: [id], onDelete: Cascade)
     @@map("conn_student_examtest")
 }
 
@@ -204,8 +204,8 @@ model CONN_Student_Class {
     
     createdAt DateTime @default(now())
 
-    student    Account    @relation(fields: [studentId], references: [id])
-    class      Class      @relation(fields: [classId], references: [id])
+    student    Account    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+    class      Class      @relation(fields: [classId], references: [id], onDelete: Cascade)
     @@map("conn_student_class")
 }
 
@@ -216,8 +216,8 @@ model CONN_Employee_ExamTest {
     
     createdAt DateTime @default(now())
 
-    employee Account @relation(fields: [employeeId], references: [id])
-    examTest ExamTest @relation(fields: [examTestId], references: [id])
+    employee Account @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+    examTest ExamTest @relation(fields: [examTestId], references: [id], onDelete: Cascade)
     @@map("conn_employee_examtest")
 }
 
@@ -228,8 +228,8 @@ model CONN_Employee_Class {
     
     createdAt DateTime @default(now())
 
-    employee Account @relation(fields: [employeeId], references: [id])
-    class    Class    @relation(fields: [classId], references: [id])
+    employee Account @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+    class    Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
     @@map("conn_employee_class")
 }
 

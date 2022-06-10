@@ -7,7 +7,7 @@ import helper from "../../../helper";
 import { myPrisma } from "../../../prisma";
 import { FieldGetter } from "../../handler/FieldGetter";
 import SessionHandler from "../../handler/session";
-import { pushToOldImage, handleCleanUp, parsePathToPublicRelative } from "../utilities";
+import { pushToOldImage, handleCleanUp, parsePathToPublicRelative, buildResponseError } from "../utilities";
 import { RouteBuilder } from "../_default";
 import { RouteHandleWrapper } from "../_wrapper";
 
@@ -54,6 +54,13 @@ export const AccountManagerRoute = () => {
         RouteBuilder.buildSelectRoute(repo, tag, customSelectFilter, selectBasicInfo),
     );
 
+//     route.get("/test",
+//     RouteBuilder.buildSelectInputParser(["fullname"], ["fullname"], tag),
+//     RouteHandleWrapper.wrapMiddleware((req,res)=>{
+//         repo.findMany().then(r =>res.json(r));
+//     }),
+// );
+
     route.get("/count",
         RouteBuilder.buildCountInputParser(["fullname"], tag),
         RouteBuilder.buildCountRoute(repo, tag, customSelectFilter),
@@ -83,8 +90,12 @@ export const AccountManagerRoute = () => {
         SessionHandler.roleChecker([0]),
         RouteBuilder.buildKeyParser(tag),
         cacheOldData,
-        pushToOldImage(["avatarURI"]),
-        RouteBuilder.buildDeletesRoute(repo, tag),
+        RouteHandleWrapper.wrapMiddleware((req, res)=>{
+            res.locals.oldImages = [
+                res.locals.old["avatarURI"],
+            ]
+        }),
+        RouteBuilder.buildDeleteSingleRoute(repo, tag),
         handleCleanUp,
     )
 
@@ -131,19 +142,22 @@ function customSelectFilter(input: any) {
     return rs;
 }
 
-function checkInput_Insert(input: any) {
+async function checkInput_Insert(input: any) {
     if (input) {
+        console.log(input);
         let data: any = {
-            username: FieldGetter.String(input, "username"),
-            password: FieldGetter.String(input, "password"),
-            fullname: FieldGetter.String(input, "fullname"),
-            email: FieldGetter.String(input, "email"),
-            phoneNumber: FieldGetter.String(input, "phoneNumber"),
-            address: FieldGetter.String(input, "address"),
-            birthday: FieldGetter.Date(input, "birthday"),
-            gender: FieldGetter.Number(input, "gender"),
-            roleId: FieldGetter.Number(input, "roleId"),
+            username: FieldGetter.String(input, "username", true),
+            password: FieldGetter.String(input, "password", true),
+            fullname: FieldGetter.String(input, "fullname", true),
+            email: FieldGetter.String(input, "email", true),
+            phoneNumber: FieldGetter.String(input, "phoneNumber", true),
+            address: FieldGetter.String(input, "address", true),
+            birthday: FieldGetter.Date(input, "birthday", true),
+            gender: FieldGetter.Number(input, "gender", true),
+            roleId: FieldGetter.Number(input, "roleId", false),
         }
+
+        await checkDuplicate(data);
 
         return {
             data
@@ -151,8 +165,9 @@ function checkInput_Insert(input: any) {
     }
 }
 
-function checkInput_Update(input: any) {
+async function checkInput_Update(input: any) {
     if (input) {
+        
         let data: any = {
             username: FieldGetter.String(input, "username"),
             password: FieldGetter.String(input, "password"),
@@ -165,10 +180,25 @@ function checkInput_Update(input: any) {
             roleId: FieldGetter.Number(input, "roleId"),
         }
 
+        await checkDuplicate(data);
+
         return {
             key: FieldGetter.Number(input, "key"),
             data
         };
+    }
+}
+
+async function checkDuplicate(data: any){
+    const result = await repo.findFirst({
+        where: {
+            username: data.username,
+        }
+    });
+    if(result){
+        if(result.username === data.username){
+            throw buildResponseError(101, "Duplicated username");
+        }
     }
 }
 
@@ -183,14 +213,17 @@ function addUploadedURIs(req: any, res: Response, next: NextFunction) {
 }
 
 const cacheOldData = RouteHandleWrapper.wrapMiddleware(async (req, res) => {
-    const movieId = res.locals.input.key;
-    if (movieId) {
+    const key = res.locals.input.key;
+    if (key) {
         const old = await repo.findUnique({
-            where: { id: movieId },
+            where: { id: key },
             select: {
                 avatarURI: true,
             }
         });
+        if(!old){
+            throw buildResponseError(1, "Not found key");
+        }
         helper.logger.traceWithTag(tag, "Old = " + JSON.stringify(old, null, 2));
         res.locals.old = old;
     }

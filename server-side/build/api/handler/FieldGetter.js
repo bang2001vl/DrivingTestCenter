@@ -9,7 +9,7 @@ const parseISO_1 = __importDefault(require("date-fns/parseISO"));
 const utilities_1 = require("../route/utilities");
 function buildGetter(checker) {
     return (input, fieldName, required = false) => {
-        if (input && input[fieldName]) {
+        if (input !== undefined && input[fieldName] !== undefined) {
             const data = checker(input[fieldName]);
             if (data !== undefined) {
                 return data;

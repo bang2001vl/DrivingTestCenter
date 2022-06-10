@@ -7,8 +7,8 @@ export interface DataTableLayoutProps<T = any> {
     emptyView?: JSX.Element,
 }
 export const DataTableLayout: FC<DataTableLayoutProps> = (props) => {
-    return <TableContainer sx={{ minWidth: 800, minHeight: 400 }}>
-        <Table>
+    return <TableContainer sx={{ minWidth: 800, minHeight: 400}}>
+        <Table >
             <DataListHead
                 headLabel={props.headLabels}
             />

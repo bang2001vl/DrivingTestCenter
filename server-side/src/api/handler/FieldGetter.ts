@@ -5,7 +5,7 @@ import { buildResponseError } from "../route/utilities";
 
 function buildGetter<T>(checker: (data: any) => T | undefined) {
     return (input: any, fieldName: string, required = false) => {
-        if (input && input[fieldName]) {
+        if (input !== undefined && input[fieldName] !== undefined) {
             const data = checker(input[fieldName]);
             if (data !== undefined) {
                 return data;

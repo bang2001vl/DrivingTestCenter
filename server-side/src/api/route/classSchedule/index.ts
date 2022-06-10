@@ -1,8 +1,9 @@
+import isBefore from "date-fns/isBefore";
 import { json, Router, urlencoded } from "express";
 import { myPrisma } from "../../../prisma";
 import { FieldGetter } from "../../handler/FieldGetter";
 import SessionHandler from "../../handler/session";
-import { parseInputDeleted } from "../utilities";
+import { buildResponseError, parseInputDeleted } from "../utilities";
 import { RouteBuilder } from "../_default";
 import { InputSource, RouteHandleWrapper } from "../_wrapper";
 
@@ -19,6 +20,11 @@ export const ClassScheduleRoute = () => {
         RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag),
         RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, customInclude),
     );
+
+    route.get("/overview/select",
+    RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag),
+    RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, ()=>({class: true})),
+);
 
     route.get("/count",
         RouteBuilder.buildCountInputParser(searchProps, tag),
@@ -46,7 +52,7 @@ export const ClassScheduleRoute = () => {
     return route;
 }
 
-function checkInput_Insert(input: any) {
+async function checkInput_Insert(input: any) {
     if (input) {
         let data = {
             classId: FieldGetter.Number(input, "classId", true),
@@ -56,6 +62,8 @@ function checkInput_Insert(input: any) {
             notes: FieldGetter.String(input, "notes", false),
             title: FieldGetter.String(input, "title", false),
         }
+
+        await checkConflictTime(data);
 
         return {
             data
@@ -63,7 +71,7 @@ function checkInput_Insert(input: any) {
     }
 }
 
-function checkInput_Update(input: any) {
+async function checkInput_Update(input: any) {
     if (input) {
         let data = {
             classId: FieldGetter.Number(input, "classId", true),
@@ -74,10 +82,38 @@ function checkInput_Update(input: any) {
             title: FieldGetter.String(input, "title", false),
         }
 
+        await checkConflictTime(data);
+
         return {
             key: FieldGetter.Number(input, "key", true),
-            data
+            data,
         };
+    }
+}
+
+async function checkConflictTime(data: any) {
+    if (!isBefore(data.dateTimeStart, data.dateTimeEnd)) {
+        throw buildResponseError(101, "Start time isn't smaller than end time");
+    }
+
+    const result = await repo.findFirst({
+        where: {
+            AND: [
+                { location: data.location },
+                {
+                    NOT: {
+                        OR: [
+                            { dateStart: { lt: data.dateTimeStart } },
+                            { dateEnd: { gt: data.dateTimeEnd } },
+                        ]
+                    }
+                }
+            ]
+        }
+    });
+
+    if(result){
+        throw buildResponseError(102, `Conflict with other (id=${result.id})`);
     }
 }
 

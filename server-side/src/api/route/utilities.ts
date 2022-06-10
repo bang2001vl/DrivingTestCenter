@@ -93,7 +93,9 @@ export const handleCleanUp = (req: any, res: Response, next: NextFunction) => {
         if (res.locals.oldImages) {
             // Delete old images when success
             res.locals.oldImages.forEach((publicURI: any) => {
-                unlinkSync(path.resolve(appConfig.publicFolder, publicURI))
+                if(publicURI){
+                 unlinkSync(path.resolve(appConfig.publicFolder, publicURI));
+                }
             });
         }
     }
@@ -111,12 +113,12 @@ export function uploadWrapper(upload: any) {
     }
 }
 
-export type InsertChecker = (input: any) => { data: any } | undefined;
-export type UpdateChecker = (input: any) => { data: any, key: any } | undefined;
+export type InsertChecker = (input: any) => { data: any } | undefined | Promise<{ data: any } | undefined>;
+export type UpdateChecker = (input: any) => { data: any, key: any } | undefined | Promise<{ data: any, key: any } | undefined>;
 
-export function checkNestedInput_Insert(nestData: any, mainKey: string, checker: InsertChecker) {
+export async function checkNestedInput_Insert(nestData: any, mainKey: string, checker: any) {
     const fakeId = 1;
-    const checked = checker({
+    const checked = await checker({
         ...nestData,
         [mainKey]: fakeId,
     });

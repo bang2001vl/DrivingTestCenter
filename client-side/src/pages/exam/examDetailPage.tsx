@@ -95,23 +95,6 @@ export const ExamDetailPage: FC<IProps> = (props) => {
                         />
                     });
                 }}
-                onClickLoadExcel={(select) => {
-                    rootDialog.openDialog({
-                        children: <ExcelPicker
-                            title="Nhập Excel"
-                            templateURI="/static/template/test.xlsx"
-                            onSubmit={(files) => {
-                                rootDialog.closeDialog();
-                                if (files.length > 0) {
-                                    readXlsxFile(files[0])
-                                    .then((rows) => {
-                                        console.log("Excel", rows);
-                                    });
-                                }
-                            }}
-                        />
-                    });
-                }}
             />
         </CustomizedTabs>
     </div>

@@ -57,10 +57,20 @@ const AccountManagerRoute = () => {
     const route = (0, express_1.Router)();
     route.use((0, express_1.json)());
     route.get("/select", _default_1.RouteBuilder.buildSelectInputParser(["fullname"], ["fullname"], tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customSelectFilter, selectBasicInfo));
+    //     route.get("/test",
+    //     RouteBuilder.buildSelectInputParser(["fullname"], ["fullname"], tag),
+    //     RouteHandleWrapper.wrapMiddleware((req,res)=>{
+    //         repo.findMany().then(r =>res.json(r));
+    //     }),
+    // );
     route.get("/count", _default_1.RouteBuilder.buildCountInputParser(["fullname"], tag), _default_1.RouteBuilder.buildCountRoute(repo, tag, customSelectFilter));
     route.post("/insert", session_1.default.roleChecker([0]), _wrapper_1.RouteHandleWrapper.wrapMulterUpload(upload.fields([{ name: "avatar", maxCount: 1 }])), _wrapper_1.RouteHandleWrapper.wrapCheckInput(checkInput_Insert, tag), addUploadedURIs, _default_1.RouteBuilder.buildInsertRoute(repo, tag), utilities_1.handleCleanUp);
     route.put("/update", session_1.default.roleChecker([0]), _wrapper_1.RouteHandleWrapper.wrapMulterUpload(upload.fields([{ name: "avatar", maxCount: 1 }])), _wrapper_1.RouteHandleWrapper.wrapCheckInput(checkInput_Update, tag), addUploadedURIs, cacheOldData, (0, utilities_1.pushToOldImage)(["avatarURI"]), _default_1.RouteBuilder.buildUpdateRoute(repo, tag), utilities_1.handleCleanUp);
-    route.delete("/delete", session_1.default.roleChecker([0]), _default_1.RouteBuilder.buildKeyParser(tag), cacheOldData, (0, utilities_1.pushToOldImage)(["avatarURI"]), _default_1.RouteBuilder.buildDeletesRoute(repo, tag), utilities_1.handleCleanUp);
+    route.delete("/delete", session_1.default.roleChecker([0]), _default_1.RouteBuilder.buildKeyParser(tag), cacheOldData, _wrapper_1.RouteHandleWrapper.wrapMiddleware((req, res) => {
+        res.locals.oldImages = [
+            res.locals.old["avatarURI"],
+        ];
+    }), _default_1.RouteBuilder.buildDeleteSingleRoute(repo, tag), utilities_1.handleCleanUp);
     return route;
 };
 exports.AccountManagerRoute = AccountManagerRoute;
@@ -103,41 +113,62 @@ function customSelectFilter(input) {
     return rs;
 }
 function checkInput_Insert(input) {
-    if (input) {
-        let data = {
-            username: FieldGetter_1.FieldGetter.String(input, "username"),
-            password: FieldGetter_1.FieldGetter.String(input, "password"),
-            fullname: FieldGetter_1.FieldGetter.String(input, "fullname"),
-            email: FieldGetter_1.FieldGetter.String(input, "email"),
-            phoneNumber: FieldGetter_1.FieldGetter.String(input, "phoneNumber"),
-            address: FieldGetter_1.FieldGetter.String(input, "address"),
-            birthday: FieldGetter_1.FieldGetter.Date(input, "birthday"),
-            gender: FieldGetter_1.FieldGetter.Number(input, "gender"),
-            roleId: FieldGetter_1.FieldGetter.Number(input, "roleId"),
-        };
-        return {
-            data
-        };
-    }
+    return __awaiter(this, void 0, void 0, function* () {
+        if (input) {
+            console.log(input);
+            let data = {
+                username: FieldGetter_1.FieldGetter.String(input, "username", true),
+                password: FieldGetter_1.FieldGetter.String(input, "password", true),
+                fullname: FieldGetter_1.FieldGetter.String(input, "fullname", true),
+                email: FieldGetter_1.FieldGetter.String(input, "email", true),
+                phoneNumber: FieldGetter_1.FieldGetter.String(input, "phoneNumber", true),
+                address: FieldGetter_1.FieldGetter.String(input, "address", true),
+                birthday: FieldGetter_1.FieldGetter.Date(input, "birthday", true),
+                gender: FieldGetter_1.FieldGetter.Number(input, "gender", true),
+                roleId: FieldGetter_1.FieldGetter.Number(input, "roleId", false),
+            };
+            yield checkDuplicate(data);
+            return {
+                data
+            };
+        }
+    });
 }
 function checkInput_Update(input) {
-    if (input) {
-        let data = {
-            username: FieldGetter_1.FieldGetter.String(input, "username"),
-            password: FieldGetter_1.FieldGetter.String(input, "password"),
-            fullname: FieldGetter_1.FieldGetter.String(input, "fullname"),
-            email: FieldGetter_1.FieldGetter.String(input, "email"),
-            phoneNumber: FieldGetter_1.FieldGetter.String(input, "phoneNumber"),
-            address: FieldGetter_1.FieldGetter.String(input, "address"),
-            birthday: FieldGetter_1.FieldGetter.Date(input, "birthday"),
-            gender: FieldGetter_1.FieldGetter.Number(input, "gender"),
-            roleId: FieldGetter_1.FieldGetter.Number(input, "roleId"),
-        };
-        return {
-            key: FieldGetter_1.FieldGetter.Number(input, "key"),
-            data
-        };
-    }
+    return __awaiter(this, void 0, void 0, function* () {
+        if (input) {
+            let data = {
+                username: FieldGetter_1.FieldGetter.String(input, "username"),
+                password: FieldGetter_1.FieldGetter.String(input, "password"),
+                fullname: FieldGetter_1.FieldGetter.String(input, "fullname"),
+                email: FieldGetter_1.FieldGetter.String(input, "email"),
+                phoneNumber: FieldGetter_1.FieldGetter.String(input, "phoneNumber"),
+                address: FieldGetter_1.FieldGetter.String(input, "address"),
+                birthday: FieldGetter_1.FieldGetter.Date(input, "birthday"),
+                gender: FieldGetter_1.FieldGetter.Number(input, "gender"),
+                roleId: FieldGetter_1.FieldGetter.Number(input, "roleId"),
+            };
+            yield checkDuplicate(data);
+            return {
+                key: FieldGetter_1.FieldGetter.Number(input, "key"),
+                data
+            };
+        }
+    });
+}
+function checkDuplicate(data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const result = yield repo.findFirst({
+            where: {
+                username: data.username,
+            }
+        });
+        if (result) {
+            if (result.username === data.username) {
+                throw (0, utilities_1.buildResponseError)(101, "Duplicated username");
+            }
+        }
+    });
 }
 function addUploadedURIs(req, res, next) {
     if (!res.locals.error && req.files) {
@@ -149,14 +180,17 @@ function addUploadedURIs(req, res, next) {
     next();
 }
 const cacheOldData = _wrapper_1.RouteHandleWrapper.wrapMiddleware((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const movieId = res.locals.input.key;
-    if (movieId) {
+    const key = res.locals.input.key;
+    if (key) {
         const old = yield repo.findUnique({
-            where: { id: movieId },
+            where: { id: key },
             select: {
                 avatarURI: true,
             }
         });
+        if (!old) {
+            throw (0, utilities_1.buildResponseError)(1, "Not found key");
+        }
         helper_1.default.logger.traceWithTag(tag, "Old = " + JSON.stringify(old, null, 2));
         res.locals.old = old;
     }

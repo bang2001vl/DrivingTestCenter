@@ -147,7 +147,7 @@ export const RouteBuilder = {
             }
 
             input.start = 0 || FieldGetter.Number(input, "start");
-            input.count = undefined || FieldGetter.Number(input, "start");
+            input.count = undefined || FieldGetter.Number(input, "count");
 
             return input;
         }, tag, InputSource.query);
@@ -189,7 +189,7 @@ export const RouteBuilder = {
             }
         }, tag, inputSource);
     },
-    buildKeyParser(tag: string, primarykeyType = "number", inputSource = InputSource.body) {
+    buildKeyParser(tag: string, primarykeyType = "number", inputSource = InputSource.query) {
         return RouteHandleWrapper.wrapCheckInput((input) => {
             if (input
                 && !isNaN(input.key)

@@ -18,23 +18,23 @@ export const ExamTestRoute = () => {
 
     route.get("/select",
         RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag),
-        RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, ()=>({ exam: true })),
+        RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, () => ({ exam: true })),
     );
 
     route.get("/select/include",
         RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag),
-        RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, ()=>({ exam: true })),
+        RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, () => ({ exam: true })),
     );
 
     route.get("/overview/select",
-    RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag),
-    RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, ()=>({ exam: true })),
-);
+        RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag),
+        RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, () => ({ exam: true })),
+    );
 
     route.get("/select/detail",
-    RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag),
-    RouteBuilder.buildSelectRoute(repo, tag, undefined, undefined, ()=>({ exam: true })),
-);
+        RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag),
+        RouteBuilder.buildSelectRoute(repo, tag, undefined, undefined, () => ({ exam: true })),
+    );
 
     route.get("/count",
         RouteBuilder.buildCountInputParser(searchProps, tag),
@@ -42,9 +42,9 @@ export const ExamTestRoute = () => {
     );
 
     route.get("/overview/count",
-    RouteBuilder.buildCountInputParser(searchProps, tag),
-    RouteBuilder.buildCountRoute(repo, tag),
-);
+        RouteBuilder.buildCountInputParser(searchProps, tag),
+        RouteBuilder.buildCountRoute(repo, tag),
+    );
 
     route.post("/insert",
         SessionHandler.roleChecker([0]),
@@ -67,7 +67,7 @@ export const ExamTestRoute = () => {
     return route;
 }
 
-function checkInput_Insert(input: any) {
+async function checkInput_Insert(input: any) {
     if (input) {
         let data = {
             examId: FieldGetter.Number(input, "examId", true),
@@ -78,9 +78,7 @@ function checkInput_Insert(input: any) {
             maxMember: FieldGetter.Number(input, "maxMember", true),
         }
 
-        if(!isBefore(data.dateTimeStart!, data.dateTimeEnd!)){
-            throw buildResponseError(1, "DateStartTime must smaller than DateTimeEnd");
-        }
+        await checkConflictTime(data);
 
         return {
             data
@@ -88,7 +86,7 @@ function checkInput_Insert(input: any) {
     }
 }
 
-function checkInput_Update(input: any) {
+async function checkInput_Update(input: any) {
     if (input) {
         let data = {
             examId: FieldGetter.Number(input, "examId", false),
@@ -99,6 +97,8 @@ function checkInput_Update(input: any) {
             maxMember: FieldGetter.Number(input, "maxMember", false),
         }
 
+        await checkConflictTime(data);
+
         return {
             key: FieldGetter.Number(input, "key", true),
             data
@@ -106,12 +106,38 @@ function checkInput_Update(input: any) {
     }
 }
 
-function customFilter(input: any){
+async function checkConflictTime(data: any) {
+    if (!isBefore(data.dateTimeStart, data.dateTimeEnd)) {
+        throw buildResponseError(101, "Start time isn't smaller than end time");
+    }
+
+    const result = await repo.findFirst({
+        where: {
+            AND: [
+                { location: data.location },
+                {
+                    NOT: {
+                        OR: [
+                            { dateTimeEnd: { lt: data.dateTimeStart } },
+                            { dateTimeStart: { gt: data.dateTimeEnd } },
+                        ]
+                    }
+                }
+            ]
+        }
+    });
+
+    if(result){
+        throw buildResponseError(102, `Conflict with other (id=${result.id})`);
+    }
+}
+
+function customFilter(input: any) {
     const rs: any = {};
-    if(!isNaN(input.id)){
+    if (!isNaN(input.id)) {
         rs.id = Number(input.id);
     }
-    if(!isNaN(input.examId)){
+    if (!isNaN(input.examId)) {
         rs.examId = Number(input.examId);
     }
     return rs;

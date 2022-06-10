@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -32,38 +41,66 @@ const ExamTestRoute = () => {
 };
 exports.ExamTestRoute = ExamTestRoute;
 function checkInput_Insert(input) {
-    if (input) {
-        let data = {
-            examId: FieldGetter_1.FieldGetter.Number(input, "examId", true),
-            name: FieldGetter_1.FieldGetter.String(input, "name", true),
-            location: FieldGetter_1.FieldGetter.String(input, "location", true),
-            dateTimeStart: FieldGetter_1.FieldGetter.Date(input, "dateTimeStart", true),
-            dateTimeEnd: FieldGetter_1.FieldGetter.Date(input, "dateTimeEnd", true),
-            maxMember: FieldGetter_1.FieldGetter.Number(input, "maxMember", true),
-        };
-        if (!(0, isBefore_1.default)(data.dateTimeStart, data.dateTimeEnd)) {
-            throw (0, utilities_1.buildResponseError)(1, "DateStartTime must smaller than DateTimeEnd");
+    return __awaiter(this, void 0, void 0, function* () {
+        if (input) {
+            let data = {
+                examId: FieldGetter_1.FieldGetter.Number(input, "examId", true),
+                name: FieldGetter_1.FieldGetter.String(input, "name", true),
+                location: FieldGetter_1.FieldGetter.String(input, "location", true),
+                dateTimeStart: FieldGetter_1.FieldGetter.Date(input, "dateTimeStart", true),
+                dateTimeEnd: FieldGetter_1.FieldGetter.Date(input, "dateTimeEnd", true),
+                maxMember: FieldGetter_1.FieldGetter.Number(input, "maxMember", true),
+            };
+            yield checkConflictTime(data);
+            return {
+                data
+            };
         }
-        return {
-            data
-        };
-    }
+    });
 }
 function checkInput_Update(input) {
-    if (input) {
-        let data = {
-            examId: FieldGetter_1.FieldGetter.Number(input, "examId", false),
-            name: FieldGetter_1.FieldGetter.String(input, "name", false),
-            location: FieldGetter_1.FieldGetter.String(input, "location", false),
-            dateTimeStart: FieldGetter_1.FieldGetter.Date(input, "dateTimeStart", false),
-            dateTimeEnd: FieldGetter_1.FieldGetter.Date(input, "dateTimeEnd", false),
-            maxMember: FieldGetter_1.FieldGetter.Number(input, "maxMember", false),
-        };
-        return {
-            key: FieldGetter_1.FieldGetter.Number(input, "key", true),
-            data
-        };
-    }
+    return __awaiter(this, void 0, void 0, function* () {
+        if (input) {
+            let data = {
+                examId: FieldGetter_1.FieldGetter.Number(input, "examId", false),
+                name: FieldGetter_1.FieldGetter.String(input, "name", false),
+                location: FieldGetter_1.FieldGetter.String(input, "location", false),
+                dateTimeStart: FieldGetter_1.FieldGetter.Date(input, "dateTimeStart", false),
+                dateTimeEnd: FieldGetter_1.FieldGetter.Date(input, "dateTimeEnd", false),
+                maxMember: FieldGetter_1.FieldGetter.Number(input, "maxMember", false),
+            };
+            yield checkConflictTime(data);
+            return {
+                key: FieldGetter_1.FieldGetter.Number(input, "key", true),
+                data
+            };
+        }
+    });
+}
+function checkConflictTime(data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!(0, isBefore_1.default)(data.dateTimeStart, data.dateTimeEnd)) {
+            throw (0, utilities_1.buildResponseError)(101, "Start time isn't smaller than end time");
+        }
+        const result = yield repo.findFirst({
+            where: {
+                AND: [
+                    { location: data.location },
+                    {
+                        NOT: {
+                            OR: [
+                                { dateTimeEnd: { lt: data.dateTimeStart } },
+                                { dateTimeStart: { gt: data.dateTimeEnd } },
+                            ]
+                        }
+                    }
+                ]
+            }
+        });
+        if (result) {
+            throw (0, utilities_1.buildResponseError)(102, `Conflict with other (id=${result.id})`);
+        }
+    });
 }
 function customFilter(input) {
     const rs = {};
