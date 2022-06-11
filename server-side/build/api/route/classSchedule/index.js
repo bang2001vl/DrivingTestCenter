@@ -29,7 +29,7 @@ const ClassScheduleRoute = () => {
     const sortProps = ["location", "dateStart", "dateEnd"];
     const route = (0, express_1.Router)();
     route.use((0, express_1.json)());
-    route.get("/select", _default_1.RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, customInclude));
+    route.get("/select", session_1.default.roleChecker([0, 1, 2]), _default_1.RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, customInclude));
     route.get("/overview/select", _default_1.RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, () => ({ class: true })));
     route.get("/count", _default_1.RouteBuilder.buildCountInputParser(searchProps, tag), _default_1.RouteBuilder.buildCountRoute(repo, tag));
     route.post("/insert", session_1.default.roleChecker([0]), _wrapper_1.RouteHandleWrapper.wrapCheckInput(checkInput_Insert, tag), _default_1.RouteBuilder.buildInsertRoute(repo, tag));

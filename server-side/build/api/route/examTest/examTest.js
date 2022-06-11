@@ -29,7 +29,7 @@ const ExamTestRoute = () => {
     const sortProps = ["name", "dateStart", "dateEnd"];
     const route = (0, express_1.Router)();
     route.use((0, express_1.json)());
-    route.get("/select", _default_1.RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, () => ({ exam: true })));
+    route.get("/select", session_1.default.roleChecker([0, 1, 2]), _default_1.RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, () => ({ exam: true })));
     route.get("/select/include", _default_1.RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, () => ({ exam: true })));
     route.get("/overview/select", _default_1.RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, () => ({ exam: true })));
     route.get("/select/detail", _default_1.RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, undefined, undefined, () => ({ exam: true })));

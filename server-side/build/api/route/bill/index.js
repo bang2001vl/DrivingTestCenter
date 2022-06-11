@@ -17,7 +17,7 @@ const BillRoute = () => {
     const searchProps = ["code", "reason"];
     const orderProps = ["code", "reason", "totalPrice", "createdAt"];
     route.use((0, express_1.json)());
-    route.get("/select", _default_1.RouteBuilder.buildSelectInputParser(searchProps, orderProps, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter));
+    route.get("/select", session_1.default.roleChecker([0, 1, 2]), _default_1.RouteBuilder.buildSelectInputParser(searchProps, orderProps, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter));
     route.get("/count", _default_1.RouteBuilder.buildCountInputParser(searchProps, tag), _default_1.RouteBuilder.buildCountRoute(repo, tag));
     route.post("/insert", session_1.default.roleChecker([0]), _wrapper_1.RouteHandleWrapper.wrapCheckInput(checkInput_Insert, tag), _default_1.RouteBuilder.buildInsertRoute(repo, tag));
     // route.put("/update",

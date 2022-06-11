@@ -8,16 +8,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkRoomAvailable = exports.ScheduleRoute = void 0;
 const express_1 = require("express");
 const prisma_1 = require("../../../prisma");
 const FieldGetter_1 = require("../../handler/FieldGetter");
+const session_1 = __importDefault(require("../../handler/session"));
 const _wrapper_1 = require("../_wrapper");
 const tag = "Schedule";
 function ScheduleRoute() {
     const route = (0, express_1.Router)();
-    route.get("/select", _wrapper_1.RouteHandleWrapper.wrapCheckInput(input => {
+    route.get("/select", session_1.default.roleChecker([0, 1, 2]), _wrapper_1.RouteHandleWrapper.wrapCheckInput(input => {
         if (input) {
             return {
                 //location: FieldGetter.String(input, "location", true),
