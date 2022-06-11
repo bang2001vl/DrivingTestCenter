@@ -18,6 +18,7 @@ export const ExamTestRoute = () => {
     route.use(json());
 
     route.get("/select",
+        SessionHandler.roleChecker([0, 1, 2]),
         RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag),
         RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, () => ({ exam: true })),
     );
@@ -122,12 +123,12 @@ async function checkConflictTime(data: any) {
         dateTimeEnd: data.dateTimeEnd,
     });
 
-    if(result){
+    if (result) {
         throw buildResponseError(102, `Conflict with other (id=${result.id})`);
     }
 }
 
-async function checkConflictMaxNumber(){
+async function checkConflictMaxNumber() {
 
 }
 

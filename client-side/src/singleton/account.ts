@@ -108,13 +108,13 @@ export class AccountSingleton {
   }
 
   public async logout() {
-    const api = new APIService();
-    api.postWithToken(
-      appConfig.backendUri + `/session/destroy/self`
-    );
     localStorage.removeItem(LocalStorageValue.session);
     this.session = undefined;
     localStorage.removeItem(LocalStorageValue.userinfo);
     this.userInfo = undefined;
+    const api = new APIService();
+    api.postWithToken(
+      appConfig.backendUri + `/session/destroy/self`
+    );
   }
 }

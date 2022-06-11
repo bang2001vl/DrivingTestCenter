@@ -17,6 +17,7 @@ export const BillRoute = () => {
     route.use(json());
 
     route.get("/select",
+        SessionHandler.roleChecker([0, 1, 2]),
         RouteBuilder.buildSelectInputParser(searchProps, orderProps, tag),
         RouteBuilder.buildSelectRoute(repo, tag, customFilter),
     );

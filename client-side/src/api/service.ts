@@ -100,7 +100,10 @@ export class APIService {
     private _buildConfigWithToken<D = any>(
         config?: AxiosRequestConfig<D>
     ): AxiosRequestConfig<D> | null {
-        if (!AccountSingleton.instance.isLogined) return null;
+        if (!AccountSingleton.instance.isLogined) {
+            window.location.href = "/login";
+            return null;
+        };
 
         const tokenHeader = { token: AccountSingleton.instance.session!.token };
         if (config) {

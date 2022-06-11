@@ -17,6 +17,7 @@ export const ExamRoute = () => {
     route.use(json());
 
     route.get("/select",
+        SessionHandler.roleChecker([0, 1, 2]),
         RouteBuilder.buildSelectInputParser(searchProps, orderProps, tag),
         RouteBuilder.buildSelectRoute(repo, tag, customFilter),
     );
@@ -91,9 +92,9 @@ function checkInput_Update(input: any) {
     }
 }
 
-function customFilter(input: any){
+function customFilter(input: any) {
     const rs: any = {};
-    if(input.id){        
+    if (input.id) {
         rs.id = FieldGetter.Number(input, "id", true);
     }
     return rs;

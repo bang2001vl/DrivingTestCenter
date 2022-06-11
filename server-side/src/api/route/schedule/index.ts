@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { myPrisma } from "../../../prisma";
 import { FieldGetter } from "../../handler/FieldGetter";
+import SessionHandler from "../../handler/session";
 import { InputSource, RouteHandleWrapper } from "../_wrapper";
 
 const tag = "Schedule";
@@ -9,6 +10,7 @@ export function ScheduleRoute() {
     const route = Router();
 
     route.get("/select",
+        SessionHandler.roleChecker([0, 1, 2]),
         RouteHandleWrapper.wrapCheckInput(input => {
             if (input) {
                 return {
@@ -36,7 +38,7 @@ export function ScheduleRoute() {
                 },
                 include: {
                     classes: {
-                        select: {name: true}
+                        select: { name: true }
                     }
                 }
             });
@@ -53,8 +55,8 @@ export function ScheduleRoute() {
     return route;
 }
 
-export async function checkRoomAvailable(data: {location: string, dateTimeStart: Date, dateTimeEnd: Date}){
-    const examSchedules =  await myPrisma.examTest.findFirst({
+export async function checkRoomAvailable(data: { location: string, dateTimeStart: Date, dateTimeEnd: Date }) {
+    const examSchedules = await myPrisma.examTest.findFirst({
         where: {
             AND: [
                 { location: data.location },
@@ -70,11 +72,11 @@ export async function checkRoomAvailable(data: {location: string, dateTimeStart:
         }
     });
 
-    if(examSchedules){
+    if (examSchedules) {
         return examSchedules;
     }
 
-    const classSchedules =  await myPrisma.classSchedule.findFirst({
+    const classSchedules = await myPrisma.classSchedule.findFirst({
         where: {
             AND: [
                 { location: data.location },
@@ -90,7 +92,7 @@ export async function checkRoomAvailable(data: {location: string, dateTimeStart:
         }
     });
 
-    if(classSchedules){
+    if (classSchedules) {
         return classSchedules;
     }
 

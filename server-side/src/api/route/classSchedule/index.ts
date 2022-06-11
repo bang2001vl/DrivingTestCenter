@@ -18,14 +18,15 @@ export const ClassScheduleRoute = () => {
     route.use(json());
 
     route.get("/select",
+        SessionHandler.roleChecker([0, 1, 2]),
         RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag),
         RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, customInclude),
     );
 
     route.get("/overview/select",
-    RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag),
-    RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, ()=>({class: true})),
-);
+        RouteBuilder.buildSelectInputParser(searchProps, sortProps, tag),
+        RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, () => ({ class: true })),
+    );
 
     route.get("/count",
         RouteBuilder.buildCountInputParser(searchProps, tag),
@@ -101,7 +102,7 @@ async function checkConflictTime(data: any) {
         dateTimeEnd: data.dateTimeEnd,
     });
 
-    if(result){
+    if (result) {
         throw buildResponseError(102, `Conflict with other (id=${result.id})`);
     }
 }
@@ -112,8 +113,8 @@ function customFilter(input: any) {
         rs.classId = FieldGetter.Number(input, "classId", true);
     }
     if (input.dateTimeStart && input.dateTimeEnd) {
-        rs.dateTimeStart = {gt: FieldGetter.Date(input, "dateTimeStart", true)};
-        rs.dateTimeEnd = {lt: FieldGetter.Date(input, "dateTimeEnd", true)};
+        rs.dateTimeStart = { gt: FieldGetter.Date(input, "dateTimeStart", true) };
+        rs.dateTimeEnd = { lt: FieldGetter.Date(input, "dateTimeEnd", true) };
     }
     return rs;
 }

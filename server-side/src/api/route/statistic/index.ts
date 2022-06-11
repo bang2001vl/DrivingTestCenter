@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { myPrisma } from "../../../prisma";
 import { FieldGetter } from "../../handler/FieldGetter";
+import SessionHandler from "../../handler/session";
 import { InputSource, RouteHandleWrapper } from "../_wrapper";
 
 const tag = "Statistic";
@@ -9,6 +10,7 @@ export const StatisticRoute = () => {
     const route = Router();
 
     route.get("/dashboard",
+        SessionHandler.roleChecker([0, 1, 2]),
         RouteHandleWrapper.wrapCheckInput(input => {
             return {
                 dateTimeStart: FieldGetter.Date(input, "dateTimeStart", true),
@@ -27,12 +29,12 @@ export const StatisticRoute = () => {
             });
             const countPreStartClass = await myPrisma.class.count({
                 where: {
-                    dateStart: {gt: input.dateTimeEnd},
+                    dateStart: { gt: input.dateTimeEnd },
                 }
             });
             const countPreStartExamTest = await myPrisma.examTest.count({
                 where: {
-                    dateTimeStart: {gt: input.dateTimeEnd},
+                    dateTimeStart: { gt: input.dateTimeEnd },
                 }
             });
             const revenueReportDailyList = await myPrisma.revenueReportDaily.findMany({

@@ -18,6 +18,7 @@ export const CourseRoute = () => {
     const orderFields = ["name", "dateStart", "dateEnd", "createdAt"];
 
     route.get("/select",
+        SessionHandler.roleChecker([0, 1, 2]),
         RouteBuilder.buildSelectInputParser(searchFields, orderFields, tag),
         RouteBuilder.buildSelectRoute(repo, tag, customFilter),
     );
