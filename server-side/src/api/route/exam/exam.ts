@@ -22,6 +22,19 @@ export const ExamRoute = () => {
         RouteBuilder.buildSelectRoute(repo, tag, customFilter),
     );
 
+    route.get("/overview/select",
+        SessionHandler.roleChecker([0, 1, 2]),
+        RouteBuilder.buildSelectInputParser(searchProps, orderProps, tag),
+        RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, () => ({
+            examTests: {
+                select: {
+                    countStudent: true,
+                    maxMember: true,
+                }
+            }
+        })),
+    );
+
     route.get("/count",
         RouteBuilder.buildCountInputParser(searchProps, tag),
         RouteBuilder.buildCountRoute(repo, tag),

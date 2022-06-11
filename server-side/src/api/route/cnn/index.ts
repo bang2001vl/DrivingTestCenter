@@ -45,9 +45,16 @@ export const CNNRoute = () => {
         ...buildInsertOneManyRoute(myPrisma.cONN_Student_ExamTest, "examTestId", "studentId", [
             async (input) => {
                 const studentIdList = FieldGetter.Array(input, "studentIdList", true)!;
-                const examId = FieldGetter.Number(input, "examId", true)!;
+                const examTest = await myPrisma.examTest.findFirst({
+                    where:{
+                        id: input.examId
+                    }
+                });
+                if(!examTest){
+                    throw buildResponseError(1, "Invalid examTestId");
+                }
                 const examTests = await myPrisma.examTest.findMany({
-                    where: {examId: examId},
+                    where: {examId: examTest.examId},
                     select: {id: true},
                 });
                 const examTestIds = examTests.map(e => e.id);

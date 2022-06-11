@@ -20,6 +20,7 @@ export const StudentPicker: FC<IProps & Partial<BasicModelPickerProps>> = (props
                 orderdirection: "asc",
                 start: String(0),
                 count: String(5),
+                roleId: "1",
             });
             
             if(props.filterClassId){

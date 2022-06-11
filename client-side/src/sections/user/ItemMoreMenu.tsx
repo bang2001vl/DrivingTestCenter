@@ -12,9 +12,10 @@ interface PropType {
   items: {
     iconURI: string,
     label: string,
-    onClick?: (data?: any)=>void,
+    onClick?: (data?: any) => void,
   }[],
   data?: any,
+  disabled?: boolean,
 }
 
 export default function ItemMoreMenu(props: PropType) {
@@ -25,7 +26,7 @@ export default function ItemMoreMenu(props: PropType) {
 
   return (
     <>
-      <IconButton ref={ref} onClick={() => setIsOpen(true)}>
+      <IconButton ref={ref} onClick={() => setIsOpen(true)} disabled={props.disabled}>
         <Iconify icon={iconURI} width={20} height={20} sx={undefined} />
       </IconButton>
 
@@ -44,7 +45,7 @@ export default function ItemMoreMenu(props: PropType) {
             <MenuItem
               key={i.label}
               onClick={() => {
-                if(i.onClick){
+                if (i.onClick) {
                   i.onClick(props.data);
                 }
                 setIsOpen(false);

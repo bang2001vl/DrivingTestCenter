@@ -1,3 +1,4 @@
+import isBefore from "date-fns/isBefore";
 import { json, Router, urlencoded } from "express";
 import { myPrisma } from "../../../prisma";
 import { FieldGetter } from "../../handler/FieldGetter";
@@ -82,8 +83,8 @@ function checkInput_Update(input: any) {
         let data = {
             name: FieldGetter.String(input, "name", false),
             location: FieldGetter.String(input, "location", false),
-            dateTimeStart: FieldGetter.Date(input, "dateTimeStart", false),
-            dateTimeEnd: FieldGetter.Date(input, "dateTimeEnd", false),
+            dateStart: FieldGetter.Date(input, "dateStart", false),
+            dateEnd: FieldGetter.Date(input, "dateEnd", false),
             maxMember: FieldGetter.Number(input, "maxMember", false),
             rules: FieldGetter.String(input, "rules", false),
         }
@@ -92,6 +93,23 @@ function checkInput_Update(input: any) {
             key: FieldGetter.Number(input, "key", true),
             data
         };
+    }
+}
+
+async function checkConflictTime(data: any) {
+    if (!isBefore(data.dateStart, data.dateEnd)) {
+        throw buildResponseError(101, "Start time isn't smaller than end time");
+    }
+}
+
+async function checkConflictMaxNumber(data: any) {
+    const currentMember = await myPrisma.cONN_Student_Class.count({
+        where: {
+            classId: data.id,
+        }
+    });
+    if(data.maxCount < currentMember){
+        throw buildResponseError(103, "Số lượng không thể nhỏ hơn " + currentMember);
     }
 }
 

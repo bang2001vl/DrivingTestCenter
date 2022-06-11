@@ -117,6 +117,7 @@ export const ExamTestDetailPage: FC<IProps> = (props) => {
                         />
                     });
                 }}
+                onClickLoadExcel={undefined}
             />
             <AccountManagerPage
                 hideTitle
@@ -172,6 +173,7 @@ export const ExamTestDetailPage: FC<IProps> = (props) => {
                         />
                     });
                 }}
+                onClickLoadExcel={undefined}
             />
         </CustomizedTabs>
     </div>

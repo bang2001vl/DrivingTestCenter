@@ -30,7 +30,6 @@ export default function FirstLaunch() {
             autoHideDuration={2 * 1000}
             onClose={() => setIsOpenAlert(false)}
 
-            sx={{ height: "100%" }}
             anchorOrigin={{
                 vertical: "top",
                 horizontal: "center"

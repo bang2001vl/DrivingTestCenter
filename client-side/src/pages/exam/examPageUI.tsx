@@ -59,7 +59,7 @@ export default function ExamPageUI(props: IProps) {
 
     const handleSelect = (params: URLSearchParams)=>{
         return api.getWithToken(
-            `${appConfig.backendUri}/${routeName}/select?${params.toString()}`
+            `${appConfig.backendUri}/exam/overview/select?${params.toString()}`
         );
     }
 

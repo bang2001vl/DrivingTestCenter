@@ -73,6 +73,28 @@ export default function AccountManagerPage(props: IProps & Partial<BasicPageProp
         }
     }
 
+    const handleClickLoadExcel = (select: any)=>{
+        rootDialog.openDialog({
+            children: <ExcelPicker
+                title="Nhập Excel"
+                templateURI="/static/template/account.xlsx"
+                onSubmit={async (files) => {
+                    rootDialog.closeDialog();
+                    select();
+                    if (files.length > 0) {
+                        const res = await new AccountManagerController().insertFromExcelToDB(files[0], api);
+                        if (res.result) {
+                            DialogHelper.showSuccess("Thành công");
+                        }
+                        else {
+                            DialogHelper.showError(res.errorMessage);
+                        }
+                    }
+                }}
+            />
+        });
+    }
+
     return (
         <BasicPage
             routeNameFE={routeNameFE}
@@ -85,6 +107,7 @@ export default function AccountManagerPage(props: IProps & Partial<BasicPageProp
             searchOptionList={searchOptionList}
             orderOptionList={orderOptionList}
 
+            onClickLoadExcel={handleClickLoadExcel}
             {...props}
             onRenderItem={(dataList, select, emptyView) => {
                 return <AccountManagerTable
@@ -105,27 +128,7 @@ export default function AccountManagerPage(props: IProps & Partial<BasicPageProp
                     {...props.tableProps}
                 />
             }}
-            onClickLoadExcel={(select) => {
-                rootDialog.openDialog({
-                    children: <ExcelPicker
-                        title="Nhập Excel"
-                        templateURI="/static/template/account.xlsx"
-                        onSubmit={async (files) => {
-                            rootDialog.closeDialog();
-                            select();
-                            if (files.length > 0) {
-                                const res = await new AccountManagerController().insertFromExcelToDB(files[0], api);
-                                if (res.result) {
-                                    DialogHelper.showSuccess("Thành công");
-                                }
-                                else {
-                                    DialogHelper.showError(res.errorMessage);
-                                }
-                            }
-                        }}
-                    />
-                });
-            }}
+            
         />
 
     )

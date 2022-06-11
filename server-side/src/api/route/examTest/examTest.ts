@@ -1,3 +1,4 @@
+import isAfter from "date-fns/isAfter";
 import isBefore from "date-fns/isBefore";
 import { json, Router, urlencoded } from "express";
 import { myPrisma } from "../../../prisma";
@@ -104,6 +105,7 @@ async function checkInput_Update(input: any) {
         }
 
         await checkConflictTime(data);
+        await checkConflictMaxNumber(data);
 
         return {
             key: FieldGetter.Number(input, "key", true),
@@ -123,13 +125,31 @@ async function checkConflictTime(data: any) {
         dateTimeEnd: data.dateTimeEnd,
     });
 
+    const exam = await myPrisma.exam.findFirst({
+        where: {id: data.examId},
+    });
+    if(!exam){
+        throw buildResponseError(103, "Invalid examId: Not found exam");
+    }
+    
+    if(!(isAfter(data.dateTimeStart, exam.dateStart) && isAfter(exam.dateEnd, data.dateTimeEnd))){
+        throw buildResponseError(104, `Thời gian thi chỉ được nằm trong khoảng ${exam.dateStart} - ${exam.dateEnd}`);
+    }
+
     if (result) {
         throw buildResponseError(102, `Conflict with other (id=${result.id})`);
     }
 }
 
-async function checkConflictMaxNumber() {
-
+async function checkConflictMaxNumber(data: any) {
+    const currentMember = await myPrisma.cONN_Student_ExamTest.count({
+        where: {
+            examTestId: data.id,
+        }
+    });
+    if(data.maxCount < currentMember){
+        throw buildResponseError(103, "Số lượng không thể nhỏ hơn " + currentMember);
+    }
 }
 
 function customFilter(input: any) {

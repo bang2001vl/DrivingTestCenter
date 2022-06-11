@@ -76,4 +76,8 @@ export class ExamTestController {
             `${appConfig.backendUri}/${this.routeName}/delete?keys=${ids.join(",")}`,
         )
     }
+
+    loadFromDB(id: number){
+        
+    }
 }
