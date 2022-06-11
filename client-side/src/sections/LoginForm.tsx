@@ -21,15 +21,16 @@ import { AccountSingleton } from '../singleton/account';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
+  const isAdmin = AccountSingleton.instance.isAdmin;
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const LoginSchema = Yup.object().shape({
     username: Yup.string()
-            .required('Username is required'),
+      .required('Username is required'),
     password: Yup.string()
-              .required('Password is required')
+      .required('Password is required')
   });
 
   const formik = useFormik({
@@ -39,15 +40,18 @@ export default function LoginForm() {
       remember: true
     },
     validationSchema: LoginSchema,
-    onSubmit: async (values)=>{
+    onSubmit: async (values) => {
       console.log("Submit login with : ");
       console.log(values);
       setIsLoading(true);
       const res = await AccountSingleton.instance.login(values.username, values.password, "DEVICE-INFO");
-      if(res.result){
-        navigate("/", {replace: true});
+      if (res.result) {
+        if (isAdmin) {
+          navigate("/", { replace: true });
+        }
+        else navigate("/dashboard/exam", { replace: true });
       }
-      else{
+      else {
         console.log(res);
         DialogHelper.showError(res.errorMessage);
       }
@@ -85,7 +89,7 @@ export default function LoginForm() {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton onClick={handleShowPassword} edge="end">
-                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} sx={undefined}/>
+                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} sx={undefined} />
                   </IconButton>
                 </InputAdornment>
               )
@@ -106,8 +110,8 @@ export default function LoginForm() {
           </Link>
         </Stack> */}
 
-        <LoadingButton 
-        style={{marginTop: "50px"}}
+        <LoadingButton
+          style={{ marginTop: "50px" }}
           fullWidth
           size="large"
           type="submit"
