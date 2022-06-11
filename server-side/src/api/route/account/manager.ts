@@ -192,8 +192,6 @@ async function checkInput_Update(input: any) {
             roleId: FieldGetter.Number(input, "roleId"),
         }
 
-        await checkDuplicate(data);
-
         return {
             key: FieldGetter.Number(input, "key"),
             data

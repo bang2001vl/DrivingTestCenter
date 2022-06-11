@@ -151,7 +151,6 @@ function checkInput_Update(input) {
                 gender: FieldGetter_1.FieldGetter.Number(input, "gender"),
                 roleId: FieldGetter_1.FieldGetter.Number(input, "roleId"),
             };
-            yield checkDuplicate(data);
             return {
                 key: FieldGetter_1.FieldGetter.Number(input, "key"),
                 data

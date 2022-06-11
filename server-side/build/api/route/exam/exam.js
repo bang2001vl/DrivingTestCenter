@@ -20,6 +20,14 @@ const ExamRoute = () => {
     const orderProps = ["name", "dateStart", "dateEnd"];
     route.use((0, express_1.json)());
     route.get("/select", session_1.default.roleChecker([0, 1, 2]), _default_1.RouteBuilder.buildSelectInputParser(searchProps, orderProps, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter));
+    route.get("/overview/select", session_1.default.roleChecker([0, 1, 2]), _default_1.RouteBuilder.buildSelectInputParser(searchProps, orderProps, tag), _default_1.RouteBuilder.buildSelectRoute(repo, tag, customFilter, undefined, () => ({
+        examTests: {
+            select: {
+                countStudent: true,
+                maxMember: true,
+            }
+        }
+    })));
     route.get("/count", _default_1.RouteBuilder.buildCountInputParser(searchProps, tag), _default_1.RouteBuilder.buildCountRoute(repo, tag));
     route.post("/insert", session_1.default.roleChecker([0]), _wrapper_1.RouteHandleWrapper.wrapCheckInput(checkInput_Insert, tag), _default_1.RouteBuilder.buildNestInsertManyCheckerRoute("examTest", "examId", examTest_1.ExamTestChecker.checkInput_Insert), _default_1.RouteBuilder.buildInsertRoute(repo, tag));
     route.put("/update", session_1.default.roleChecker([0]), _wrapper_1.RouteHandleWrapper.wrapCheckInput(checkInput_Update, tag), _default_1.RouteBuilder.buildNestInsertManyCheckerRoute("examTest", "examId", examTest_1.ExamTestChecker.checkInput_Insert), _default_1.RouteBuilder.buildDeleteNestedData("examTest", "id"), _default_1.RouteBuilder.buildUpdateRoute(repo, tag));

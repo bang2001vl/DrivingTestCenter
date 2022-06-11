@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExamTestChecker = exports.ExamTestRoute = void 0;
+const isAfter_1 = __importDefault(require("date-fns/isAfter"));
 const isBefore_1 = __importDefault(require("date-fns/isBefore"));
 const express_1 = require("express");
 const prisma_1 = require("../../../prisma");
@@ -75,6 +76,7 @@ function checkInput_Update(input) {
                 maxMember: FieldGetter_1.FieldGetter.Number(input, "maxMember", false),
             };
             yield checkConflictTime(data);
+            yield checkConflictMaxNumber(data);
             return {
                 key: FieldGetter_1.FieldGetter.Number(input, "key", true),
                 data
@@ -92,13 +94,30 @@ function checkConflictTime(data) {
             dateTimeStart: data.dateTimeStart,
             dateTimeEnd: data.dateTimeEnd,
         });
+        const exam = yield prisma_1.myPrisma.exam.findFirst({
+            where: { id: data.examId },
+        });
+        if (!exam) {
+            throw (0, utilities_1.buildResponseError)(103, "Invalid examId: Not found exam");
+        }
+        if (!((0, isAfter_1.default)(data.dateTimeStart, exam.dateStart) && (0, isAfter_1.default)(exam.dateEnd, data.dateTimeEnd))) {
+            throw (0, utilities_1.buildResponseError)(104, `Thời gian thi chỉ được nằm trong khoảng ${exam.dateStart} - ${exam.dateEnd}`);
+        }
         if (result) {
             throw (0, utilities_1.buildResponseError)(102, `Conflict with other (id=${result.id})`);
         }
     });
 }
-function checkConflictMaxNumber() {
+function checkConflictMaxNumber(data) {
     return __awaiter(this, void 0, void 0, function* () {
+        const currentMember = yield prisma_1.myPrisma.cONN_Student_ExamTest.count({
+            where: {
+                examTestId: data.id,
+            }
+        });
+        if (data.maxCount < currentMember) {
+            throw (0, utilities_1.buildResponseError)(103, "Số lượng không thể nhỏ hơn " + currentMember);
+        }
     });
 }
 function customFilter(input) {

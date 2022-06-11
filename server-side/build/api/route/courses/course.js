@@ -1,9 +1,19 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CourseRouteChecker = exports.CourseRoute = void 0;
+const isBefore_1 = __importDefault(require("date-fns/isBefore"));
 const express_1 = require("express");
 const prisma_1 = require("../../../prisma");
 const FieldGetter_1 = require("../../handler/FieldGetter");
@@ -49,8 +59,8 @@ function checkInput_Update(input) {
         let data = {
             name: FieldGetter_1.FieldGetter.String(input, "name", false),
             location: FieldGetter_1.FieldGetter.String(input, "location", false),
-            dateTimeStart: FieldGetter_1.FieldGetter.Date(input, "dateTimeStart", false),
-            dateTimeEnd: FieldGetter_1.FieldGetter.Date(input, "dateTimeEnd", false),
+            dateStart: FieldGetter_1.FieldGetter.Date(input, "dateStart", false),
+            dateEnd: FieldGetter_1.FieldGetter.Date(input, "dateEnd", false),
             maxMember: FieldGetter_1.FieldGetter.Number(input, "maxMember", false),
             rules: FieldGetter_1.FieldGetter.String(input, "rules", false),
         };
@@ -59,6 +69,25 @@ function checkInput_Update(input) {
             data
         };
     }
+}
+function checkConflictTime(data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!(0, isBefore_1.default)(data.dateStart, data.dateEnd)) {
+            throw (0, utilities_1.buildResponseError)(101, "Start time isn't smaller than end time");
+        }
+    });
+}
+function checkConflictMaxNumber(data) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const currentMember = yield prisma_1.myPrisma.cONN_Student_Class.count({
+            where: {
+                classId: data.id,
+            }
+        });
+        if (data.maxCount < currentMember) {
+            throw (0, utilities_1.buildResponseError)(103, "Số lượng không thể nhỏ hơn " + currentMember);
+        }
+    });
 }
 function customFilter(input) {
     const rs = {};

@@ -75,6 +75,9 @@ export const AccountManagerCreate: FC<IProps & Partial<BasicEditSectionProps>> =
 
     function handleValidate(formik: IFormIK) {
         const errors = validYupToObject(formik.values, schema);
+        if(props.method === EDIT_METHOD.update){
+            delete errors.password;
+        }
         if (Object.keys(errors).length > 0) {
             formik.setErrors(errors);
             return errors;

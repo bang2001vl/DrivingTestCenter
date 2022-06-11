@@ -37,9 +37,16 @@ const CNNRoute = () => {
     route.post("/join/examtest/students", session_1.default.roleChecker([0]), ...buildInsertOneManyRoute(prisma_1.myPrisma.cONN_Student_ExamTest, "examTestId", "studentId", [
         (input) => __awaiter(void 0, void 0, void 0, function* () {
             const studentIdList = FieldGetter_1.FieldGetter.Array(input, "studentIdList", true);
-            const examId = FieldGetter_1.FieldGetter.Number(input, "examId", true);
+            const examTest = yield prisma_1.myPrisma.examTest.findFirst({
+                where: {
+                    id: input.examId
+                }
+            });
+            if (!examTest) {
+                throw (0, utilities_1.buildResponseError)(1, "Invalid examTestId");
+            }
             const examTests = yield prisma_1.myPrisma.examTest.findMany({
-                where: { examId: examId },
+                where: { examId: examTest.examId },
                 select: { id: true },
             });
             const examTestIds = examTests.map(e => e.id);
