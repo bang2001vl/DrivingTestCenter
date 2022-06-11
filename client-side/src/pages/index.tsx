@@ -26,7 +26,7 @@ const HomePage = () => {
         countPreStartExamTest: 0,
         revenueReportDailyList: [],
     });
-    const [dateTimeStart] = useState(addMonths(new Date(), -1));
+    const [dateTimeStart] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
     const [dateTimeEnd] = useState(new Date());
 
     useEffect(() => {

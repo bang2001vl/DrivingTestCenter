@@ -12,6 +12,8 @@ import { StudentRoute } from "./route/student";
 import { CNNRoute } from "./route/cnn";
 import { BillRoute } from "./route/bill";
 import { StatisticRoute } from "./route/statistic";
+import { ScheduleRoute } from "./route/schedule";
+import { ClassScheduleRoute } from "./route/classSchedule";
 
 export function ApiServer() {
     const app = express();
@@ -31,6 +33,8 @@ export function ApiServer() {
     app.use("/cnn", CNNRoute());
     app.use("/bill", BillRoute());
     app.use("/statistic", StatisticRoute());
+    app.use("/classSchedule", ClassScheduleRoute())
+    app.use("/schedule", ScheduleRoute());
 
     app.use((req, res, next) => {
         if (res.locals.error) {

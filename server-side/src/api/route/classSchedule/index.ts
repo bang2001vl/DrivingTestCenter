@@ -57,10 +57,9 @@ async function checkInput_Insert(input: any) {
         let data = {
             classId: FieldGetter.Number(input, "classId", true),
             location: FieldGetter.String(input, "location", true),
-            dateStart: FieldGetter.Date(input, "dateStart", true),
-            dateEnd: FieldGetter.Date(input, "dateEnd", true),
+            dateTimeStart: FieldGetter.Date(input, "dateTimeStart", true),
+            dateTimeEnd: FieldGetter.Date(input, "dateTimeEnd", true),
             notes: FieldGetter.String(input, "notes", false),
-            title: FieldGetter.String(input, "title", false),
         }
 
         await checkConflictTime(data);
@@ -74,12 +73,11 @@ async function checkInput_Insert(input: any) {
 async function checkInput_Update(input: any) {
     if (input) {
         let data = {
-            classId: FieldGetter.Number(input, "classId", true),
-            location: FieldGetter.String(input, "location", true),
-            dateStart: FieldGetter.Date(input, "dateStart", true),
-            dateEnd: FieldGetter.Date(input, "dateEnd", true),
+            classId: FieldGetter.Number(input, "classId", false),
+            location: FieldGetter.String(input, "location", false),
+            dateTimeStart: FieldGetter.Date(input, "dateTimeStart", false),
+            dateTimeEnd: FieldGetter.Date(input, "dateTimeEnd", false),
             notes: FieldGetter.String(input, "notes", false),
-            title: FieldGetter.String(input, "title", false),
         }
 
         await checkConflictTime(data);
@@ -103,8 +101,8 @@ async function checkConflictTime(data: any) {
                 {
                     NOT: {
                         OR: [
-                            { dateStart: { lt: data.dateTimeStart } },
-                            { dateEnd: { gt: data.dateTimeEnd } },
+                            { dateTimeStart: { gte: data.dateTimeEnd } },
+                            { dateTimeEnd: { lte: data.dateTimeStart } },
                         ]
                     }
                 }

@@ -11,6 +11,7 @@ import palette from "../../../theme/palette";
 interface IProps<T = any>{
     formik: any,
     fieldName: string,
+    idFieldName?: string,
     getURL: (input: string) => string,
     label?: string,
     placeholder?: string,
@@ -38,7 +39,7 @@ export const BasicFormIKModelSelector: FC<BasicFormIKModelSelectorProps> = (prop
             return res.data.map((e: any) => ({
                 label: e.name,
                 value: e,
-            }))
+            }));
         }
         else {
             console.log("HAVE ERROR", res);
@@ -62,7 +63,10 @@ export const BasicFormIKModelSelector: FC<BasicFormIKModelSelectorProps> = (prop
           
             value={props.formik.values[props.fieldName]}
             onChange={(option, action) => {
-                props.formik.setFieldValue([props.fieldName], option)
+                props.formik.setFieldValue([props.fieldName], option);
+                if(option !== null && props.idFieldName){
+                    props.formik.setFieldValue([props.idFieldName], option.value.id);
+                }
             }}
 
             styles={{

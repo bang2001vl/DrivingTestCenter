@@ -22,7 +22,7 @@ export class MyResponse<D = any> {
     }
 
     static fromJson(json: any) {
-        if(typeof json === "string"){
+        if (typeof json === "string") {
             json = JSON.parse(json);
         }
         return new MyResponse(
@@ -37,15 +37,15 @@ export class MyResponse<D = any> {
 const UNAUTHORIZED_RESPONSE = new MyResponse(false, 401, "Need login");
 
 axios.interceptors.request.use(request => {
-        console.log('Starting Request', JSON.stringify(request, null, 2))
-        return request
-      });
+    console.log('Starting Request', JSON.stringify(request, null, 2))
+    return request
+});
 
 export class APIService {
     axios: Axios;
-    private onHandleReponse?: (response: MyResponse)=> any;
-    
-    constructor(cancelToken?: CancelToken, onHandleReponse?: (response: MyResponse)=> any){
+    private onHandleReponse?: (response: MyResponse) => any;
+
+    constructor(cancelToken?: CancelToken, onHandleReponse?: (response: MyResponse) => any) {
         this.onHandleReponse = onHandleReponse;
         this.axios = axios;
         // this.axios = axios.create({
@@ -63,11 +63,11 @@ export class APIService {
         console.log(response);
 
         const myResponse = this._handleResponse(response);
-        if(this.onHandleReponse){
+        if (this.onHandleReponse) {
             this.onHandleReponse(myResponse);
         }
         console.log(myResponse);
-        
+
         return myResponse;
     }
 
@@ -76,7 +76,7 @@ export class APIService {
             return new MyResponse(false, -1, "Not receive response");
         }
         const myResponse = MyResponse.fromJson(response.data);
-        if (myResponse.errorCode === 401) {
+        if (myResponse.errorCode === 401 || response.status === 401) {
             return UNAUTHORIZED_RESPONSE;
         }
         return myResponse;
@@ -85,7 +85,16 @@ export class APIService {
     private handleException(errors: any) {
         console.log('ERROR RESPONSE:', errors);
 
-        return new MyResponse(false, -2, "Catch exeption when call api");
+        let myResponse = new MyResponse(false, -2, "Catch exeption when call api");
+        if (errors.response.status === 401) {
+            myResponse = UNAUTHORIZED_RESPONSE;
+        }
+
+        if (this.onHandleReponse) {
+            this.onHandleReponse(myResponse);
+        }
+
+        return myResponse;
     }
 
     private _buildConfigWithToken<D = any>(
@@ -106,8 +115,8 @@ export class APIService {
     ): Promise<MyResponse<T>> {
         return this.axios
             .request(config)
-            .then((res)=>this.handleReponse(res))
-            .catch((reason)=>this.handleException(reason));
+            .then((res) => this.handleReponse(res))
+            .catch((reason) => this.handleException(reason));
     }
 
     public async get<T = any, D = any>(
@@ -116,8 +125,8 @@ export class APIService {
     ): Promise<MyResponse<T>> {
         return this.axios
             .get(url, config)
-            .then((res)=>this.handleReponse(res))
-            .catch((reason)=>this.handleException(reason));
+            .then((res) => this.handleReponse(res))
+            .catch((reason) => this.handleException(reason));
     }
     public async getWithToken<T = any, D = any>(
         url: string,
@@ -129,8 +138,8 @@ export class APIService {
 
         return this.axios
             .get(url, newConfig)
-            .then((res)=>this.handleReponse(res))
-            .catch((reason)=>this.handleException(reason));
+            .then((res) => this.handleReponse(res))
+            .catch((reason) => this.handleException(reason));
     }
 
 
@@ -141,8 +150,8 @@ export class APIService {
     ): Promise<MyResponse<T>> {
         return this.axios
             .post(url, data, config)
-            .then((res)=>this.handleReponse(res))
-            .catch((reason)=>this.handleException(reason));
+            .then((res) => this.handleReponse(res))
+            .catch((reason) => this.handleException(reason));
     }
 
     public postWithToken<T = any, D = any>(
@@ -156,8 +165,8 @@ export class APIService {
 
         return this.axios
             .post(url, data, newConfig)
-            .then((res)=>this.handleReponse(res))
-            .catch((reason)=>this.handleException(reason));
+            .then((res) => this.handleReponse(res))
+            .catch((reason) => this.handleException(reason));
     }
 
     public put<T = any, D = any>(
@@ -167,8 +176,8 @@ export class APIService {
     ): Promise<MyResponse<T>> {
         return this.axios
             .put(url, data, config)
-            .then((res)=>this.handleReponse(res))
-            .catch((reason)=>this.handleException(reason));
+            .then((res) => this.handleReponse(res))
+            .catch((reason) => this.handleException(reason));
     }
     public putWithToken<T = any, D = any>(
         url: string,
@@ -181,8 +190,8 @@ export class APIService {
 
         return this.axios
             .put(url, data, newConfig)
-            .then((res)=>this.handleReponse(res))
-            .catch((reason)=>this.handleException(reason));
+            .then((res) => this.handleReponse(res))
+            .catch((reason) => this.handleException(reason));
     }
 
     public delete<T = any, D = any>(
@@ -191,8 +200,8 @@ export class APIService {
     ): Promise<MyResponse<T>> {
         return this.axios
             .delete(url, config)
-            .then((res)=>this.handleReponse(res))
-            .catch((reason)=>this.handleException(reason));
+            .then((res) => this.handleReponse(res))
+            .catch((reason) => this.handleException(reason));
     }
     public deleteWithToken<T = any, D = any>(
         url: string,
@@ -205,7 +214,7 @@ export class APIService {
 
         return this.axios
             .delete(url, newConfig)
-            .then((res)=>this.handleReponse(res))
-            .catch((reason)=>this.handleException(reason));
+            .then((res) => this.handleReponse(res))
+            .catch((reason) => this.handleException(reason));
     }
 }

@@ -77,7 +77,9 @@ export const BasicEditSection: FC<BasicEditSectionProps> = (props) => {
         let result = await props.submit(formik);
         setIsLoading(false)
         if (result.errorCode) {
-            DialogHelper.showAlert(result.errorMessage);
+            if(result.errorMessage){
+                DialogHelper.showAlert(result.errorMessage);
+            }
         }
         else {
          //   BuildReportAlert("error","Thành công", "Đã lưu kì thi thành công!" );

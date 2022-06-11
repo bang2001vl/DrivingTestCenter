@@ -16,6 +16,12 @@ import { BasicEditSection } from "../../sections/CRUD/BasicEditSection";
 import { ExamCreateUI } from "../exam/examCreateUI";
 import { EDIT_METHOD } from "../examCreate";
 import { ExamTestCreate } from "../examTest/examTestCreate";
+import useAPI from "../../hooks/useApi";
+import { appConfig } from "../../configs";
+import { DialogHelper } from "../../singleton/dialogHelper";
+import { ExamTestController } from "../../api/controllers/examTest";
+import { ClassScheduleController } from "../../api/controllers/classScheduleController";
+import { ClassScheduleCreate } from "../classSchedule/classScheduleCreate";
 
 const PREFIX = 'Demo';
 const classes = {
@@ -45,36 +51,23 @@ interface ISelectable<T = any> {
 
 interface IData {
     id: number,
-    classId: number,
     roomId: number,
     title: string,
     startDate: Date,
     endDate: Date,
     allDay: boolean,
+    sourceData: any,
 }
-
-function parseScheduleDetail(data: any) {
-    const result: IData = {
-        id: data.id,
-        classId: data.classId,
-        roomId: data.roomId,
-        title: data.movie.title,
-        startDate: new Date(data.dateTimeStart),
-        endDate: new Date(data.dateTimeEnd),
-        allDay: false,
-    }
-    return result;
-}
-
 
 export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
     const [data, setData] = useState<IData[]>([]);
     const [openAddSchedule, setOpenAddSchedule] = useState(false);
-    const [added, setAdded] = useState<IData[]>([]);
-    const [deleted, setDeleted] = useState<IData[]>([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [minTime, setMinTime] = useState("08:00");
     const [selectedRoom, setSelectedRoom] = useState(0);
+    const [examTestList, setExamTestList] = useState<any[]>([]);
+    const [classScheduleList, setClassScheduleList] = useState<any[]>([]);
+    const api = useAPI();
 
     const rootDialog = useRootDialog();
 
@@ -83,90 +76,66 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
     useEffect(() => {
         // First load
         window.scrollTo(0, 0);
+        loadData(selectedDate);
         //  loadShow();
     }, [selectedDate]);
 
+    useEffect(() => {
+        let id = 0;
+        const dataList: IData[] = [];
+        for (let i = 0; i < examTestList.length; i++) {
+            const item = examTestList[i];
+            dataList.push({
+                id: id,
+                roomId: Rooms.indexOf(item.location),
+                title: `[Thi]: ${item.name}`,
+                startDate: new Date(item.dateTimeStart),
+                endDate: new Date(item.dateTimeEnd),
+                allDay: false,
+                sourceData: item,
+            });
+            id++;
+        }
+        for (let i = 0; i < classScheduleList.length; i++) {
+            const item = classScheduleList[i];
+            dataList.push({
+                id: id,
+                roomId: Rooms.indexOf(item.location),
+                title: `[Học]: ${item.classTitle}`,
+                startDate: new Date(item.dateTimeStart),
+                endDate: new Date(item.dateTimeEnd),
+                allDay: false,
+                sourceData: item,
+            });
+            id++;
+        }
+        setData(dataList);
+    }, [examTestList, classScheduleList]);
+
+    function loadData(date: Date) {
+        const params = new URLSearchParams({
+            dateTimeStart: parse("00:00", "HH:mm", date).toISOString(),
+            dateTimeEnd: parse("23:59", "HH:mm", date).toISOString(),
+        })
+        api.get(
+            `${appConfig.backendUri}/schedule/select?${params.toString()}`
+        ).then(res => {
+            if (res.result) {
+                setExamTestList(res.data["examTestList"]);
+                setClassScheduleList(res.data["classScheduleList"]);
+            }
+            else {
+                DialogHelper.showAlert(res.errorMessage);
+            }
+        })
+    }
 
     console.log("Render with");
     console.log("SelectedData", selectedDate);
     console.log("Data", data);
 
-    const handleSubmit = () => {
-        if (props.onSubmitData) {
-            props.onSubmitData({
-                added: added.map(e => ({
-                    classId: Number(e.classId),
-                    roomId: Number(e.roomId),
-                    dateTimeStart: e.startDate.toISOString(),
-                    dateTimeEnd: e.endDate.toISOString(),
-                })),
-                deleted: deleted.map(e => e.id)
-            });
-        }
-    }
-
     const handleDateChange = (newDate: Date) => {
         setSelectedDate(newDate);
-    }
-
-    const getnewid = () => {
-        let temp = 1;
-        data.forEach(e => {
-            temp = temp > e.id ? e.id : temp;
-        });
-        added.forEach(e => {
-            temp = temp > e.id ? e.id : temp;
-        });
-        return temp + 1;
-    }
-
-    const commitChanges = (change: ChangeSet) => {
-        if (change.added) {
-            console.log("added showtime", change.added);
-
-            if (validShowTime(change.added as any)) {
-                const startingAddedId = getnewid();
-                setAdded(added.concat([{ id: startingAddedId, ...change.added } as any]));
-            }
-        }
-        if (change.changed) {
-            console.log("changed showtime", change.changed);
-            // data = data.map(showTime => (
-            //     change.changed![showTime.id] ? { ...showTime, ...change.changed![showTime.id] } : showTime));
-        }
-        if (change.deleted !== undefined) {
-            console.log("deleted showtime", change.deleted);
-            const showId = change.deleted;
-            let temp = added.find(e => e.id === showId);
-            if (temp) {
-                setAdded(added.filter(e => e !== temp));
-            } else {
-                temp = data.find(e => e.id === showId);
-                if (temp) {
-                    setDeleted(deleted.concat([temp]));
-                }
-            }
-        }
-    }
-
-    const validShowTime = (showTime: IData) => {
-        let isValid = true;
-        showTimes.forEach(e => {
-            let timeConflict = isBefore(e.startDate, showTime.startDate)
-                ? isAfter(e.endDate, showTime.startDate)
-                : isBefore(e.startDate, showTime.endDate);
-            if (timeConflict) {
-                if (e.roomId === showTime.roomId) {
-                    window.alert("Khung giờ có lịch khác!");
-                    isValid = false;
-                }
-            }
-        });
-        return isValid;
-    }
-
-    const onSelectedShowtimeChange = (newValue: MultiValue<ISelectable>, actionMeta: ActionMeta<ISelectable>) => {
-        setSelectedRoom(parseInt((newValue as unknown as ISelectable).value));
     }
 
     const FlexibleSpace = (({ ...restProps }) => (
@@ -175,9 +144,14 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
                 <Button
                     onClick={() => {
                         rootDialog.openDialog({
-                            children: <ExamTestCreate method={EDIT_METHOD.create}  onSuccess={()=>rootDialog.closeDialog()} onClose={()=>rootDialog.closeDialog()}>
+                            children: <ExamTestCreate method={EDIT_METHOD.create}
+                                title="Thêm ca thi"
+                                onSuccess={() => {
+                                    loadData(selectedDate);
+                                    rootDialog.closeDialog();
+                                }}
+                                onClose={() => rootDialog.closeDialog()}>
                             </ExamTestCreate>
-
                         })
                     }}
                     variant="contained"
@@ -188,12 +162,19 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
                 <Button
                     onClick={() => {
                         rootDialog.openDialog({
-                            children: <Stack>
-                                <Typography variant="h4" gutterBottom style={{ color: "#3C557A" }}>Thêm lịch học</Typography>
-                            </Stack>
-                    })
-                }}
-            
+                            children: <ClassScheduleCreate method={EDIT_METHOD.create}
+                                title="Thêm lịch học"
+                                onSuccess={() => {
+                                    loadData(selectedDate);
+                                    rootDialog.closeDialog();
+                                }}
+                                onClose={() => rootDialog.closeDialog()}
+                            >
+
+                            </ClassScheduleCreate>
+                        })
+                    }}
+
                     variant="contained"
                     startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}>
                     Thêm lịch học
@@ -202,23 +183,6 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
         </StyledToolbarFlexibleSpace>
     ));
 
-    const onConfirmAddSchedule = () => {
-        const startDateTime = parse(minTime, "HH:mm", selectedDate);
-        const endDateTime = parse(minTime, "HH:mm", selectedDate);
-        const startingAddedId = getnewid;
-        const newShow = {
-            id: startingAddedId,
-            title: "",
-            roomId: selectedRoom,
-            startDate: startDateTime,
-            endDate: endDateTime,
-            allDay: false,
-        };
-        commitChanges({
-            added: newShow
-        });
-        setOpenAddSchedule(false);
-    }
     function getRoomsResource() {
         const rooms: { id: number; text: string; }[] = [];
         Rooms.map((item, index) => {
@@ -234,10 +198,6 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
             instances: rooms,
         }];
     }
-    const showTimes = data
-        .filter(e => !deleted.includes(e))
-        .concat(added);
-
     const resources = getRoomsResource();
     const grouping = [{
         resourceName: 'roomId',
@@ -246,7 +206,7 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
     return <Box>
         <Paper sx={{ mb: 2, borderRadius: "10px", marginTop: 2 }}>
             <Scheduler
-                data={showTimes}
+                data={data}
                 height={660}
                 locale={"vi-VN"}
             >
@@ -255,7 +215,33 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
                     onCurrentDateChange={handleDateChange}
                 />
                 <EditingState
-                    onCommitChanges={commitChanges}
+                    onCommitChanges={async (change) => {
+                        if (change.deleted !== undefined) {
+                            console.log("OnDeleted", change.deleted);
+
+                            if (!isNaN(Number(change.deleted))) {
+                                const item = data.find(d => d.id === Number(change.deleted));
+                                console.log("OnDeleted Item", item);
+                                if (item) {
+                                    let res: any;
+
+                                    if (item.title.includes("[Thi]")) {
+                                        res = await new ExamTestController().deleteFromDB([item.sourceData.id], api);
+                                    }
+                                    else if (item.title.includes("[Học]")) {
+                                        res = await new ClassScheduleController(api).deleteFromDB([item.sourceData.id]);
+                                    }
+
+                                    if (res.result) {
+                                        loadData(selectedDate);
+                                    }
+                                    else {
+                                        DialogHelper.showAlert(res.errorMessage);
+                                    }
+                                }
+                            }
+                        }
+                    }}
                 />
                 <GroupingState
                     grouping={grouping}
