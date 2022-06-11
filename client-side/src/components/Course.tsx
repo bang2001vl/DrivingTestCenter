@@ -35,7 +35,7 @@ export const CourseCard: FC<CourseProps> = (props) => {
         }
         else if (isAfter(props.dateEnd, now)) {
             return {
-                
+
                 text: "Đang thực hiện",
                 color: "#00DB99",
             };
@@ -82,13 +82,20 @@ export const CourseCard: FC<CourseProps> = (props) => {
                 <Typography variant="h6" noWrap>
                     {props.name}
                 </Typography>
-                <Stack direction='row' spacing={0.5} alignItems='center'>
-                    <Circle style={{ color: getStatus().color, fontSize: '8px' }}></Circle>
+                <Stack direction='row' spacing={0.5} alignItems='center' justifyContent='space-between' >
+                    <Box>
+                        <Circle style={{ color: getStatus().color, fontSize: '8px' }}></Circle>
+                        <Typography
+                            variant="subtitle2"
+                            color={getStatus().color} >
+                            {getStatus().text}
+                        </Typography>
+                    </Box>
                     <Typography
-                        variant="subtitle2"
-                        color={getStatus().color} >
-                        {getStatus().text}
-                    </Typography>
+                            variant="subtitle2">
+                            {props.price}
+                        </Typography>
+
                 </Stack>
 
             </Stack>

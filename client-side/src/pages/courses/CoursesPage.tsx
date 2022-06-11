@@ -82,6 +82,8 @@ export default function CoursesPage(props: IProps & Partial<BasicPageProps>) {
                         navigate("detail?id=" + data.id);
                     }}
                     onDelete={async (data: any) => {
+                         const result = DialogHelper.showConfirm('Bạn chắc chắn muốn xóa lớp học này?');
+                        if (result) {
                         const id = data.id;
                         const res = await api.deleteWithToken(
                             `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
@@ -93,7 +95,7 @@ export default function CoursesPage(props: IProps & Partial<BasicPageProps>) {
                         else {
                             DialogHelper.showError(res.errorMessage);
                         }
-                    }}
+                    }}}
                     {...props.tableProps}
                 />
             }}

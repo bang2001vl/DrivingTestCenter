@@ -88,9 +88,9 @@ export const ExamCreateUI: FC<IProps> = (props: IProps & Partial<BasicEditSectio
         dateEnd: yup
             .string()
             .required(),
-        maxMember: yup
-            .number().typeError("Must be number")
-            .required(),
+        // maxMember: yup
+        //     .number().typeError("Must be number")
+        //     .required(),
         rules: yup
             .string()
             .required(),
@@ -169,7 +169,7 @@ export const ExamCreateUI: FC<IProps> = (props: IProps & Partial<BasicEditSectio
                 <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
 
                     <Stack direction="row" spacing={2} sx={{ p: 1 }}>
-                        <Box sx={{ width: "50%" }}>
+                        <Box sx={{ width: "100%" }}>
                             <FormIkTextField formik={formik} fieldName="name"
                                 fullWidth
                                 label="Tên kì thi"
@@ -177,16 +177,17 @@ export const ExamCreateUI: FC<IProps> = (props: IProps & Partial<BasicEditSectio
                             />
 
                         </Box>
-                        <Box sx={{ minWidth: "50%" }}>
+                       
+
+                    </Stack>
+                    <Stack direction="row" spacing={2} sx={{ p: 1 }}>
+                     <Box sx={{ minWidth: "50%" }}>
                             <FormIkType formik={formik} fieldName="type"
                                 fullWidth
                                 label="Loại bằng"
                                 style={{ marginTop }}
                             />
                         </Box>
-
-                    </Stack>
-                    <Stack direction="row" spacing={2} sx={{ p: 1 }}>
                         <Box sx={{ width: "50%" }}>
                             <FormIkNumberField formik={formik} fieldName="price"
                                 fullWidth
@@ -194,13 +195,13 @@ export const ExamCreateUI: FC<IProps> = (props: IProps & Partial<BasicEditSectio
                                 style={{ marginTop: 1 }}
                             />
                         </Box>
-                        <Box sx={{ minWidth: "50%" }}>
+                        {/* <Box sx={{ minWidth: "50%" }}>
                             <FormIkNumberField formik={formik} fieldName="maxMember"
                                 fullWidth
                                 label="Số lượng tối đa"
                                 style={{ marginTop }}
                             />
-                        </Box>
+                        </Box> */}
 
                     </Stack>
 
