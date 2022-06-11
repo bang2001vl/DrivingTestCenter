@@ -30,6 +30,7 @@ import useAPI from '../hooks/useApi';
 import { DialogHelper } from '../singleton/dialogHelper';
 import { appConfig } from '../configs';
 import { MyResponse } from '../api/service';
+import { AccountSingleton } from '../singleton/account';
 
 // ----------------------------------------------------------------------
 
@@ -65,6 +66,7 @@ export const DataTable4 = forwardRef((props: DataTable4Props, ref) => {
     useImperativeHandle(ref, () => ({
         select
     }))
+    const isAdmin = AccountSingleton.instance.isAdmin;
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -215,19 +217,21 @@ export const DataTable4 = forwardRef((props: DataTable4Props, ref) => {
                                     </Button>
                                 )
                             }
-                                <Button
-                                    variant="contained"
-                                    onClick={() => {
-                                        if (props.onClickCreate) {
-                                            console.log("SelectRaw0", select);
+                                {(isAdmin) ?
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => {
+                                            if (props.onClickCreate) {
+                                                console.log("SelectRaw0", select);
 
-                                            props.onClickCreate(select);
-                                        }
-                                    }}
-                                    startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
-                                >
-                                    {"Thêm mới"}
-                                </Button>
+                                                props.onClickCreate(select);
+                                            }
+                                        }}
+                                        startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
+                                    >
+                                        {"Thêm mới"}
+                                    </Button>
+                                    : <></>}
                             </Stack>
                     }
                 </Stack>

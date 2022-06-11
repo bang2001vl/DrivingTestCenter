@@ -10,6 +10,7 @@ import MenuPopover from '../../components/MenuPopover';
 import { useRecoilValue } from 'recoil';
 import { AccountSingleton } from '../../singleton/account';
 import { createBEPublicURI } from '../../_helper/helper';
+import FirstLaunch from '../../components/FirstLaunch';
 
 // ----------------------------------------------------------------------
 
@@ -47,15 +48,21 @@ export default function AccountPopover() {
   };
   const handleLogout = () => {
     AccountSingleton.instance.logout()
-    .then(() => navigate(0));
+    .then(() => {
+     
+      FirstLaunch();
+      navigate('/login');
+    })
   };
   const handleLogin = () =>{
+
     navigate("/login");
   }
 
+
   const currentUser = AccountSingleton.instance.userInfo;
   const userFullname = currentUser ? currentUser.fullname : "Chưa đăng nhập";
-  const userSecondText = "";
+  const userSecondText = currentUser? currentUser.email: "";
   const userImageURI = currentUser && currentUser.avatarURI ? createBEPublicURI(currentUser.avatarURI) : '/static/mock-images/avatars/avatar_default.jpg';
 
   return (
@@ -107,7 +114,7 @@ export default function AccountPopover() {
 
         <Divider sx={{ my: 1 }} />
 
-        {MENU_OPTIONS.map((option) => (
+        {/* {MENU_OPTIONS.map((option) => (
           <MenuItem
             key={option.label}
             to={option.linkTo}
@@ -126,11 +133,11 @@ export default function AccountPopover() {
 
             {option.label}
           </MenuItem>
-        ))}
+        ))} */}
 
         <Box sx={{ p: 2, pt: 1.5 }}>
           <Button fullWidth color="inherit" variant="outlined" onClick={handleLogout}>
-            Logout
+            Đăng xuất
           </Button>
         </Box>
       </MenuPopover>)
@@ -148,9 +155,18 @@ export default function AccountPopover() {
           Login
         </Button>
       </Box> */}
+      <Box sx={{ my: 1.5, px: 2.5 }}>
+          <Typography variant="subtitle1" noWrap >
+            {userFullname}
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+            {userSecondText}
+          </Typography>
+        </Box>
+
         <Box sx={{ p: 2, pt: 1.5 }}>
           <Button fullWidth color="inherit" variant="outlined" href='/login' onClick={handleLogin}>
-            Login
+            Đăng nhập
           </Button>
         </Box>
       </MenuPopover>

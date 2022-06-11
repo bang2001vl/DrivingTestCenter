@@ -22,6 +22,7 @@ import { DialogHelper } from "../../singleton/dialogHelper";
 import { ExamTestController } from "../../api/controllers/examTest";
 import { ClassScheduleController } from "../../api/controllers/classScheduleController";
 import { ClassScheduleCreate } from "../classSchedule/classScheduleCreate";
+import { AccountSingleton } from "../../singleton/account";
 
 const PREFIX = 'Demo';
 const classes = {
@@ -72,6 +73,8 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
     const rootDialog = useRootDialog();
 
     const [isLoading, setIsLoading] = useState(false);
+
+    const isAdmin = AccountSingleton.instance.isAdmin;
 
     useEffect(() => {
         // First load
@@ -140,46 +143,48 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
 
     const FlexibleSpace = (({ ...restProps }) => (
         <StyledToolbarFlexibleSpace {...restProps} className={classes.flexibleSpace}>
-            <Stack direction='row' spacing={2} className={classes.flexContainer}>
-                <Button
-                    onClick={() => {
-                        rootDialog.openDialog({
-                            children: <ExamTestCreate method={EDIT_METHOD.create}
-                                title="Thêm ca thi"
-                                onSuccess={() => {
-                                    loadData(selectedDate);
-                                    rootDialog.closeDialog();
-                                }}
-                                onClose={() => rootDialog.closeDialog()}>
-                            </ExamTestCreate>
-                        })
-                    }}
-                    variant="contained"
-                    startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
-                >
-                    Thêm ca thi
-                </Button>
-                <Button
-                    onClick={() => {
-                        rootDialog.openDialog({
-                            children: <ClassScheduleCreate method={EDIT_METHOD.create}
-                                title="Thêm lịch học"
-                                onSuccess={() => {
-                                    loadData(selectedDate);
-                                    rootDialog.closeDialog();
-                                }}
-                                onClose={() => rootDialog.closeDialog()}
-                            >
+            {(isAdmin) ?
+                <Stack direction='row' spacing={2} className={classes.flexContainer}>
+                    <Button
+                        onClick={() => {
+                            rootDialog.openDialog({
+                                children: <ExamTestCreate method={EDIT_METHOD.create}
+                                    title="Thêm ca thi"
+                                    onSuccess={() => {
+                                        loadData(selectedDate);
+                                        rootDialog.closeDialog();
+                                    }}
+                                    onClose={() => rootDialog.closeDialog()}>
+                                </ExamTestCreate>
+                            })
+                        }}
+                        variant="contained"
+                        startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
+                    >
+                        Thêm ca thi
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            rootDialog.openDialog({
+                                children: <ClassScheduleCreate method={EDIT_METHOD.create}
+                                    title="Thêm lịch học"
+                                    onSuccess={() => {
+                                        loadData(selectedDate);
+                                        rootDialog.closeDialog();
+                                    }}
+                                    onClose={() => rootDialog.closeDialog()}
+                                >
 
-                            </ClassScheduleCreate>
-                        })
-                    }}
+                                </ClassScheduleCreate>
+                            })
+                        }}
 
-                    variant="contained"
-                    startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}>
-                    Thêm lịch học
-                </Button>
-            </Stack>
+                        variant="contained"
+                        startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}>
+                        Thêm lịch học
+                    </Button>
+                </Stack> : <></>
+            }
         </StyledToolbarFlexibleSpace>
     ));
 
@@ -207,7 +212,7 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
         <Paper sx={{ mb: 2, borderRadius: "10px", marginTop: 2 }}>
             <Scheduler
                 data={data}
-                height={660}
+                //   height={660}
                 locale={"vi-VN"}
             >
                 <ViewState
@@ -258,9 +263,9 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
 
                 <IntegratedEditing />
                 <IntegratedGrouping />
+
                 <Toolbar
-                    flexibleSpaceComponent={FlexibleSpace}
-                />
+                    flexibleSpaceComponent={FlexibleSpace} />
                 <DateNavigator />
                 <TodayButton> </TodayButton>
                 <AppointmentTooltip showDeleteButton />

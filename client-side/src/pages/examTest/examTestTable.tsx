@@ -8,6 +8,7 @@ import { BorderLinearProgress } from "../../components/LinearProgress";
 import { DataTableLayout, DataTableLayoutProps } from "../../sections/CRUD/BasicDataTable";
 import DataListHead from "../../sections/user/DataListHead";
 import ItemMoreMenu from "../../sections/user/ItemMoreMenu";
+import { AccountSingleton } from "../../singleton/account";
 import { formatNumber } from "../../_helper/helper";
 interface IProps {
     dataList: IData[];
@@ -29,6 +30,8 @@ interface IData {
 }
 export type ExamTestTableProps = IProps & DataTableLayoutProps;
 export const ExamTestTable: FC<ExamTestTableProps> = (props) => {
+    const isAdmin = AccountSingleton.instance.isAdmin;
+
     function getStatus(data: IData) {
         const now = new Date();
         if (isAfter(data.dateTimeStart, now)) {
@@ -42,14 +45,14 @@ export const ExamTestTable: FC<ExamTestTableProps> = (props) => {
                 text: "Đang thi",
                 color: "secondary"
             }
-            
+
         }
         else {
             return {
                 text: "Kết thúc",
                 color: "error"
             }
-            
+
         }
     }
 
@@ -77,12 +80,16 @@ export const ExamTestTable: FC<ExamTestTableProps> = (props) => {
             <LabelCustom variant="ghost" color={status.color}>
                 {status.text}
             </LabelCustom></TableCell>);
-        cells.push(<TableCell>
-            <ItemMoreMenu
-                data={data}
-                items={buildActions()}
-            ></ItemMoreMenu>
-        </TableCell>);
+        {
+            if (isAdmin) {
+                cells.push(<TableCell>
+                    <ItemMoreMenu
+                        data={data}
+                        items={buildActions()}
+                    ></ItemMoreMenu>
+                </TableCell>);
+            }
+        }
         return <TableRow hover={true}
         >{cells}
         </TableRow>;
@@ -111,7 +118,7 @@ export const ExamTestTable: FC<ExamTestTableProps> = (props) => {
                 onClick: props.onDelete
             });
         }
-    
+
         if (props.onAddStudent) {
             actions.push({
                 label: "Thêm mới",
