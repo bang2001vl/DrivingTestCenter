@@ -10,7 +10,7 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns"
 import { Box, Button, Card, MenuItem, Stack } from "@mui/material"
 import { FormIkTextField } from "../../components/FormIK/TextField"
 import { EDIT_METHOD } from "../../_enums"
-import { useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { DialogHelper } from "../../singleton/dialogHelper"
 import { FormIkNumberField } from "../../components/FormIK/NumberField"
 import { FormIkDateTimePicker } from "../../components/FormIK/DateTimePicker"
@@ -43,7 +43,7 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
         maxMember: "",
     };
 
-    const loadOldData = (params: URLSearchParams)=>{
+    const loadOldData = (params: URLSearchParams) => {
         const key = params.get("id");
         if (!key) {
             navigate("/", { replace: true });
@@ -60,9 +60,9 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
                 id: String(key),
             }).toString()}`
         ).then(res => {
-            if(res.result && res.data){
+            if (res.result && res.data) {
                 const exam = res.data[0].exam;
-                res.data[0].examOption = {label: exam.name, value:exam}
+                res.data[0].examOption = { label: exam.name, value: exam }
             }
             return res;
         })
@@ -82,12 +82,12 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
         const errors = validYupToObject(formik.values, schema);
 
         if (!isBefore(new Date(formik.values.dateTimeStart), new Date(formik.values.dateTimeEnd))) {
-            errors.dateTimeStart = "Ngày bắt đầu không được lớn hơn ngày kết thúc!";
+            errors.dateTimeStart = "Giờ bắt đầu không được lớn hơn ngày kết thúc!";
         }
 
-        
+
         if (!isBefore(new Date(formik.values.dateTimeStart2), new Date(formik.values.dateTimeEnd2))) {
-            errors.dateTimeStart2 = "Ngày bắt đầu không được lớn hơn ngày kết thúc!";
+            errors.dateTimeStart2 = "Giờ bắt đầu không được lớn hơn ngày kết thúc!";
         }
 
         if (!formik.values.examOption) {
@@ -123,7 +123,7 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
                 `${appConfig.backendUri}/${routeName}/insert`,
                 data,
             ).then(res => {
-                if(res.errorCode === 102){
+                if (res.errorCode === 102) {
                     DialogHelper.showError("Phòng đã có lịch vào khung giờ này");
                     res.errorMessage = undefined;
                 }
@@ -158,7 +158,7 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
         loadOldData={loadOldData}
 
         {...props}
-        initValues={{...defaultInitValue, ...props.initValues}}
+        initValues={{ ...defaultInitValue, ...props.initValues }}
         formComponent={(formik, cancel, isLoading) => {
             return (
                 <Card style={{ alignItems: "center", justifyContent: 'center', textAlign: "center", marginTop: '15px', padding: "5%" }} >
@@ -197,12 +197,14 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
                             </Box>
 
                         </Stack>
-                        <Box sx={{ width: "100%" }} paddingTop={2}>
+
+                        <Stack direction="row" spacing={2} paddingTop={2}>
+                            <Box sx={{ width: "50%" }} >
                                 <FormIkDatePicker formik={formik} fieldName="dateTimeStart"
                                     label="Ngày thi lý thuyết"
                                     minDate={new Date()}
-                                    onChange={(date)=>{
-                                        if(date){
+                                    onChange={(date) => {
+                                        if (date) {
                                             formik.setFieldValue("dateTimeStart", date.toISOString());
                                             const dateTimeEnd = new Date(formik.values["dateTimeEnd"]);
                                             formik.setFieldValue("dateTimeEnd", new Date(date.getFullYear(), date.getMonth(), date.getDate(), dateTimeEnd.getHours(), dateTimeEnd.getMinutes()).toISOString());
@@ -210,25 +212,26 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
                                     }}
                                 />
                             </Box>
-                        <Stack direction="row" spacing={2} paddingTop={2}>
-                            <Box sx={{ width: "50%" }}>
+                            <Box sx={{ minWidth: "25%" }}>
                                 <FormIkTimePicker formik={formik} fieldName="dateTimeStart"
                                     label="Giờ bắt đầu"
                                 />
                             </Box>
-                            <Box sx={{ minWidth: "50%" }}>
+                            <Box sx={{ minWidth: "25%" }}>
                                 <FormIkTimePicker formik={formik} fieldName="dateTimeEnd"
                                     label="Giờ kết thúc"
                                 />
                             </Box>
 
                         </Stack>
-                        <Box sx={{ width: "100%" }} paddingTop={2}>
+
+                        <Stack direction="row" spacing={2} paddingTop={2}>
+                            <Box sx={{ width: "50%" }} >
                                 <FormIkDatePicker formik={formik} fieldName="dateTimeStart2"
                                     label="Ngày thi thực hành"
                                     minDate={new Date()}
-                                    onChange={(date)=>{
-                                        if(date){
+                                    onChange={(date) => {
+                                        if (date) {
                                             formik.setFieldValue("dateTimeStart2", date.toISOString());
                                             const dateTimeEnd = new Date(formik.values["dateTimeEnd2"]);
                                             formik.setFieldValue("dateTimeEnd2", new Date(date.getFullYear(), date.getMonth(), date.getDate(), dateTimeEnd.getHours(), dateTimeEnd.getMinutes()).toISOString());
@@ -236,13 +239,12 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
                                     }}
                                 />
                             </Box>
-                        <Stack direction="row" spacing={2} paddingTop={2}>
-                            <Box sx={{ width: "50%" }}>
+                            <Box sx={{ minWidth: "25%" }}>
                                 <FormIkTimePicker formik={formik} fieldName="dateTimeStart2"
                                     label="Giờ bắt đầu"
                                 />
                             </Box>
-                            <Box sx={{ minWidth: "50%" }}>
+                            <Box sx={{ minWidth: "25%" }}>
                                 <FormIkTimePicker formik={formik} fieldName="dateTimeEnd2"
                                     label="Giờ kết thúc"
                                 />
@@ -263,7 +265,7 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
                                     variant="outlined"
                                     onClick={() => cancel()}
                                     sx={{ width: "120px", height: "43px" }}
-                                     >
+                                >
                                     Hủy
                                 </Button>
                             </Stack>
