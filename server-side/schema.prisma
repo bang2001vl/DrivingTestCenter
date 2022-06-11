@@ -90,11 +90,14 @@ model ExamTest {
     id     Int  @id @default(autoincrement())
     examId Int
 
-    name          String   @db.VarChar(255)
     location      String   @db.VarChar(255)
     dateTimeStart DateTime
     dateTimeEnd   DateTime
+
+    name          String   @db.VarChar(255)
     maxMember     Int
+    dateTimeStart2 DateTime?
+    dateTimeEnd2 DateTime?
 
     countStudent Int      @default(0)
     createdAt    DateTime @default(now())

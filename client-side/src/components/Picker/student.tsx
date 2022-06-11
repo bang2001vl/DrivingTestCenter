@@ -6,16 +6,34 @@ import { BasicModelPicker, BasicModelPickerProps } from "./_modelPicker";
 interface IProps{
     filterClassId? :any;
     filterExamTestId? :any;
+    filterExamId? :any;
 }
 export const StudentPicker: FC<IProps & Partial<BasicModelPickerProps>> = (props) => {
     const api = useAPI();
-
-    const filterClassId = props.filterClassId ? `notHaveClassId=${String(props.filterClassId)}&` : "";
-    const filterExamTestId = props.filterExamTestId ? `notHaveExamTestId=${String(props.filterExamTestId)}&` : "";
+    
     return <BasicModelPicker
         loadOption={async (input) => {
+            const params = new URLSearchParams({
+                searchby: "fullname",
+                searchvalue: String(input),
+                orderby: "fullname",
+                orderdirection: "asc",
+                start: String(0),
+                count: String(5),
+            });
+            
+            if(props.filterClassId){
+                params.append("notHaveClassId", String(props.filterClassId));
+            }
+            if(props.filterExamTestId){
+                params.append("notHaveExamTestId", String(props.filterExamTestId));
+            }
+            if(props.filterExamId){
+                params.append("notHaveExamId", String(props.filterExamId));
+            }
+
             const res = await api.getWithToken(
-                `${appConfig.backendUri}/account/manager/select?roleId=1&${filterClassId}${filterExamTestId}searchvalue=${String(input)}&searchby=fullname&orderby=fullname&orderdirection=asc&start=0&count=5`
+                `${appConfig.backendUri}/account/manager/select?${params.toString()}`
             );
             if (res.result && res.data) {
                 res.data = res.data.map((e: any) => ({

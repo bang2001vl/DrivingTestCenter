@@ -1,22 +1,25 @@
-import { TextField } from "@mui/material";
-import { DateTimePicker, DateTimePickerProps } from "@mui/lab";
-import { FC } from "react";
+import { DatePicker, DatePickerProps, LocalizationProvider, TimePicker } from "@mui/lab"
+import { TextField } from "@mui/material"
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import isValid from "date-fns/isValid";
+import { vi } from "date-fns/locale"
+import { FC } from "react"
+import { IFormIK } from "../../_interfaces/formik";
 
-interface IProps<TDate = unknown> extends Partial<DateTimePickerProps<TDate>> {
-    formik: any, 
+interface IProps<TDate = Date> extends Partial<DatePickerProps<TDate>> {
+    formik: IFormIK,
     fieldName: string,
 }
-export const FormIkDateTimePicker: FC<IProps> = (props) => {
+export const FormIkTimePicker: FC<IProps> = (props) => {
     const customProps: any = {
         ...props,
     }
     delete customProps.formik;
     delete customProps.fieldName;
-    return <DateTimePicker
-        inputFormat="dd/MM/yyyy hh:mm"
+    return <LocalizationProvider locale={vi} dateAdapter={AdapterDateFns}>
+    <TimePicker
         value={new Date(props.formik.values[props.fieldName])}
-        onChange={(date :any) => {
+        onChange={(date) => {
             if (date && isValid(date)) {
                 props.formik.setFieldValue(props.fieldName, date.toISOString());
             }
@@ -26,10 +29,12 @@ export const FormIkDateTimePicker: FC<IProps> = (props) => {
         }}
         renderInput={(params) => <TextField
             {...params}
-            style={{width:"100%"}}
             error={props.formik.touched[props.fieldName] && Boolean(props.formik.errors[props.fieldName])}
             helperText={props.formik.touched[props.fieldName] && props.formik.errors[props.fieldName]}
+            {...customProps}
+            fullWidth
         />}
-        {...customProps}
+
     />
+      </LocalizationProvider>
 }

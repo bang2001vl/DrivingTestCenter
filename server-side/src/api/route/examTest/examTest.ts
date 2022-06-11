@@ -75,6 +75,8 @@ async function checkInput_Insert(input: any) {
             location: FieldGetter.String(input, "location", true),
             dateTimeStart: FieldGetter.Date(input, "dateTimeStart", true),
             dateTimeEnd: FieldGetter.Date(input, "dateTimeEnd", true),
+            dateTimeStart2: FieldGetter.Date(input, "dateTimeStart2", true),
+            dateTimeEnd2: FieldGetter.Date(input, "dateTimeEnd2", true),
             maxMember: FieldGetter.Number(input, "maxMember", true),
         }
 
@@ -94,6 +96,8 @@ async function checkInput_Update(input: any) {
             location: FieldGetter.String(input, "location", false),
             dateTimeStart: FieldGetter.Date(input, "dateTimeStart", false),
             dateTimeEnd: FieldGetter.Date(input, "dateTimeEnd", false),
+            dateTimeStart2: FieldGetter.Date(input, "dateTimeStart2", false),
+            dateTimeEnd2: FieldGetter.Date(input, "dateTimeEnd2", false),
             maxMember: FieldGetter.Number(input, "maxMember", false),
         }
 
@@ -130,6 +134,10 @@ async function checkConflictTime(data: any) {
     if(result){
         throw buildResponseError(102, `Conflict with other (id=${result.id})`);
     }
+}
+
+async function checkConflictMaxNumber(){
+
 }
 
 function customFilter(input: any) {

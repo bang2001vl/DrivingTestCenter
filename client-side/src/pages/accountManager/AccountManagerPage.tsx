@@ -13,7 +13,7 @@ import { AccountManagerController } from "../../api/controllers/accountManagerCo
 const HEAD_LABEL = [
     { id: 'avt', label: '', alignRight: false },
     { id: 'name', label: 'Họ và tên', alignRight: false },
-  //  { id: 'gender', label: 'Giới tính', alignRight: false },
+    //  { id: 'gender', label: 'Giới tính', alignRight: false },
     { id: 'email', label: 'Email', alignRight: false },
     { id: 'phoneNumber', label: 'Số điện thoại', alignRight: false },
     { id: 'address', label: 'Địa chỉ', alignRight: false },
@@ -44,11 +44,11 @@ const orderOptionList = [
     }
 ];
 
-interface IProps{
-    onDelete?: (data: any,select: ()=>void)=> any,
+interface IProps {
+    onDelete?: (data: any, select: () => void) => any,
     hideTitle?: boolean,
-    filter? : any,
-    tableProps? : Partial<AccountManagerTableProps>,
+    filter?: any,
+    tableProps?: Partial<AccountManagerTableProps>,
 }
 
 export default function AccountManagerPage(props: IProps & Partial<BasicPageProps>) {
@@ -59,7 +59,7 @@ export default function AccountManagerPage(props: IProps & Partial<BasicPageProp
     const navigate = useNavigate();
     const rootDialog = useRootDialog();
 
-    const handleDelete = async (data: any,select: ()=>void) => {
+    const handleDelete = async (data: any, select: () => void) => {
         const id = data.id;
         const res = await api.deleteWithToken(
             `${appConfig.backendUri}/${routeName}/delete?key=${String(id)}`
@@ -86,25 +86,25 @@ export default function AccountManagerPage(props: IProps & Partial<BasicPageProp
             orderOptionList={orderOptionList}
 
             {...props}
-            onRenderItem={(dataList ,select , emptyView ) => {
+            onRenderItem={(dataList, select, emptyView) => {
                 return <AccountManagerTable
                     dataList={dataList}
                     emptyView={emptyView}
                     headLabels={HEAD_LABEL}
                     onEdit={(data) => {
-                        navigate("edit?id="+data.id);
+                        navigate("edit?id=" + data.id);
                     }}
-                    onDelete={(data)=>{
-                        if(props.onDelete){
+                    onDelete={(data) => {
+                        if (props.onDelete) {
                             props.onDelete(data, select);
                         }
-                        else{
+                        else {
                             handleDelete(data, select);
                         }
                     }}
                     {...props.tableProps}
                 />
-            }} 
+            }}
             onClickLoadExcel={(select) => {
                 rootDialog.openDialog({
                     children: <ExcelPicker
@@ -112,13 +112,13 @@ export default function AccountManagerPage(props: IProps & Partial<BasicPageProp
                         templateURI="/static/template/account.xlsx"
                         onSubmit={async (files) => {
                             rootDialog.closeDialog();
+                            select();
                             if (files.length > 0) {
-                                const res  = await new AccountManagerController().insertFromExcelToDB(files[0], api);
-                                if(res.result){
+                                const res = await new AccountManagerController().insertFromExcelToDB(files[0], api);
+                                if (res.result) {
                                     DialogHelper.showAlert("Success");
-                                    select();
                                 }
-                                else{
+                                else {
                                     DialogHelper.showAlert(res.errorMessage);
                                 }
                             }
@@ -126,7 +126,7 @@ export default function AccountManagerPage(props: IProps & Partial<BasicPageProp
                     />
                 });
             }}
-            />
+        />
 
     )
 }

@@ -54,12 +54,12 @@ export const AccountManagerRoute = () => {
         RouteBuilder.buildSelectRoute(repo, tag, customSelectFilter, selectBasicInfo),
     );
 
-//     route.get("/test",
-//     RouteBuilder.buildSelectInputParser(["fullname"], ["fullname"], tag),
-//     RouteHandleWrapper.wrapMiddleware((req,res)=>{
-//         repo.findMany().then(r =>res.json(r));
-//     }),
-// );
+    //     route.get("/test",
+    //     RouteBuilder.buildSelectInputParser(["fullname"], ["fullname"], tag),
+    //     RouteHandleWrapper.wrapMiddleware((req,res)=>{
+    //         repo.findMany().then(r =>res.json(r));
+    //     }),
+    // );
 
     route.get("/count",
         RouteBuilder.buildCountInputParser(["fullname"], tag),
@@ -90,7 +90,7 @@ export const AccountManagerRoute = () => {
         SessionHandler.roleChecker([0]),
         RouteBuilder.buildKeyParser(tag),
         cacheOldData,
-        RouteHandleWrapper.wrapMiddleware((req, res)=>{
+        RouteHandleWrapper.wrapMiddleware((req, res) => {
             res.locals.oldImages = [
                 res.locals.old["avatarURI"],
             ]
@@ -111,13 +111,25 @@ function customSelectFilter(input: any) {
                 rs.joingTest = { some: { examTestId: FieldGetter.Number(input, "examTestId", true) } };
             }
             if (input.notHaveExamTestId) {
-                rs.joingTest = { ...rs.joingTest, none: { examTestId: FieldGetter.Number(input, "notHaveExamTestId", true) } };
+                rs.joingTest = {
+                    ...rs.joingTest,
+                    none: { examTestId: FieldGetter.Number(input, "notHaveExamTestId", true) }
+                };
+            }
+            if (input.notHaveExamId) {
+                rs.joingTest = {
+                    ...rs.joingTest,
+                    none: { examTest: { examId: FieldGetter.Number(input, "notHaveExamId", true) } }
+                };
             }
             if (input.classId) {
                 rs.studingClass = { some: { classId: FieldGetter.Number(input, "classId", true) } };
             }
             if (input.notHaveClassId) {
-                rs.studingClass = { ...rs.studingClass, none: { classId: FieldGetter.Number(input, "notHaveClassId", true) } };
+                rs.studingClass = {
+                    ...rs.studingClass,
+                    none: { classId: FieldGetter.Number(input, "notHaveClassId", true) }
+                };
             }
         }
         else if (rs.roleId === 2) {
@@ -167,7 +179,7 @@ async function checkInput_Insert(input: any) {
 
 async function checkInput_Update(input: any) {
     if (input) {
-        
+
         let data: any = {
             username: FieldGetter.String(input, "username"),
             password: FieldGetter.String(input, "password"),
@@ -189,14 +201,14 @@ async function checkInput_Update(input: any) {
     }
 }
 
-async function checkDuplicate(data: any){
+async function checkDuplicate(data: any) {
     const result = await repo.findFirst({
         where: {
             username: data.username,
         }
     });
-    if(result){
-        if(result.username === data.username){
+    if (result) {
+        if (result.username === data.username) {
             throw buildResponseError(101, "Duplicated username");
         }
     }
@@ -221,7 +233,7 @@ const cacheOldData = RouteHandleWrapper.wrapMiddleware(async (req, res) => {
                 avatarURI: true,
             }
         });
-        if(!old){
+        if (!old) {
             throw buildResponseError(1, "Not found key");
         }
         helper.logger.traceWithTag(tag, "Old = " + JSON.stringify(old, null, 2));

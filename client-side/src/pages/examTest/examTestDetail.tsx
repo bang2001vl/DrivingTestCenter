@@ -20,7 +20,7 @@ interface IProps {
 }
 export const ExamTestDetailPage: FC<IProps> = (props) => {
     const [searchParams] = useSearchParams();
-    const [oldData, setOldData] = useState<any>({});
+    const [oldData, setOldData] = useState<any>();
 
     const rootDialog = useRootDialog();
     const navigate = useNavigate();
@@ -36,11 +36,7 @@ export const ExamTestDetailPage: FC<IProps> = (props) => {
             console.log("load old from exam detail page", key);
 
             api.getWithToken(
-                `${appConfig.backendUri}/exam/select?${new URLSearchParams({
-                    searchvalue: "",
-                    searchby: "name",
-                    orderby: "name",
-                    orderdirection: "asc",
+                `${appConfig.backendUri}/examtest/overview/select?${new URLSearchParams({
                     start: "0",
                     count: "1",
                     id: String(searchParams.get("id")),
@@ -68,6 +64,7 @@ export const ExamTestDetailPage: FC<IProps> = (props) => {
             />
             <AccountManagerPage
                 hideTitle
+                isfull={oldData ? oldData.countStudent >= oldData.exam.maxMember : false}
                 filter={oldData ? {
                     roleId: 1,
                     examTestId: oldData.id,
@@ -95,7 +92,7 @@ export const ExamTestDetailPage: FC<IProps> = (props) => {
                         children: <StudentPicker
                             isMulti
                             title="Chọn học sinh"
-                            filterExamTestId={oldData.id}
+                            filterExamId={oldData.examId}
                             onSubmit={async (selected) => {
                                 const data = {
                                     examTestId: oldData.id,

@@ -56,6 +56,7 @@ export interface DataTable4Props {
     onClickLoadExcel?: (select: () => void) => void,
 
     needReload?: boolean,
+    isfull?: boolean,
 }
 
 export const DataTable4 = forwardRef((props: DataTable4Props, ref) => {
@@ -152,14 +153,14 @@ export const DataTable4 = forwardRef((props: DataTable4Props, ref) => {
                 }}
             ></MySearchBar>
             {/*@ts-ignore*/}
-                {props.onRenderItem(dataList, select, (
-                    dataList.length === 0
-                        ? <Container>
-                            <SearchNotFound searchQuery={options.searchvalue} />
-                        </Container>
-                        : undefined
-                ))
-                }
+            {props.onRenderItem(dataList, select, (
+                dataList.length === 0
+                    ? <Container>
+                        <SearchNotFound searchQuery={options.searchvalue} />
+                    </Container>
+                    : undefined
+            ))
+            }
 
             <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
@@ -188,36 +189,47 @@ export const DataTable4 = forwardRef((props: DataTable4Props, ref) => {
                     <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
                         {props.textLabel}
                     </Typography>
-                    <Stack direction={"row"} spacing={2}>
-                        {
-                            props.onClickLoadExcel && (
+                    {
+                        props.isfull
+                            ?
+                            <Button
+                                variant="contained"
+                                disabled={true}
+                                startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
+                            >
+                                {"Đầy"}
+                            </Button>
+                            :
+                            <Stack direction={"row"} spacing={2}>{
+                                props.onClickLoadExcel && (
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => {
+                                            if (props.onClickLoadExcel) {
+                                                props.onClickLoadExcel(select);
+                                            }
+                                        }}
+                                        startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
+                                    >
+                                        Import Excel
+                                    </Button>
+                                )
+                            }
                                 <Button
                                     variant="contained"
                                     onClick={() => {
-                                        if (props.onClickLoadExcel) {
-                                            props.onClickLoadExcel(select);
+                                        if (props.onClickCreate) {
+                                            console.log("SelectRaw0", select);
+
+                                            props.onClickCreate(select);
                                         }
                                     }}
                                     startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
                                 >
-                                    Import Excel
+                                    {"Thêm mới"}
                                 </Button>
-                            )
-                        }
-                        <Button
-                            variant="contained"
-                            onClick={() => {
-                                if (props.onClickCreate) {
-                                    console.log("SelectRaw0", select);
-
-                                    props.onClickCreate(select);
-                                }
-                            }}
-                            startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
-                        >
-                            Thêm mới
-                        </Button>
-                    </Stack>
+                            </Stack>
+                    }
                 </Stack>
                 {(props.cardColor === undefined) ? <Card>
                     {onRenderTable()}

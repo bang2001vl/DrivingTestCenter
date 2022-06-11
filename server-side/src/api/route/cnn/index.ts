@@ -2,6 +2,7 @@ import { json, Router } from "express";
 import { myPrisma, PrismaDelegate } from "../../../prisma";
 import { FieldGetter } from "../../handler/FieldGetter";
 import SessionHandler from "../../handler/session";
+import { buildResponseError } from "../utilities";
 import { RouteBuilder } from "../_default";
 import { RouteHandleWrapper } from "../_wrapper";
 
@@ -41,7 +42,26 @@ export const CNNRoute = () => {
     );
     route.post("/join/examtest/students",
         SessionHandler.roleChecker([0]),
-        ...buildInsertOneManyRoute(myPrisma.cONN_Student_ExamTest, "examTestId", "studentId"),
+        ...buildInsertOneManyRoute(myPrisma.cONN_Student_ExamTest, "examTestId", "studentId", [
+            async (input) => {
+                const studentIdList = FieldGetter.Array(input, "studentIdList", true)!;
+                const examId = FieldGetter.Number(input, "examId", true)!;
+                const examTests = await myPrisma.examTest.findMany({
+                    where: {examId: examId},
+                    select: {id: true},
+                });
+                const examTestIds = examTests.map(e => e.id);
+                const duplicated = await myPrisma.cONN_Student_ExamTest.findMany({
+                    where: {
+                        studentId: {in: studentIdList},
+                        examTestId: {in: examTestIds}
+                    }
+                });
+                if(duplicated.length > 0){
+                    throw buildResponseError(101, `Cannot join multiple examTest of one exam for students have ids in [${duplicated.map(e => e.studentId).join(", ")}]`)
+                }
+            }
+        ]),
     );
     route.post("/delete/student/examtests",
         SessionHandler.roleChecker([0]),
@@ -104,6 +124,7 @@ function buildDeleteOneManyRoute(repo: PrismaDelegate, propA: string, propB: str
         RouteHandleWrapper.wrapHandleInput(async (input) => {
             const result = await repo.deleteMany({
                 where: {
+                    ...input,
                     [propA]: input[propA],
                     [propB]: { in: input[`${propB}List`] }
                 }
@@ -113,15 +134,18 @@ function buildDeleteOneManyRoute(repo: PrismaDelegate, propA: string, propB: str
     ]
 }
 
-function buildInsertOneManyRoute(repo: PrismaDelegate, propA: string, propB: string) {
+function buildInsertOneManyRoute(repo: PrismaDelegate, propA: string, propB: string, middleware?: ((input: any)=> Promise<void>)[]) {
     return [
         RouteHandleWrapper.wrapCheckInput(input => {
             console.log(input);
             return ({
+                ...input,
                 [propA]: FieldGetter.Number(input, propA, true),
                 [`${propB}List`]: FieldGetter.Array(input, `${propB}List`, true),
             });
         }, tag),
+        ...(middleware ? middleware.map(e => RouteHandleWrapper.wrapHandleInput(e, tag)) : [])
+        ,
         RouteHandleWrapper.wrapHandleInput(async (input) => {
             console.log(input);
             const result = await repo.createMany({
