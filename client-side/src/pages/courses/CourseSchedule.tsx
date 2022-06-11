@@ -125,7 +125,7 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
                 setClassScheduleList(res.data["classScheduleList"]);
             }
             else {
-                DialogHelper.showAlert(res.errorMessage);
+                DialogHelper.showError(res.errorMessage);
             }
         })
     }
@@ -236,7 +236,7 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
                                         loadData(selectedDate);
                                     }
                                     else {
-                                        DialogHelper.showAlert(res.errorMessage);
+                                        DialogHelper.showError(res.errorMessage);
                                     }
                                 }
                             }

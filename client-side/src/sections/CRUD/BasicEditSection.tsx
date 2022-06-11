@@ -47,7 +47,7 @@ export const BasicEditSection: FC<BasicEditSectionProps> = (props) => {
                             formik.setValues(res.data[0]);
                         }
                         else {
-                            DialogHelper.showAlert(res.errorMessage);
+                            DialogHelper.showError(res.errorMessage);
                         }
                     });
             }
@@ -78,7 +78,7 @@ export const BasicEditSection: FC<BasicEditSectionProps> = (props) => {
         setIsLoading(false)
         if (result.errorCode) {
             if(result.errorMessage){
-                DialogHelper.showAlert(result.errorMessage);
+                DialogHelper.showError(result.errorMessage);
             }
         }
         else {

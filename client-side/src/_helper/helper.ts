@@ -1,3 +1,4 @@
+import { AlertColor } from "@mui/material";
 import { appConfig } from "../configs";
 
 export function createBEPublicURI(localURI: string) {
@@ -46,5 +47,11 @@ export function validYupToArray<T = any>(values: T, schema: any) {
             errors.push(`${e.path}: ${e.message}`);
         });
         return errors;
+    };
+}
+
+export function getMyWindowVariable(){
+    return (window as any).my as {
+        showSnackBar: (content: string, color: AlertColor)=>void,
     };
 }

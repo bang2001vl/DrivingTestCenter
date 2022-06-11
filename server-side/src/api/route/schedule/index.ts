@@ -52,3 +52,47 @@ export function ScheduleRoute() {
 
     return route;
 }
+
+export async function checkRoomAvailable(data: {location: string, dateTimeStart: Date, dateTimeEnd: Date}){
+    const examSchedules =  await myPrisma.examTest.findFirst({
+        where: {
+            AND: [
+                { location: data.location },
+                {
+                    NOT: {
+                        OR: [
+                            { dateTimeEnd: { lt: data.dateTimeStart } },
+                            { dateTimeStart: { gt: data.dateTimeEnd } },
+                        ]
+                    }
+                }
+            ]
+        }
+    });
+
+    if(examSchedules){
+        return examSchedules;
+    }
+
+    const classSchedules =  await myPrisma.classSchedule.findFirst({
+        where: {
+            AND: [
+                { location: data.location },
+                {
+                    NOT: {
+                        OR: [
+                            { dateTimeEnd: { lt: data.dateTimeStart } },
+                            { dateTimeStart: { gt: data.dateTimeEnd } },
+                        ]
+                    }
+                }
+            ]
+        }
+    });
+
+    if(classSchedules){
+        return classSchedules;
+    }
+
+    return undefined;
+}

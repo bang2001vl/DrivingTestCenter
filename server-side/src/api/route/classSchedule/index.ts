@@ -3,6 +3,7 @@ import { json, Router, urlencoded } from "express";
 import { myPrisma } from "../../../prisma";
 import { FieldGetter } from "../../handler/FieldGetter";
 import SessionHandler from "../../handler/session";
+import { checkRoomAvailable } from "../schedule";
 import { buildResponseError, parseInputDeleted } from "../utilities";
 import { RouteBuilder } from "../_default";
 import { InputSource, RouteHandleWrapper } from "../_wrapper";
@@ -94,20 +95,10 @@ async function checkConflictTime(data: any) {
         throw buildResponseError(101, "Start time isn't smaller than end time");
     }
 
-    const result = await repo.findFirst({
-        where: {
-            AND: [
-                { location: data.location },
-                {
-                    NOT: {
-                        OR: [
-                            { dateTimeStart: { gte: data.dateTimeEnd } },
-                            { dateTimeEnd: { lte: data.dateTimeStart } },
-                        ]
-                    }
-                }
-            ]
-        }
+    const result = await checkRoomAvailable({
+        location: data.location,
+        dateTimeStart: data.dateTimeStart,
+        dateTimeEnd: data.dateTimeEnd,
     });
 
     if(result){

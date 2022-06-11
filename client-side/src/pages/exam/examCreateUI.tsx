@@ -145,7 +145,7 @@ export const ExamCreateUI: FC<IProps> = (props: IProps & Partial<BasicEditSectio
     }
 
     function handleSuccess() {
-        DialogHelper.showAlert("Success");
+        DialogHelper.showSuccess("Thành công");
         navigate(-1);
     }
 

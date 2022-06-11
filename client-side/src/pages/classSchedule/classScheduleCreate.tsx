@@ -48,7 +48,7 @@ export const ClassScheduleCreate: FC<IProps & Partial<BasicEditSectionProps>> = 
         const key = params.get("id");
         if (!key || isNaN(Number(key))) {
             navigate("/", { replace: true });
-            DialogHelper.showAlert("Not found id");
+            DialogHelper.showError("Không tìm thấy id");
         }
         return controller.loadFromDB(Number(key)).then(res => {
             if (res.result && res.data) {
@@ -75,6 +75,10 @@ export const ClassScheduleCreate: FC<IProps & Partial<BasicEditSectionProps>> = 
 
         if (props.method === EDIT_METHOD.create) {
             return controller.insertToDB(values).then(res => {
+                if(res.errorCode === 102){
+                    DialogHelper.showError("Phòng đã có lịch vào khung giờ này");
+                    res.errorMessage = undefined;
+                }
                 return res;
             });
         }
@@ -84,7 +88,7 @@ export const ClassScheduleCreate: FC<IProps & Partial<BasicEditSectionProps>> = 
     }
 
     function handleSuccess() {
-        DialogHelper.showAlert("Success");
+        DialogHelper.showSuccess("Thành công");
         navigate(-1);
     }
 

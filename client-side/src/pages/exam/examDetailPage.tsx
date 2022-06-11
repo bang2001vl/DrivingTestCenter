@@ -29,7 +29,7 @@ export const ExamDetailPage: FC<IProps> = (props) => {
         const key = searchParams.get("id");
         if (!key) {
             navigate("/", { replace: true });
-            DialogHelper.showAlert("Không thể tìm thấy kì thi!");
+            DialogHelper.showError("Không thể tìm thấy kì thi!");
         }
         else {
             console.log("load old from exam detail page", key);

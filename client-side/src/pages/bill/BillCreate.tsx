@@ -64,7 +64,7 @@ export const BillCreate: FC<IProps> = (props: IProps & Partial<BasicEditSectionP
     }
 
     function handleSuccess() {
-        DialogHelper.showAlert("Success");
+        DialogHelper.showSuccess("Thành công");
         navigate(-1);
     }
 

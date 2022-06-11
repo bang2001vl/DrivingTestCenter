@@ -30,7 +30,7 @@ export const ExamTestDetailPage: FC<IProps> = (props) => {
         const key = searchParams.get("id");
         if (!key) {
             navigate("/", { replace: true });
-            DialogHelper.showAlert("Not found id");
+            DialogHelper.showError("Không tìm thấy id");
         }
         else {
             console.log("load old from exam detail page", key);
@@ -81,10 +81,10 @@ export const ExamTestDetailPage: FC<IProps> = (props) => {
                     if (res.result) {
                         rootDialog.closeDialog();
                         select();
-                        DialogHelper.showAlert("Success");
+                        DialogHelper.showSuccess("Thành công");
                     }
                     else {
-                        DialogHelper.showAlert(res.errorMessage);
+                        DialogHelper.showError(res.errorMessage);
                     }
                 }}
                 onClickCreate={(select) => {
@@ -107,10 +107,10 @@ export const ExamTestDetailPage: FC<IProps> = (props) => {
                                 if (res.result) {
                                     rootDialog.closeDialog();
                                     select();
-                                    DialogHelper.showAlert("Success");
+                                    DialogHelper.showSuccess("Thành công");
                                 }
                                 else {
-                                    DialogHelper.showAlert(res.errorMessage);
+                                    DialogHelper.showError(res.errorMessage);
                                 }
                             }}
                             onClose={() => rootDialog.closeDialog()}
@@ -136,10 +136,10 @@ export const ExamTestDetailPage: FC<IProps> = (props) => {
                     if (res.result) {
                         rootDialog.closeDialog();
                         select();
-                        DialogHelper.showAlert("Success");
+                        DialogHelper.showSuccess("Thành công");
                     }
                     else {
-                        DialogHelper.showAlert(res.errorMessage);
+                        DialogHelper.showError(res.errorMessage);
                     }
                 }}
                 onClickCreate={(select) => {
@@ -162,10 +162,10 @@ export const ExamTestDetailPage: FC<IProps> = (props) => {
                                 if (res.result) {
                                     rootDialog.closeDialog();
                                     select();
-                                    DialogHelper.showAlert("Success");
+                                    DialogHelper.showSuccess("Thành công");
                                 }
                                 else {
-                                    DialogHelper.showAlert(res.errorMessage);
+                                    DialogHelper.showError(res.errorMessage);
                                 }
                             }}
                             onClose={() => rootDialog.closeDialog()}

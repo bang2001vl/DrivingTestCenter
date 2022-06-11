@@ -103,7 +103,7 @@ export const DataTable4 = forwardRef((props: DataTable4Props, ref) => {
                     setDataList(res.data);
                 }
                 else {
-                    DialogHelper.showAlert(res.errorMessage);
+                    DialogHelper.showError(res.errorMessage);
                 }
             })
     }
@@ -124,7 +124,7 @@ export const DataTable4 = forwardRef((props: DataTable4Props, ref) => {
                     setMaxCount(res.data);
                 }
                 else {
-                    DialogHelper.showAlert(res.errorMessage);
+                    DialogHelper.showError(res.errorMessage);
                 }
             })
     }

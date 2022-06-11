@@ -85,11 +85,11 @@ export default function CoursesPage(props: IProps & Partial<BasicPageProps>) {
                             `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
                         );
                         if (res.result) {
-                            DialogHelper.showAlert("Thành công");
+                            DialogHelper.showSuccess("Thành công");
                             select();
                         }
                         else {
-                            DialogHelper.showAlert(res.errorMessage);
+                            DialogHelper.showError(res.errorMessage);
                         }
                     }}
                     {...props.tableProps}

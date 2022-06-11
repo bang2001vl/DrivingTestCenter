@@ -106,10 +106,10 @@ export default function ExamCreate(props: IProps) {
             }
 
             if (result.errorCode) {
-                DialogHelper.showAlert(result.errorMessage);
+                DialogHelper.showError(result.errorMessage);
             }
             else {
-                DialogHelper.showAlert("Success");
+                DialogHelper.showSuccess("Success");
                 navigate("/dashboard/exam");
             }
         }

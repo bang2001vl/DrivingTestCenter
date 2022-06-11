@@ -47,7 +47,7 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
         const key = params.get("id");
         if (!key) {
             navigate("/", { replace: true });
-            DialogHelper.showAlert("Not found id");
+            DialogHelper.showError("Không tìm thấy id");
         }
         return api.getWithToken(
             `${appConfig.backendUri}/${routeName}/select?${new URLSearchParams({
@@ -122,7 +122,13 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
             return api.postWithToken(
                 `${appConfig.backendUri}/${routeName}/insert`,
                 data,
-            );
+            ).then(res => {
+                if(res.errorCode === 102){
+                    DialogHelper.showError("Phòng đã có lịch vào khung giờ này");
+                    res.errorMessage = undefined;
+                }
+                return res;
+            });
         }
         else {
             data.key = String(formik.values.id);
@@ -134,7 +140,7 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
     }
 
     function handleSuccess() {
-        DialogHelper.showAlert("Success");
+        DialogHelper.showSuccess("Success");
         navigate(-1);
     }
 

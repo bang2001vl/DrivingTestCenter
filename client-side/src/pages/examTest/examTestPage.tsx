@@ -83,11 +83,11 @@ export default function ExamTestPage(props: IProps & Partial<BasicPageProps>) {
                                 `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
                             );
                             if (res.result) {
-                                DialogHelper.showAlert("Xóa thành công!");
+                                DialogHelper.showSuccess("Xóa thành công!");
                                 select();
                             }
                             else {
-                                DialogHelper.showAlert(res.errorMessage);
+                                DialogHelper.showError(res.errorMessage);
                             }
                         }
                     }

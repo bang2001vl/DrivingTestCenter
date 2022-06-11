@@ -129,7 +129,7 @@ export const AccountManagerCreate: FC<IProps & Partial<BasicEditSectionProps>> =
     }
 
     function handleSuccess() {
-        DialogHelper.showAlert("Success");
+        DialogHelper.showSuccess("Thành công");
         navigate(-1);
     }
 

@@ -89,11 +89,11 @@ export default function ExamPageUI(props: IProps) {
             `${appConfig.backendUri}/${routeName}/delete?keys=${String(id)}`
         );
         if (res.result) {
-            DialogHelper.showAlert("Xóa thành công!");
+            DialogHelper.showSuccess("Xóa thành công!");
             reload();
         }
         else {
-            DialogHelper.showAlert(res.errorMessage);
+            DialogHelper.showError(res.errorMessage);
         }
     }
     }

@@ -27,7 +27,7 @@ export const CourseDetailPage: FC<IProps> = (props) => {
         const key = searchParams.get("id");
         if (!key) {
             navigate("/", { replace: true });
-            DialogHelper.showAlert("Not found id");
+            DialogHelper.showError("Không tìm thấy id");
         }
         else {
             api.getWithToken(
@@ -78,10 +78,10 @@ export const CourseDetailPage: FC<IProps> = (props) => {
                     if (res.result) {
                         rootDialog.closeDialog();
                         select();
-                        DialogHelper.showAlert("Success");
+                        DialogHelper.showSuccess("Thành công");
                     }
                     else {
-                        DialogHelper.showAlert(res.errorMessage);
+                        DialogHelper.showError(res.errorMessage);
                     }
                 }}
                 onClickCreate={(select) => {
@@ -104,10 +104,10 @@ export const CourseDetailPage: FC<IProps> = (props) => {
                                 if (res.result) {
                                     rootDialog.closeDialog();
                                     select();
-                                    DialogHelper.showAlert("Thành công");
+                                    DialogHelper.showSuccess("Thành công");
                                 }
                                 else {
-                                    DialogHelper.showAlert(res.errorMessage);
+                                    DialogHelper.showError(res.errorMessage);
                                 }
                             }}
                             onClose={() => rootDialog.closeDialog()}
@@ -133,10 +133,10 @@ export const CourseDetailPage: FC<IProps> = (props) => {
                     if (res.result) {
                         rootDialog.closeDialog();
                         select();
-                        DialogHelper.showAlert("Xóa tài khoản thành công!");
+                        DialogHelper.showSuccess("Xóa tài khoản thành công!");
                     }
                     else {
-                        DialogHelper.showAlert(res.errorMessage);
+                        DialogHelper.showError(res.errorMessage);
                     }
                 }}
                 onClickCreate={(select) => {
@@ -159,10 +159,10 @@ export const CourseDetailPage: FC<IProps> = (props) => {
                                 if (res.result) {
                                     rootDialog.closeDialog();
                                     select();
-                                    DialogHelper.showAlert("Thành công");
+                                    DialogHelper.showSuccess("Thành công");
                                 }
                                 else {
-                                    DialogHelper.showAlert(res.errorMessage);
+                                    DialogHelper.showError(res.errorMessage);
                                 }
                             }}
                             onClose={() => rootDialog.closeDialog()}

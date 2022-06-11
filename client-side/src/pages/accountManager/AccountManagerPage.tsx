@@ -65,11 +65,11 @@ export default function AccountManagerPage(props: IProps & Partial<BasicPageProp
             `${appConfig.backendUri}/${routeName}/delete?key=${String(id)}`
         );
         if (res.result) {
-            DialogHelper.showAlert("Thành công");
+            DialogHelper.showSuccess("Thành công");
             select();
         }
         else {
-            DialogHelper.showAlert(res.errorMessage);
+            DialogHelper.showError(res.errorMessage);
         }
     }
 
@@ -116,10 +116,10 @@ export default function AccountManagerPage(props: IProps & Partial<BasicPageProp
                             if (files.length > 0) {
                                 const res = await new AccountManagerController().insertFromExcelToDB(files[0], api);
                                 if (res.result) {
-                                    DialogHelper.showAlert("Success");
+                                    DialogHelper.showSuccess("Thành công");
                                 }
                                 else {
-                                    DialogHelper.showAlert(res.errorMessage);
+                                    DialogHelper.showError(res.errorMessage);
                                 }
                             }
                         }}

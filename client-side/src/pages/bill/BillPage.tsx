@@ -98,11 +98,11 @@ export default function BillPage(props: IProps & Partial<BasicPageProps>) {
                             }
                         );
                         if (res.result) {
-                            DialogHelper.showAlert("Success");
+                            DialogHelper.showSuccess("Thành công");
                             select();
                         }
                         else {
-                            DialogHelper.showAlert(res.errorMessage);
+                            DialogHelper.showError(res.errorMessage);
                         }
                     }}
                     {...props.tableProps}

@@ -49,7 +49,7 @@ export default function LoginForm() {
       }
       else{
         console.log(res);
-        DialogHelper.showAlert(res.errorMessage);
+        DialogHelper.showError(res.errorMessage);
       }
       setIsLoading(false);
     },

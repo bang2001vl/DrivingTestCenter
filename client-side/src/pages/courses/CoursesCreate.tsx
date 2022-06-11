@@ -41,7 +41,7 @@ export const CoursesCreate: FC<IProps & Partial<BasicEditSectionProps>> = (props
         const key = params.get("id");
             if (!key) {
                 navigate("/", { replace: true });
-                DialogHelper.showAlert("Không tìm thấy lớp học!");
+                DialogHelper.showError("Không tìm thấy lớp học!");
             }
 
             return api.getWithToken(
@@ -108,7 +108,7 @@ export const CoursesCreate: FC<IProps & Partial<BasicEditSectionProps>> = (props
     }
 
     function handleSuccess() {
-        DialogHelper.showAlert("Success");
+        DialogHelper.showSuccess("Thành công");
         navigate(-1);
     }
 
