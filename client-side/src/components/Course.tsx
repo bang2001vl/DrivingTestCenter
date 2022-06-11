@@ -27,7 +27,7 @@ export const CourseCard: FC<CourseProps> = (props) => {
 
     function getStatus() {
         const now = new Date();
-        if (isBefore(props.dateStart, now)) {
+        if (isAfter(props.dateStart, now)) {
             return {
                 text: "Sắp mở",
                 color: "#1BB3E3",
@@ -35,14 +35,15 @@ export const CourseCard: FC<CourseProps> = (props) => {
         }
         else if (isAfter(props.dateEnd, now)) {
             return {
-                text: "Kết thúc",
-                color: "#E31B1B",
+                
+                text: "Đang thực hiện",
+                color: "#00DB99",
             };
         }
         else {
             return {
-                text: "Đang thực hiện",
-                color: "#00DB99",
+                text: "Kết thúc",
+                color: "#E31B1B",
             };
         }
     }
