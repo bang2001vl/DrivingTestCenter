@@ -268,7 +268,8 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
                     flexibleSpaceComponent={FlexibleSpace} />
                 <DateNavigator />
                 <TodayButton> </TodayButton>
-                <AppointmentTooltip showDeleteButton />
+                { (isAdmin)?
+                <AppointmentTooltip  showDeleteButton />:  <AppointmentTooltip/>}
                 <ConfirmationDialog />
                 <GroupingPanel />
             </Scheduler>
