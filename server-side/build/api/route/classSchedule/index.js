@@ -18,6 +18,7 @@ const express_1 = require("express");
 const prisma_1 = require("../../../prisma");
 const FieldGetter_1 = require("../../handler/FieldGetter");
 const session_1 = __importDefault(require("../../handler/session"));
+const schedule_1 = require("../schedule");
 const utilities_1 = require("../utilities");
 const _default_1 = require("../_default");
 const _wrapper_1 = require("../_wrapper");
@@ -43,10 +44,9 @@ function checkInput_Insert(input) {
             let data = {
                 classId: FieldGetter_1.FieldGetter.Number(input, "classId", true),
                 location: FieldGetter_1.FieldGetter.String(input, "location", true),
-                dateStart: FieldGetter_1.FieldGetter.Date(input, "dateStart", true),
-                dateEnd: FieldGetter_1.FieldGetter.Date(input, "dateEnd", true),
+                dateTimeStart: FieldGetter_1.FieldGetter.Date(input, "dateTimeStart", true),
+                dateTimeEnd: FieldGetter_1.FieldGetter.Date(input, "dateTimeEnd", true),
                 notes: FieldGetter_1.FieldGetter.String(input, "notes", false),
-                title: FieldGetter_1.FieldGetter.String(input, "title", false),
             };
             yield checkConflictTime(data);
             return {
@@ -59,12 +59,11 @@ function checkInput_Update(input) {
     return __awaiter(this, void 0, void 0, function* () {
         if (input) {
             let data = {
-                classId: FieldGetter_1.FieldGetter.Number(input, "classId", true),
-                location: FieldGetter_1.FieldGetter.String(input, "location", true),
-                dateStart: FieldGetter_1.FieldGetter.Date(input, "dateStart", true),
-                dateEnd: FieldGetter_1.FieldGetter.Date(input, "dateEnd", true),
+                classId: FieldGetter_1.FieldGetter.Number(input, "classId", false),
+                location: FieldGetter_1.FieldGetter.String(input, "location", false),
+                dateTimeStart: FieldGetter_1.FieldGetter.Date(input, "dateTimeStart", false),
+                dateTimeEnd: FieldGetter_1.FieldGetter.Date(input, "dateTimeEnd", false),
                 notes: FieldGetter_1.FieldGetter.String(input, "notes", false),
-                title: FieldGetter_1.FieldGetter.String(input, "title", false),
             };
             yield checkConflictTime(data);
             return {
@@ -79,20 +78,10 @@ function checkConflictTime(data) {
         if (!(0, isBefore_1.default)(data.dateTimeStart, data.dateTimeEnd)) {
             throw (0, utilities_1.buildResponseError)(101, "Start time isn't smaller than end time");
         }
-        const result = yield repo.findFirst({
-            where: {
-                AND: [
-                    { location: data.location },
-                    {
-                        NOT: {
-                            OR: [
-                                { dateStart: { lt: data.dateTimeStart } },
-                                { dateEnd: { gt: data.dateTimeEnd } },
-                            ]
-                        }
-                    }
-                ]
-            }
+        const result = yield (0, schedule_1.checkRoomAvailable)({
+            location: data.location,
+            dateTimeStart: data.dateTimeStart,
+            dateTimeEnd: data.dateTimeEnd,
         });
         if (result) {
             throw (0, utilities_1.buildResponseError)(102, `Conflict with other (id=${result.id})`);

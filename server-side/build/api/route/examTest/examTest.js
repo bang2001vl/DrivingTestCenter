@@ -18,6 +18,7 @@ const express_1 = require("express");
 const prisma_1 = require("../../../prisma");
 const FieldGetter_1 = require("../../handler/FieldGetter");
 const session_1 = __importDefault(require("../../handler/session"));
+const schedule_1 = require("../schedule");
 const utilities_1 = require("../utilities");
 const _default_1 = require("../_default");
 const _wrapper_1 = require("../_wrapper");
@@ -49,6 +50,8 @@ function checkInput_Insert(input) {
                 location: FieldGetter_1.FieldGetter.String(input, "location", true),
                 dateTimeStart: FieldGetter_1.FieldGetter.Date(input, "dateTimeStart", true),
                 dateTimeEnd: FieldGetter_1.FieldGetter.Date(input, "dateTimeEnd", true),
+                dateTimeStart2: FieldGetter_1.FieldGetter.Date(input, "dateTimeStart2", true),
+                dateTimeEnd2: FieldGetter_1.FieldGetter.Date(input, "dateTimeEnd2", true),
                 maxMember: FieldGetter_1.FieldGetter.Number(input, "maxMember", true),
             };
             yield checkConflictTime(data);
@@ -67,6 +70,8 @@ function checkInput_Update(input) {
                 location: FieldGetter_1.FieldGetter.String(input, "location", false),
                 dateTimeStart: FieldGetter_1.FieldGetter.Date(input, "dateTimeStart", false),
                 dateTimeEnd: FieldGetter_1.FieldGetter.Date(input, "dateTimeEnd", false),
+                dateTimeStart2: FieldGetter_1.FieldGetter.Date(input, "dateTimeStart2", false),
+                dateTimeEnd2: FieldGetter_1.FieldGetter.Date(input, "dateTimeEnd2", false),
                 maxMember: FieldGetter_1.FieldGetter.Number(input, "maxMember", false),
             };
             yield checkConflictTime(data);
@@ -82,24 +87,18 @@ function checkConflictTime(data) {
         if (!(0, isBefore_1.default)(data.dateTimeStart, data.dateTimeEnd)) {
             throw (0, utilities_1.buildResponseError)(101, "Start time isn't smaller than end time");
         }
-        const result = yield repo.findFirst({
-            where: {
-                AND: [
-                    { location: data.location },
-                    {
-                        NOT: {
-                            OR: [
-                                { dateTimeEnd: { lt: data.dateTimeStart } },
-                                { dateTimeStart: { gt: data.dateTimeEnd } },
-                            ]
-                        }
-                    }
-                ]
-            }
+        const result = yield (0, schedule_1.checkRoomAvailable)({
+            location: data.location,
+            dateTimeStart: data.dateTimeStart,
+            dateTimeEnd: data.dateTimeEnd,
         });
         if (result) {
             throw (0, utilities_1.buildResponseError)(102, `Conflict with other (id=${result.id})`);
         }
+    });
+}
+function checkConflictMaxNumber() {
+    return __awaiter(this, void 0, void 0, function* () {
     });
 }
 function customFilter(input) {

@@ -85,6 +85,9 @@ function customSelectFilter(input) {
             if (input.notHaveExamTestId) {
                 rs.joingTest = Object.assign(Object.assign({}, rs.joingTest), { none: { examTestId: FieldGetter_1.FieldGetter.Number(input, "notHaveExamTestId", true) } });
             }
+            if (input.notHaveExamId) {
+                rs.joingTest = Object.assign(Object.assign({}, rs.joingTest), { none: { examTest: { examId: FieldGetter_1.FieldGetter.Number(input, "notHaveExamId", true) } } });
+            }
             if (input.classId) {
                 rs.studingClass = { some: { classId: FieldGetter_1.FieldGetter.Number(input, "classId", true) } };
             }

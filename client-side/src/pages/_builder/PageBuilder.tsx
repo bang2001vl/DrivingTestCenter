@@ -35,7 +35,7 @@ export const BasicPage = (props: BasicPageProps) => {
                 params.append(key, props.filter![key])
             });
         }
-        return api.get(
+        return api.getWithToken(
             `${appConfig.backendUri}/${props.routeSelect}/select?${params.toString()}`
         );
     }
@@ -46,7 +46,7 @@ export const BasicPage = (props: BasicPageProps) => {
                 params.append(key, props.filter![key])
             });
         }
-        return api.get(
+        return api.getWithToken(
             `${appConfig.backendUri}/${props.routeSelect}/count?${params.toString()}`
         );
     }

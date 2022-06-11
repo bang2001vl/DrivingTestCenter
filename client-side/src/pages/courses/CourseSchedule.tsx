@@ -120,7 +120,7 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
             dateTimeStart: parse("00:00", "HH:mm", date).toISOString(),
             dateTimeEnd: parse("23:59", "HH:mm", date).toISOString(),
         })
-        api.get(
+        api.getWithToken(
             `${appConfig.backendUri}/schedule/select?${params.toString()}`
         ).then(res => {
             if (res.result) {

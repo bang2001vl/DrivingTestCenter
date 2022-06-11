@@ -39,6 +39,8 @@ const student_1 = require("./route/student");
 const cnn_1 = require("./route/cnn");
 const bill_1 = require("./route/bill");
 const statistic_1 = require("./route/statistic");
+const schedule_1 = require("./route/schedule");
+const classSchedule_1 = require("./route/classSchedule");
 function ApiServer() {
     const app = (0, express_1.default)();
     app.use((0, cors_1.default)());
@@ -53,6 +55,8 @@ function ApiServer() {
     app.use("/cnn", (0, cnn_1.CNNRoute)());
     app.use("/bill", (0, bill_1.BillRoute)());
     app.use("/statistic", (0, statistic_1.StatisticRoute)());
+    app.use("/classSchedule", (0, classSchedule_1.ClassScheduleRoute)());
+    app.use("/schedule", (0, schedule_1.ScheduleRoute)());
     app.use((req, res, next) => {
         if (res.locals.error) {
             res.json(res.locals.error);

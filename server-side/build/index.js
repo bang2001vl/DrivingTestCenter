@@ -14,8 +14,10 @@ apiServer.listen(config_1.default.port_http, () => {
 //     where: {
 //         roleId: 1,
 //         joingTest: {
-//             some: {
-//                 examTestId: 1
+//             none: {
+//                 examTest: {
+//                     examId: 1
+//                 }
 //             }
 //         }
 //     }

@@ -58,13 +58,13 @@ export default function ExamPageUI(props: IProps) {
     }
 
     const handleSelect = (params: URLSearchParams)=>{
-        return api.get(
+        return api.getWithToken(
             `${appConfig.backendUri}/${routeName}/select?${params.toString()}`
         );
     }
 
     const handleCount = (params: URLSearchParams)=>{
-        return api.get(
+        return api.getWithToken(
             `${appConfig.backendUri}/${routeName}/count?${params.toString()}`
         );
     }

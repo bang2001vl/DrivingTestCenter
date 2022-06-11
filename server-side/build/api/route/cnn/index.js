@@ -17,6 +17,7 @@ const express_1 = require("express");
 const prisma_1 = require("../../../prisma");
 const FieldGetter_1 = require("../../handler/FieldGetter");
 const session_1 = __importDefault(require("../../handler/session"));
+const utilities_1 = require("../utilities");
 const _wrapper_1 = require("../_wrapper");
 const tag = "CNN_Student_Class";
 const CNNRoute = () => {
@@ -33,7 +34,26 @@ const CNNRoute = () => {
     /// **** Student-Test
     //
     route.post("/join/student/examtests", session_1.default.roleChecker([0]), ...buildInsertOneManyRoute(prisma_1.myPrisma.cONN_Student_ExamTest, "studentId", "examTestId"));
-    route.post("/join/examtest/students", session_1.default.roleChecker([0]), ...buildInsertOneManyRoute(prisma_1.myPrisma.cONN_Student_ExamTest, "examTestId", "studentId"));
+    route.post("/join/examtest/students", session_1.default.roleChecker([0]), ...buildInsertOneManyRoute(prisma_1.myPrisma.cONN_Student_ExamTest, "examTestId", "studentId", [
+        (input) => __awaiter(void 0, void 0, void 0, function* () {
+            const studentIdList = FieldGetter_1.FieldGetter.Array(input, "studentIdList", true);
+            const examId = FieldGetter_1.FieldGetter.Number(input, "examId", true);
+            const examTests = yield prisma_1.myPrisma.examTest.findMany({
+                where: { examId: examId },
+                select: { id: true },
+            });
+            const examTestIds = examTests.map(e => e.id);
+            const duplicated = yield prisma_1.myPrisma.cONN_Student_ExamTest.findMany({
+                where: {
+                    studentId: { in: studentIdList },
+                    examTestId: { in: examTestIds }
+                }
+            });
+            if (duplicated.length > 0) {
+                throw (0, utilities_1.buildResponseError)(101, `Cannot join multiple examTest of one exam for students have ids in [${duplicated.map(e => e.studentId).join(", ")}]`);
+            }
+        })
+    ]));
     route.post("/delete/student/examtests", session_1.default.roleChecker([0]), ...buildDeleteOneManyRoute(prisma_1.myPrisma.cONN_Student_ExamTest, "studentId", "examTestId"));
     route.post("/delete/examtest/students", session_1.default.roleChecker([0]), ...buildDeleteOneManyRoute(prisma_1.myPrisma.cONN_Student_ExamTest, "examTestId", "studentId"));
     ///
@@ -61,24 +81,19 @@ function buildDeleteOneManyRoute(repo, propA, propB) {
         }), tag),
         _wrapper_1.RouteHandleWrapper.wrapHandleInput((input) => __awaiter(this, void 0, void 0, function* () {
             const result = yield repo.deleteMany({
-                where: {
-                    [propA]: input[propA],
-                    [propB]: { in: input[`${propB}List`] }
-                }
+                where: Object.assign(Object.assign({}, input), { [propA]: input[propA], [propB]: { in: input[`${propB}List`] } })
             });
             return result;
         }), tag),
     ];
 }
-function buildInsertOneManyRoute(repo, propA, propB) {
+function buildInsertOneManyRoute(repo, propA, propB, middleware) {
     return [
         _wrapper_1.RouteHandleWrapper.wrapCheckInput(input => {
             console.log(input);
-            return ({
-                [propA]: FieldGetter_1.FieldGetter.Number(input, propA, true),
-                [`${propB}List`]: FieldGetter_1.FieldGetter.Array(input, `${propB}List`, true),
-            });
+            return (Object.assign(Object.assign({}, input), { [propA]: FieldGetter_1.FieldGetter.Number(input, propA, true), [`${propB}List`]: FieldGetter_1.FieldGetter.Array(input, `${propB}List`, true) }));
         }, tag),
+        ...(middleware ? middleware.map(e => _wrapper_1.RouteHandleWrapper.wrapHandleInput(e, tag)) : []),
         _wrapper_1.RouteHandleWrapper.wrapHandleInput((input) => __awaiter(this, void 0, void 0, function* () {
             console.log(input);
             const result = yield repo.createMany({

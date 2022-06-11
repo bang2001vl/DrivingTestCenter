@@ -30,7 +30,7 @@ const HomePage = () => {
     const [dateTimeEnd] = useState(new Date());
 
     useEffect(() => {
-        api.get<IData>(`${appConfig.backendUri}/statistic/dashboard?dateTimeStart=${dateTimeStart.toISOString()}&dateTimeEnd=${dateTimeEnd.toISOString()}`)
+        api.getWithToken<IData>(`${appConfig.backendUri}/statistic/dashboard?dateTimeStart=${dateTimeStart.toISOString()}&dateTimeEnd=${dateTimeEnd.toISOString()}`)
             .then(res => {
                 if (res.result && res.data) {
                     console.log("Before", res.data.revenueReportDailyList);

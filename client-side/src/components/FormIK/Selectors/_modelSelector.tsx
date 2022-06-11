@@ -34,7 +34,7 @@ export const BasicFormIKModelSelector: FC<BasicFormIKModelSelectorProps> = (prop
     delete customProps.fieldName;
 
     async function loadOption(inputValue: string) {
-        const res = await api.get(props.getURL(inputValue));
+        const res = await api.getWithToken(props.getURL(inputValue));
         if (res.result && res.data) {
             return res.data.map((e: any) => ({
                 label: e.name,

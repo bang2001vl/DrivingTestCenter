@@ -31,7 +31,7 @@ export const ExamSelector: FC<IProps> = (props) => {
             start: 0,
             count: 10,
         } as any).toString();
-        const res = await api.get(appConfig.backendUri + `/exam/select?${params}`);
+        const res = await api.getWithToken(appConfig.backendUri + `/exam/select?${params}`);
         if (res.result && res.data) {
             return res.data.map((e: any) => ({
                 label: e.name,
