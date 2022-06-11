@@ -9,7 +9,7 @@ const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
 
 const sidebarConfig = [
   {
-    title: 'dashboard',
+    title: 'Tổng quan',
     path: '/dashboard/home',
     icon: getIcon('eva:pie-chart-2-fill')
   },
@@ -26,6 +26,11 @@ const sidebarConfig = [
   {
     title: 'Khóa học',
     path: '/dashboard/course',
+    icon: getIcon('eos-icons:storage-class')
+  },
+  {
+    title: 'Lịch phòng',
+    path: '/dashboard/schedule',
     icon: getIcon('eos-icons:storage-class')
   },
   {

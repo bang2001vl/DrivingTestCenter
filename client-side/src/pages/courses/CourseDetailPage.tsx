@@ -54,7 +54,7 @@ export const CourseDetailPage: FC<IProps> = (props) => {
             Chỉnh sửa lớp học
         </Typography>
         <CustomizedTabs
-            listtab={["Thông tin", "Quản lý học viên", , "Quản lý giảng viên"]}
+            listtab={["Thông tin", "Quản lý học viên", "Quản lý giảng viên"]}
         >
             <CoursesCreate
                 hideTitle

@@ -152,7 +152,7 @@ export const CoursesCreate: FC<IProps & Partial<BasicEditSectionProps>> = (props
                                 <Box sx={{ width: "50%" }}>
                                     <FormIkRoom formik={formik} fieldName="location"
                                         fullWidth
-                                        label="Nơi học"
+                                        label="Phòng học"
                                         sx={{ marginTop }}
                                     />
                                 </Box>

@@ -16,7 +16,7 @@ import { BuildReportAlert } from "../../singleton/alertConfirm";
 export interface BasicEditSectionProps<T extends FormikValues = FormikValues, OldDataType = any> {
     initValues: T,
     formComponent: (formik: IFormIK<T>, cancel: () => void, isLoading: boolean) => JSX.Element,
-    title: string,
+    title?: string,
     submit: (formik: IFormIK<T>) => Promise<MyResponse>,
     method: EDIT_METHOD,
     validation?: (formik: IFormIK<T>) => any,

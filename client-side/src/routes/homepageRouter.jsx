@@ -25,6 +25,7 @@ import { ExamTestDetailPage } from "../pages/examTest/examTestDetail";
 import { CourseDetailPage } from "../pages/courses/CourseDetailPage";
 import BillPage from "../pages/bill/BillPage";
 import { BillCreate } from "../pages/bill/BillCreate";
+import RoomSchedulePage from "../pages/roomSchedule";
 
 export default function RootRouter() {
   return useRoutes([
@@ -50,6 +51,8 @@ export default function RootRouter() {
         { path: 'course/detail', element: <CourseDetailPage /> },
 
         { path: 'lecture', element: <LecturesPage /> },
+
+        { path: 'schedule', element: <RoomSchedulePage /> },
 
         { path: 'account/manager', element: <AccountManagerPage /> },
         { path: 'account/manager/create', element: <AccountManagerCreate method={EDIT_METHOD.create} /> },

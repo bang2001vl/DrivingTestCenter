@@ -1,4 +1,4 @@
-import { Box, Card, Container, Stack, Typography } from "@mui/material";
+import { Box, Button, Card, Container, Stack, Typography } from "@mui/material";
 import { FC, useState } from "react";
 import { ActionMeta, GroupBase, MultiValue } from "react-select";
 import AsyncSelect from 'react-select/async';
@@ -42,7 +42,7 @@ export const BasicModelPicker: FC<BasicModelPickerProps> = (props) => {
 
     return (
         <Stack style={{ minWidth: 400, minHeight: 1 }}>
-            <Typography variant="h3" gutterBottom style={{ color: "#3C557A" }}>
+            <Typography variant="h4" gutterBottom style={{ color: "#3C557A" }}>
                 {props.title}
             </Typography>
             <AsyncSelect
@@ -76,6 +76,18 @@ export const BasicModelPicker: FC<BasicModelPickerProps> = (props) => {
                     {...props.propSelect}
                 />
             <Stack direction="row" justifyContent={"space-between"} style={{ fontSize: 14, marginTop: "20px", marginBottom: "10px" }}>
+             
+                <Button
+                    variant="outlined"
+                    sx={{ width: "45%" }}
+                    onClick={() => {
+                        if (props.onClose) {
+                            props.onClose();
+                        }
+                    }}
+                >
+                    Hủy
+                </Button>
                 <CommonButton
                     sx={{ width: "45%" }}
                     onClick={() => {
@@ -85,16 +97,6 @@ export const BasicModelPicker: FC<BasicModelPickerProps> = (props) => {
                     }}
                 >
                     Xác nhận
-                </CommonButton>
-                <CommonButton
-                    sx={{ width: "45%" }}
-                    onClick={() => {
-                        if (props.onClose) {
-                            props.onClose();
-                        }
-                    }}
-                >
-                    Hủy
                 </CommonButton>
             </Stack>
         </Stack>
