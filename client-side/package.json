@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@date-io/date-fns": "^2.13.1",
+    "@devexpress/dx-react-grid": "^3.0.3",
     "@devexpress/dx-react-scheduler": "^3.0.3",
     "@devexpress/dx-react-scheduler-material-ui": "^3.0.3",
     "@emotion/cache": "^11.5.0",

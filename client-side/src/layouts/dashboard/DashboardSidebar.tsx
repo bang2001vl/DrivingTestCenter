@@ -56,8 +56,9 @@ export default function DashboardSidebar(props: IProps) {
   const userInfo = AccountSingleton.instance.userInfo;
   const session = AccountSingleton.instance.session;
   const userFullname = userInfo ? userInfo.fullname : "Login";
-  const userSecondText = session ? session.roleId : "";
+  const userSecondText = session ? getRole(session.roleId).text : "";
   const userImageURI = userInfo && userInfo.avatarURI ? createBEPublicURI(userInfo.avatarURI) : '/static/mock-images/avatars/avatar_default.jpg';
+
 
   useEffect(() => {
     if (props.isOpenSidebar) {
@@ -65,7 +66,24 @@ export default function DashboardSidebar(props: IProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
-
+  function getRole(role:number) {
+    if (role === 0) {
+        return {
+            text: "Admin",
+            color: "success"
+        };
+    } else if (role === 1) {
+        return {
+            text: "Học viên",
+            color: "secondary"
+        };
+    } else {
+        return {
+            text: "Giảng viên",
+            color: "warning"
+        };
+    }
+}
   const renderContent = (
     <Scrollbar
       sx={{
@@ -85,7 +103,7 @@ export default function DashboardSidebar(props: IProps) {
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
                 {userFullname}
               </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 {userSecondText}
               </Typography>
             </Box>

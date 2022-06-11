@@ -3,6 +3,7 @@ import { Typography, Card, Stack, Box, Divider, Avatar } from "@mui/material";
 import { format, isAfter, isBefore } from "date-fns";
 import { FC, useRef, useState } from "react";
 import ItemMoreMenu from "../sections/user/ItemMoreMenu";
+import { AccountSingleton } from "../singleton/account";
 import { MyThumb } from "./myThumb";
 
 export interface CourseProps {
@@ -22,6 +23,7 @@ export interface CourseProps {
 
 export const CourseCard: FC<CourseProps> = (props) => {
     let dateFormat = "dd/MM/yyyy";
+    const isAdmin = AccountSingleton.instance.isAdmin;
 
     function getStatus() {
         const now = new Date();
@@ -45,24 +47,24 @@ export const CourseCard: FC<CourseProps> = (props) => {
         }
     }
 
-    const getActions = ()=>{
+    const getActions = () => {
         const actions = [];
-        if(props.onEdit){
+        if (props.onEdit) {
             actions.push({
                 label: "Chỉnh sửa",
                 iconURI: "eva:edit-fill",
                 onClick: props.onEdit
             });
         }
-        if(props.onDelete){
+        if (props.onDelete) {
             actions.push({
                 label: "Xóa",
                 iconURI: "eva:trash-2-outline",
                 onClick: props.onDelete
             });
         }
-        
-        if(props.onDetail){
+
+        if (props.onDetail) {
             actions.push({
                 label: "Detail",
                 iconURI: "eva:person-add-outline",
@@ -89,11 +91,13 @@ export const CourseCard: FC<CourseProps> = (props) => {
                 </Stack>
 
             </Stack>
-
-            <ItemMoreMenu
-                data={props.item}
-                items={getActions()}
-            ></ItemMoreMenu>
+            {(isAdmin) ?
+                <ItemMoreMenu
+                    data={props.item}
+                    items={getActions()}
+                ></ItemMoreMenu>
+                : <></>
+            }
 
         </Stack>
         <Stack direction='row' sx={{ paddingTop: '10px', verticalAlign: "center" }} justifyContent="space-between">
@@ -124,8 +128,7 @@ export const CourseCard: FC<CourseProps> = (props) => {
         </Stack>
         <Typography variant="subtitle2" sx={{ color: '#00DB99', fontSize: '13', marginTop: "15px" }}>Giảng viên</Typography>
         <Stack>
-            {props.employeeCNNs?.map((employee, index) =>
-             {return <Avatar src={employee.avataURL} key={index} style={{ height: "30px", width: "30px" }}></Avatar>})
+            {props.employeeCNNs?.map((employee, index) => { return <Avatar src={employee.avataURL} key={index} style={{ height: "30px", width: "30px" }}></Avatar> })
             }
 
         </Stack>

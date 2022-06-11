@@ -69,7 +69,7 @@ export default function LoginForm() {
             fullWidth
             autoComplete="username"
             type="text"
-            label="Username"
+            label="Tên đăng nhập"
             {...getFieldProps('username')}
             error={Boolean(touched.username && errors.username)}
             helperText={touched.username && errors.username}
@@ -79,7 +79,7 @@ export default function LoginForm() {
             fullWidth
             autoComplete="current-password"
             type={showPassword ? 'text' : 'password'}
-            label="Password"
+            label="Mật khẩu"
             {...getFieldProps('password')}
             InputProps={{
               endAdornment: (

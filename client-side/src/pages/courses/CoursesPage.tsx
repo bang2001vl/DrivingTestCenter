@@ -4,6 +4,7 @@ import useAPI from "../../hooks/useApi";
 import { DialogHelper } from "../../singleton/dialogHelper";
 import { CoursesTable, CourseTableProps } from "./CoursesTable";
 import { BasicPage, BasicPageProps } from "../_builder/PageBuilder";
+import { AccountSingleton } from "../../singleton/account";
 
 // const HEAD_LABEL = [
 //     { id: 'name', label: 'Name', alignRight: false },
@@ -47,6 +48,7 @@ export default function CoursesPage(props: IProps & Partial<BasicPageProps>) {
     const routeNameFE = "dashboard/course";
     const routeName = "course";
     const api = useAPI();
+    const isAdmin=AccountSingleton.instance.isAdmin;
     const navigate = useNavigate();
     return (
         <BasicPage

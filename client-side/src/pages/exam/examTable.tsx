@@ -7,6 +7,7 @@ import { BorderLinearProgress } from "../../components/LinearProgress";
 import { DataTableLayout, DataTableLayoutProps } from "../../sections/CRUD/BasicDataTable";
 import DataListHead from "../../sections/user/DataListHead";
 import ItemMoreMenu from "../../sections/user/ItemMoreMenu";
+import { AccountSingleton } from "../../singleton/account";
 import { formatNumber } from "../../_helper/helper";
 interface IProps {
     dataList: IData[];
@@ -27,6 +28,7 @@ interface IData {
     price: number,
 }
 export const ExamTable: FC<IProps & DataTableLayoutProps> = (props) => {
+    const isAdmin=AccountSingleton.instance.isAdmin;
     function getStatus(data: IData) {
         const now = new Date();
         if (isAfter(data.dateOpen, now)) {
@@ -91,6 +93,7 @@ export const ExamTable: FC<IProps & DataTableLayoutProps> = (props) => {
 
             </TableCell>
         );
+        {if (isAdmin)
         cells.push(<TableCell key={8}>
             <ItemMoreMenu
                 data={item}
@@ -112,7 +115,7 @@ export const ExamTable: FC<IProps & DataTableLayoutProps> = (props) => {
                     },
                 ]}
             ></ItemMoreMenu>
-        </TableCell>);
+        </TableCell>)};
         return <TableRow key={item.id} hover={true}>
             {cells}
         </TableRow>;
