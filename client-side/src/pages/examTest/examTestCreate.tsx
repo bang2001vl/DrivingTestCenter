@@ -205,7 +205,7 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
                                         if(date){
                                             formik.setFieldValue("dateTimeStart", date.toISOString());
                                             const dateTimeEnd = new Date(formik.values["dateTimeEnd"]);
-                                            formik.setFieldValue("dateTimeEnd", new Date(date.setTime(dateTimeEnd.getTime())).toISOString());
+                                            formik.setFieldValue("dateTimeEnd", new Date(date.getFullYear(), date.getMonth(), date.getDate(), dateTimeEnd.getHours(), dateTimeEnd.getMinutes()).toISOString());
                                         }
                                     }}
                                 />
@@ -231,8 +231,7 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
                                         if(date){
                                             formik.setFieldValue("dateTimeStart2", date.toISOString());
                                             const dateTimeEnd = new Date(formik.values["dateTimeEnd2"]);
-                                            date.setTime(dateTimeEnd.getTime());
-                                            formik.setFieldValue("dateTimeEnd2", date.toISOString());
+                                            formik.setFieldValue("dateTimeEnd2", new Date(date.getFullYear(), date.getMonth(), date.getDate(), dateTimeEnd.getHours(), dateTimeEnd.getMinutes()).toISOString());
                                         }
                                     }}
                                 />

@@ -1,5 +1,6 @@
 import isAfter from "date-fns/isAfter";
 import isBefore from "date-fns/isBefore";
+import parse from "date-fns/parse";
 import { json, Router, urlencoded } from "express";
 import { myPrisma } from "../../../prisma";
 import { FieldGetter } from "../../handler/FieldGetter";
@@ -132,7 +133,7 @@ async function checkConflictTime(data: any) {
         throw buildResponseError(103, "Invalid examId: Not found exam");
     }
     
-    if(!(isAfter(data.dateTimeStart, exam.dateStart) && isAfter(exam.dateEnd, data.dateTimeEnd))){
+    if(!(isAfter(data.dateTimeStart, parse("00:00", "HH:mm", exam.dateStart)) && isAfter(parse("23:59", "HH:mm", exam.dateEnd), data.dateTimeEnd))){
         throw buildResponseError(104, `Thời gian thi chỉ được nằm trong khoảng ${exam.dateStart} - ${exam.dateEnd}`);
     }
 
