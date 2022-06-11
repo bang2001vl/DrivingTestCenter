@@ -47,11 +47,11 @@ export default function AccountPopover() {
     setOpen(false);
   };
   const handleLogout = () => {
+   
     AccountSingleton.instance.logout()
-    .then(() => {
-     
-      FirstLaunch();
+    .then(() => { 
       navigate('/login');
+      
     })
   };
   const handleLogin = () =>{

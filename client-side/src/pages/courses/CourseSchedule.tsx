@@ -187,7 +187,52 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
             }
         </StyledToolbarFlexibleSpace>
     ));
+    const commandButton = (({ ...restProps }) => (
+        <StyledToolbarFlexibleSpace {...restProps} className={classes.flexibleSpace}>
+            {(isAdmin) ?
+                <Stack direction='row' spacing={2} className={classes.flexContainer}>
+                    <Button
+                        onClick={() => {
+                            rootDialog.openDialog({
+                                children: <ExamTestCreate method={EDIT_METHOD.create}
+                                    title="Thêm ca thi"
+                                    onSuccess={() => {
+                                        loadData(selectedDate);
+                                        rootDialog.closeDialog();
+                                    }}
+                                    onClose={() => rootDialog.closeDialog()}>
+                                </ExamTestCreate>
+                            })
+                        }}
+                        variant="contained"
+                        startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
+                    >
+                        Thêm ca thi
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            rootDialog.openDialog({
+                                children: <ClassScheduleCreate method={EDIT_METHOD.create}
+                                    title="Thêm lịch học"
+                                    onSuccess={() => {
+                                        loadData(selectedDate);
+                                        rootDialog.closeDialog();
+                                    }}
+                                    onClose={() => rootDialog.closeDialog()}
+                                >
 
+                                </ClassScheduleCreate>
+                            })
+                        }}
+
+                        variant="contained"
+                        startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}>
+                        Thêm lịch học
+                    </Button>
+                </Stack> : <></>
+            }
+        </StyledToolbarFlexibleSpace>
+    ));
     function getRoomsResource() {
         const rooms: { id: number; text: string; }[] = [];
         Rooms.map((item, index) => {
@@ -269,7 +314,7 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
                 <DateNavigator />
                 <TodayButton> </TodayButton>
                 { (isAdmin)?
-                <AppointmentTooltip  showDeleteButton />:  <AppointmentTooltip/>}
+                <AppointmentTooltip  showDeleteButton commandButtonComponent={commandButton}/>:  <AppointmentTooltip/>}
                 <ConfirmationDialog />
                 <GroupingPanel />
             </Scheduler>
