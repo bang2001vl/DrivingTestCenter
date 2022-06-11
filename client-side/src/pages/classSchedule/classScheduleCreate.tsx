@@ -75,7 +75,7 @@ export const ClassScheduleCreate: FC<IProps & Partial<BasicEditSectionProps>> = 
 
         if (props.method === EDIT_METHOD.create) {
             return controller.insertToDB(values).then(res => {
-                if(res.errorCode === 102){
+                if (res.errorCode === 102) {
                     DialogHelper.showError("Phòng đã có lịch vào khung giờ này");
                     res.errorMessage = undefined;
                 }
@@ -111,76 +111,77 @@ export const ClassScheduleCreate: FC<IProps & Partial<BasicEditSectionProps>> = 
             return (
                 <Card style={{ alignItems: "center", justifyContent: 'center', textAlign: "center", marginTop: '15px', padding: "5%" }} >
                     <LocalizationProvider dateAdapter={AdapterDateFns} style={{ alignItems: "center" }}>
-                        <Stack direction="row" spacing={2}>
-                            <FormIKClassSelector formik={formik} fieldName="classOption" idFieldName="classId"
-                                placeholder="Lớp"
-                                propFormControl={{
-                                    fullWidth: true,
-                                    sx: { height: "100%" }
-                                }}
-                            />
-
-                            < Box sx={{ minWidth: "50%" }}>
-                                <FormIkTextField formik={formik} fieldName="notes"
-                                    fullWidth
-                                    label="Ghi chú"
-                                    sx={{ marginTop }}
-                                />
-                            </Box>
-                        </Stack>
-                        <Stack direction="row" spacing={2}>
-                            <Box sx={{ width: "50%" }}>
-                                <FormIkRoom formik={formik} fieldName="location"
-                                    fullWidth
-                                    label="Phòng học"
-                                    sx={{ marginTop, textAlign: "start" }}
-                                />
-                            </Box>
-                            <Box sx={{ minWidth: "50%" }}>
-                                <FormIkDatePicker formik={formik} fieldName="dateTimeStart"
-                                    label="Ngày học"
-                                    minDate={new Date()}
-                                    onChange={(date) => {
-                                        if (date) {
-                                            formik.setFieldValue("dateTimeStart", date.toISOString());
-                                            const dateTimeEnd = new Date(formik.values["dateTimeEnd"]);
-                                            formik.setFieldValue("dateTimeEnd", new Date(date.setTime(dateTimeEnd.getTime())).toISOString());
-                                        }
+                        <Stack spacing={2}>
+                            <Stack direction="row" spacing={2}>
+                                <FormIKClassSelector formik={formik} fieldName="classOption" idFieldName="classId"
+                                    placeholder="Lớp"
+                                    propFormControl={{
+                                        fullWidth: true,
+                                        sx: { height: "100%" }
                                     }}
                                 />
-                            </Box>
 
-                        </Stack>
-                        <Stack direction="row" spacing={2} paddingTop={2}>
-                            <Box sx={{ width: "50%" }}>
-                                <FormIkTimePicker formik={formik} fieldName="dateTimeStart"
-                                    label="Giờ bắt đầu"
-                                />
-                            </Box>
-                            <Box sx={{ minWidth: "50%" }}>
-                                <FormIkTimePicker formik={formik} fieldName="dateTimeEnd"
-                                    label="Giờ kết thúc"
-                                />
-                            </Box>
+                                < Box sx={{ minWidth: "50%" }}>
+                                    <FormIkTextField formik={formik} fieldName="notes"
+                                        fullWidth
+                                        label="Ghi chú"
+                                    />
+                                </Box>
+                            </Stack>
+                            <Stack direction="row" spacing={2}>
+                                <Box sx={{ width: "50%" }}>
+                                    <FormIkRoom formik={formik} fieldName="location"
+                                        fullWidth
+                                        label="Phòng học"
+                                        sx={{ textAlign: "start" }}
+                                    />
+                                </Box>
+                                <Box sx={{ minWidth: "50%" }}>
+                                    <FormIkDatePicker formik={formik} fieldName="dateTimeStart"
+                                        label="Ngày học"
+                                        minDate={new Date()}
+                                        onChange={(date) => {
+                                            if (date) {
+                                                formik.setFieldValue("dateTimeStart", date.toISOString());
+                                                const dateTimeEnd = new Date(formik.values["dateTimeEnd"]);
+                                                formik.setFieldValue("dateTimeEnd", new Date(date.setTime(dateTimeEnd.getTime())).toISOString());
+                                            }
+                                        }}
+                                    />
+                                </Box>
 
-                        </Stack>
-                        <Stack alignItems={"center"}>
-                            <Stack direction={"row"} spacing={20} style={{ alignSelf: "center", justifyContent: "space-around", marginTop: 20, maxWidth: 400 }}>
-                                <LoadingButton
-                                    variant="contained"
-                                    onClick={() => formik.handleSubmit()}
-                                    sx={{ width: "120px", height: "43px" }}
-                                >
-                                    Lưu
-                                </LoadingButton>
+                            </Stack>
+                            <Stack direction="row" spacing={2} paddingTop={2}>
+                                <Box sx={{ width: "50%" }}>
+                                    <FormIkTimePicker formik={formik} fieldName="dateTimeStart"
+                                        label="Giờ bắt đầu"
+                                    />
+                                </Box>
+                                <Box sx={{ minWidth: "50%" }}>
+                                    <FormIkTimePicker formik={formik} fieldName="dateTimeEnd"
+                                        label="Giờ kết thúc"
+                                    />
+                                </Box>
 
-                                <Button
-                                    variant="outlined"
-                                    onClick={() => cancel()}
-                                    sx={{ width: "120px", height: "43px" }}
-                                >
-                                    Hủy
-                                </Button>
+                            </Stack>
+                            <Stack alignItems={"center"}>
+                                <Stack direction={"row"} spacing={20} style={{ alignSelf: "center", justifyContent: "space-around", marginTop: 20, maxWidth: 400 }}>
+                                    <LoadingButton
+                                        variant="contained"
+                                        onClick={() => formik.handleSubmit()}
+                                        sx={{ width: "120px", height: "43px" }}
+                                    >
+                                        Lưu
+                                    </LoadingButton>
+
+                                    <Button
+                                        variant="outlined"
+                                        onClick={() => cancel()}
+                                        sx={{ width: "120px", height: "43px" }}
+                                    >
+                                        Hủy
+                                    </Button>
+                                </Stack>
                             </Stack>
                         </Stack>
                     </LocalizationProvider>

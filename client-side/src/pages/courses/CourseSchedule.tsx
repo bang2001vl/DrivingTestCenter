@@ -23,6 +23,7 @@ import { ExamTestController } from "../../api/controllers/examTest";
 import { ClassScheduleController } from "../../api/controllers/classScheduleController";
 import { ClassScheduleCreate } from "../classSchedule/classScheduleCreate";
 import { AccountSingleton } from "../../singleton/account";
+import { CommonButton } from "../../components/Buttons/common";
 
 const PREFIX = 'Demo';
 const classes = {
@@ -145,7 +146,7 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
         <StyledToolbarFlexibleSpace {...restProps} className={classes.flexibleSpace}>
             {(isAdmin) ?
                 <Stack direction='row' spacing={2} className={classes.flexContainer}>
-                    <Button
+                    <CommonButton
                         onClick={() => {
                             rootDialog.openDialog({
                                 children: <ExamTestCreate method={EDIT_METHOD.create}
@@ -158,12 +159,12 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
                                 </ExamTestCreate>
                             })
                         }}
-                        variant="contained"
+                        variant="outlined"
                         startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
                     >
                         Thêm ca thi
-                    </Button>
-                    <Button
+                    </CommonButton>
+                    <CommonButton
                         onClick={() => {
                             rootDialog.openDialog({
                                 children: <ClassScheduleCreate method={EDIT_METHOD.create}
@@ -182,57 +183,12 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
                         variant="contained"
                         startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}>
                         Thêm lịch học
-                    </Button>
+                    </CommonButton>
                 </Stack> : <></>
             }
         </StyledToolbarFlexibleSpace>
     ));
-    const commandButton = (({ ...restProps }) => (
-        <StyledToolbarFlexibleSpace {...restProps} className={classes.flexibleSpace}>
-            {(isAdmin) ?
-                <Stack direction='row' spacing={2} className={classes.flexContainer}>
-                    <Button
-                        onClick={() => {
-                            rootDialog.openDialog({
-                                children: <ExamTestCreate method={EDIT_METHOD.create}
-                                    title="Thêm ca thi"
-                                    onSuccess={() => {
-                                        loadData(selectedDate);
-                                        rootDialog.closeDialog();
-                                    }}
-                                    onClose={() => rootDialog.closeDialog()}>
-                                </ExamTestCreate>
-                            })
-                        }}
-                        variant="contained"
-                        startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}
-                    >
-                        Thêm ca thi
-                    </Button>
-                    <Button
-                        onClick={() => {
-                            rootDialog.openDialog({
-                                children: <ClassScheduleCreate method={EDIT_METHOD.create}
-                                    title="Thêm lịch học"
-                                    onSuccess={() => {
-                                        loadData(selectedDate);
-                                        rootDialog.closeDialog();
-                                    }}
-                                    onClose={() => rootDialog.closeDialog()}
-                                >
 
-                                </ClassScheduleCreate>
-                            })
-                        }}
-
-                        variant="contained"
-                        startIcon={<Iconify icon="eva:plus-fill" sx={undefined} />}>
-                        Thêm lịch học
-                    </Button>
-                </Stack> : <></>
-            }
-        </StyledToolbarFlexibleSpace>
-    ));
     function getRoomsResource() {
         const rooms: { id: number; text: string; }[] = [];
         Rooms.map((item, index) => {
@@ -313,8 +269,8 @@ export const RoomSchedule: FC<RoomScheduleProp> = (props) => {
                     flexibleSpaceComponent={FlexibleSpace} />
                 <DateNavigator />
                 <TodayButton> </TodayButton>
-                { (isAdmin)?
-                <AppointmentTooltip  showDeleteButton commandButtonComponent={commandButton}/>:  <AppointmentTooltip/>}
+                {(isAdmin) ?
+                    <AppointmentTooltip showDeleteButton /> : <AppointmentTooltip />}
                 <ConfirmationDialog />
                 <GroupingPanel />
             </Scheduler>

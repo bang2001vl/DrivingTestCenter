@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 // material
-import { Box } from '@mui/material';
+import { Box, Typography, Stack } from '@mui/material';
+import logo_manager from "../assets/images/logo_manager.png"
 
 // ----------------------------------------------------------------------
 
@@ -11,8 +12,11 @@ Logo.propTypes = {
 
 export default function Logo({ sx }) {
   return (
-    <RouterLink to="/">
-      <Box component="img" src="/static/logo.png" sx={{ width: 40, height: 40, ...sx }} />
-    </RouterLink>
+    <Stack alignContent='center' spacing={1} alignItems='center'>
+      <RouterLink to="/">
+        <Box component="img" src={logo_manager} sx={{ width: 50, height: 50, ...sx }} />
+      </RouterLink >
+      <Typography variant="h5" gutterBottom style={{ color: "#00AB55" }}>Mandrile</Typography>
+    </Stack>
   );
 }
