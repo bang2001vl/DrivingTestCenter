@@ -21,7 +21,7 @@ import { AccountSingleton } from '../singleton/account';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
-  const isAdmin = AccountSingleton.instance.isAdmin;
+  
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -46,6 +46,7 @@ export default function LoginForm() {
       setIsLoading(true);
       const res = await AccountSingleton.instance.login(values.username, values.password, "DEVICE-INFO");
       if (res.result) {
+        const isAdmin = AccountSingleton.instance.isAdmin;
         if (isAdmin) {
           navigate("/", { replace: true });
         }

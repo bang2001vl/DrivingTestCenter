@@ -13,7 +13,7 @@ import Logo from '../../components/Logo';
 import Scrollbar from '../../components/Scrollbar';
 import NavSection from '../../components/NavSection';
 //
-import sidebarConfig from './SidebarConfig';
+import {sidebarConfig} from './SidebarConfig';
 import { useRecoilValue } from 'recoil';
 import { AccountSingleton } from '../../singleton/account';
 import { createBEPublicURI } from '../../_helper/helper';
@@ -112,7 +112,7 @@ export default function DashboardSidebar(props: IProps) {
 
       </Box>
 
-      <NavSection navConfig={sidebarConfig} />
+      <NavSection navConfig={sidebarConfig()} />
 
       <Box sx={{ flexGrow: 1 }} />
 
