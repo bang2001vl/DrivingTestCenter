@@ -64,7 +64,7 @@ export const ExamTestDetailPage: FC<IProps> = (props) => {
             />
             <AccountManagerPage
                 hideTitle
-                isfull={oldData ? oldData.countStudent >= oldData.exam.maxMember : false}
+                isfull={oldData ? oldData.countStudent >= oldData.maxMember : false}
                 filter={oldData ? {
                     roleId: 1,
                     examTestId: oldData.id,

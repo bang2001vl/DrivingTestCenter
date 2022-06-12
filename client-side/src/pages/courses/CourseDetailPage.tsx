@@ -72,9 +72,9 @@ export const CourseDetailPage: FC<IProps> = (props) => {
                 onDelete={async (item, select) => {
                     const data = {
                         classId: oldData.id,
-                        employeeIdList: [item.id],
+                        studentIdList: [item.id],
                     }
-                    const res = await api.postWithToken(`${appConfig.backendUri}/cnn/delete/class/employees`, data);
+                    const res = await api.postWithToken(`${appConfig.backendUri}/cnn/delete/class/students`, data);
                     if (res.result) {
                         rootDialog.closeDialog();
                         select();
