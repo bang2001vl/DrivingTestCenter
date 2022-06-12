@@ -76,7 +76,7 @@ export const BillCreate: FC<IProps> = (props: IProps & Partial<BasicEditSectionP
 
     return <BasicEditSection
         method={EDIT_METHOD.create}
-        title={props.hideTitle ? "" : "Tạo Kì Thi"}
+        title={props.hideTitle ? "" : "Tạo Hóa Đơn"}
         onSuccess={handleSuccess}
         onClose={handleClose}
         validation={handleValidate}

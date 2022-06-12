@@ -83,17 +83,17 @@ export const CourseCard: FC<CourseProps> = (props) => {
                     {props.name}
                 </Typography>
                 <Stack direction='row' spacing={0.5} alignItems='center' justifyContent='space-between' >
-                    <Box>
+                    <Stack direction='row' spacing={0.5} alignItems='center'>
                         <Circle style={{ color: getStatus().color, fontSize: '8px' }}></Circle>
                         <Typography
                             variant="subtitle2"
                             color={getStatus().color} >
                             {getStatus().text}
                         </Typography>
-                    </Box>
+                    </Stack>
                     <Typography
                             variant="subtitle2">
-                            {props.price}
+                            Học phí: {props.price}
                         </Typography>
 
                 </Stack>
