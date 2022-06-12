@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react"
 import { BasicEditSection, BasicEditSectionProps } from "../../sections/CRUD/BasicEditSection"
 import * as yup from "yup"
 import { IFormIK } from "../../_interfaces/formik"
-import { validYupToObject } from "../../_helper/helper"
+import { objectToFormData, validYupToObject } from "../../_helper/helper"
 import useAPI from "../../hooks/useApi"
 import { appConfig } from "../../configs"
 import { LoadingButton, LocalizationProvider } from "@mui/lab"
@@ -99,12 +99,7 @@ export const AccountManagerCreate: FC<IProps & Partial<BasicEditSectionProps>> =
             avatar: formik.values.avatar instanceof File ? formik.values.avatar : undefined,
         }
 
-        const formData = new FormData();
-        Object.keys(data).forEach(key => {
-            if (formik.values[key]) {
-                formData.append(key, formik.values[key])
-            }
-        });
+        const formData = objectToFormData(data);
 
         if (props.method === EDIT_METHOD.create) {
             return api.postWithToken(
