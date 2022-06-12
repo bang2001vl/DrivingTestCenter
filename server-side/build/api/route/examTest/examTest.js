@@ -13,9 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExamTestChecker = exports.ExamTestRoute = void 0;
-const isAfter_1 = __importDefault(require("date-fns/isAfter"));
 const isBefore_1 = __importDefault(require("date-fns/isBefore"));
-const parse_1 = __importDefault(require("date-fns/parse"));
 const express_1 = require("express");
 const prisma_1 = require("../../../prisma");
 const FieldGetter_1 = require("../../handler/FieldGetter");
@@ -101,9 +99,11 @@ function checkConflictTime(data) {
         if (!exam) {
             throw (0, utilities_1.buildResponseError)(103, "Invalid examId: Not found exam");
         }
-        if (!((0, isAfter_1.default)(data.dateTimeStart, (0, parse_1.default)("00:00", "HH:mm", exam.dateStart)) && (0, isAfter_1.default)((0, parse_1.default)("23:59", "HH:mm", exam.dateEnd), data.dateTimeEnd))) {
-            throw (0, utilities_1.buildResponseError)(104, `Thời gian thi chỉ được nằm trong khoảng ${exam.dateStart} - ${exam.dateEnd}`);
-        }
+        // const minDateTime = parse("00:00", "HH:mm", exam.dateStart);
+        // const maxDateTime = parse("23:59", "HH:mm", exam.dateEnd)
+        // if(!(isAfter(data.dateTimeStart, minDateTime) && isAfter(maxDateTime, data.dateTimeEnd))){
+        //     throw buildResponseError(104, `Thời gian thi chỉ được nằm trong khoảng ${exam.dateStart} - ${exam.dateEnd}`);
+        // }
         if (result) {
             throw (0, utilities_1.buildResponseError)(102, `Conflict with other (id=${result.id})`);
         }

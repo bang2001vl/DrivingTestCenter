@@ -82,13 +82,13 @@ const CNNRoute = () => {
 exports.CNNRoute = CNNRoute;
 function buildDeleteOneManyRoute(repo, propA, propB) {
     return [
-        _wrapper_1.RouteHandleWrapper.wrapCheckInput(input => ({
-            [propA]: FieldGetter_1.FieldGetter.Number(input, propA, true),
-            [`${propB}List`]: FieldGetter_1.FieldGetter.Array(input, `${propB}List`, true),
-        }), tag),
+        _wrapper_1.RouteHandleWrapper.wrapCheckInput(input => (Object.assign(Object.assign({}, input), { [propA]: FieldGetter_1.FieldGetter.Number(input, propA, true), [`${propB}List`]: FieldGetter_1.FieldGetter.Array(input, `${propB}List`, true) })), tag),
         _wrapper_1.RouteHandleWrapper.wrapHandleInput((input) => __awaiter(this, void 0, void 0, function* () {
             const result = yield repo.deleteMany({
-                where: Object.assign(Object.assign({}, input), { [propA]: input[propA], [propB]: { in: input[`${propB}List`] } })
+                where: {
+                    [propA]: input[propA],
+                    [propB]: { in: input[`${propB}List`] }
+                }
             });
             return result;
         }), tag),

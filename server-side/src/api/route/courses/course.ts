@@ -115,6 +115,9 @@ async function checkConflictMaxNumber(data: any) {
 
 function customFilter(input: any) {
     const rs: any = {};
+    if (!isNaN(Number(input.id))) {
+        rs.id = Number(input.id)
+    }
     if (!isNaN(Number(input.accountId))) {
         rs.accountId = Number(input.accountId)
     }

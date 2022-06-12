@@ -107,7 +107,7 @@ export default function AccountManagerPage(props: IProps & Partial<BasicPageProp
             searchOptionList={searchOptionList}
             orderOptionList={orderOptionList}
 
-            onClickLoadExcel={handleClickLoadExcel}
+            onClickLoadExcel={(select) => handleClickLoadExcel(select)}
             {...props}
             onRenderItem={(dataList, select, emptyView) => {
                 return <AccountManagerTable

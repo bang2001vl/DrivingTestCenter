@@ -21,6 +21,7 @@ import { FormIkRoom } from "../../components/FormIK/Selectors/Rooms"
 import { FormIkDatePicker } from "../../components/FormIK/DatePicker"
 import { FormIkTimePicker } from "../../components/FormIK/TimePicker"
 import parse from "date-fns/parse"
+import isAfter from "date-fns/isAfter"
 
 interface IProps {
     method: EDIT_METHOD,
@@ -92,6 +93,22 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
 
         if (!formik.values.examOption) {
             errors.examOption = "Kì thi không được để trống!";
+        }
+
+        const minDate = new Date(formik.values.examOption.value.dateStart);
+        const maxDate = new Date(formik.values.examOption.value.dateEnd);
+        const minDateTime = new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate(), 0, 0);
+        const maxDateTime = new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate(), 23, 59);
+        // if(!isAfter(formik.values.dateTimeStart, minDateTime)){
+        //     console.log("faild 1");
+            
+        // }
+        // if(!isAfter(maxDateTime, formik.values.dateTimeEnd)){
+        //     console.log("faild 1");
+            
+        // }
+        if(!(isAfter(new Date(formik.values.dateTimeStart), minDateTime) && isAfter(maxDateTime, new Date(formik.values.dateTimeEnd)))){
+            errors.dateTimeStart = `Thời gian thi chỉ được nằm trong khoảng ${minDateTime} - ${maxDateTime}`;
         }
 
         if (Object.keys(errors).length > 0) {

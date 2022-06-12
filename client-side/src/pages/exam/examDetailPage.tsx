@@ -81,10 +81,7 @@ export const ExamDetailPage: FC<IProps> = (props) => {
                             initValues={oldData ? {
                                 examOption: {
                                     label: oldData.name,
-                                    value: {
-                                        id: oldData.id,
-                                        name: oldData.name,
-                                    }
+                                    value: oldData,
                                 }
                             } : undefined}
                             onSuccess={() => {

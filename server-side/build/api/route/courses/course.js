@@ -91,6 +91,9 @@ function checkConflictMaxNumber(data) {
 }
 function customFilter(input) {
     const rs = {};
+    if (!isNaN(Number(input.id))) {
+        rs.id = Number(input.id);
+    }
     if (!isNaN(Number(input.accountId))) {
         rs.accountId = Number(input.accountId);
     }

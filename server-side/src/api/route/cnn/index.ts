@@ -46,25 +46,25 @@ export const CNNRoute = () => {
             async (input) => {
                 const studentIdList = FieldGetter.Array(input, "studentIdList", true)!;
                 const examTest = await myPrisma.examTest.findFirst({
-                    where:{
+                    where: {
                         id: input.examId
                     }
                 });
-                if(!examTest){
+                if (!examTest) {
                     throw buildResponseError(1, "Invalid examTestId");
                 }
                 const examTests = await myPrisma.examTest.findMany({
-                    where: {examId: examTest.examId},
-                    select: {id: true},
+                    where: { examId: examTest.examId },
+                    select: { id: true },
                 });
                 const examTestIds = examTests.map(e => e.id);
                 const duplicated = await myPrisma.cONN_Student_ExamTest.findMany({
                     where: {
-                        studentId: {in: studentIdList},
-                        examTestId: {in: examTestIds}
+                        studentId: { in: studentIdList },
+                        examTestId: { in: examTestIds }
                     }
                 });
-                if(duplicated.length > 0){
+                if (duplicated.length > 0) {
                     throw buildResponseError(101, `Cannot join multiple examTest of one exam for students have ids in [${duplicated.map(e => e.studentId).join(", ")}]`)
                 }
             }
@@ -125,13 +125,13 @@ export const CNNRoute = () => {
 function buildDeleteOneManyRoute(repo: PrismaDelegate, propA: string, propB: string) {
     return [
         RouteHandleWrapper.wrapCheckInput(input => ({
+            ...input,
             [propA]: FieldGetter.Number(input, propA, true),
             [`${propB}List`]: FieldGetter.Array(input, `${propB}List`, true),
         }), tag),
         RouteHandleWrapper.wrapHandleInput(async (input) => {
             const result = await repo.deleteMany({
                 where: {
-                    ...input,
                     [propA]: input[propA],
                     [propB]: { in: input[`${propB}List`] }
                 }
@@ -141,7 +141,7 @@ function buildDeleteOneManyRoute(repo: PrismaDelegate, propA: string, propB: str
     ]
 }
 
-function buildInsertOneManyRoute(repo: PrismaDelegate, propA: string, propB: string, middleware?: ((input: any)=> Promise<void>)[]) {
+function buildInsertOneManyRoute(repo: PrismaDelegate, propA: string, propB: string, middleware?: ((input: any) => Promise<void>)[]) {
     return [
         RouteHandleWrapper.wrapCheckInput(input => {
             console.log(input);
