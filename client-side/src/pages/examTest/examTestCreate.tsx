@@ -202,7 +202,7 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
                             <Box sx={{ width: "50%" }} >
                                 <FormIkDatePicker formik={formik} fieldName="dateTimeStart"
                                     label="Ngày thi lý thuyết"
-                                    minDate={new Date()}
+                                    
                                     onChange={(date) => {
                                         if (date) {
                                             formik.setFieldValue("dateTimeStart", date.toISOString());
@@ -229,7 +229,7 @@ export const ExamTestCreate: FC<IProps & Partial<BasicEditSectionProps>> = (prop
                             <Box sx={{ width: "50%" }} >
                                 <FormIkDatePicker formik={formik} fieldName="dateTimeStart2"
                                     label="Ngày thi thực hành"
-                                    minDate={new Date()}
+                            
                                     onChange={(date) => {
                                         if (date) {
                                             formik.setFieldValue("dateTimeStart2", date.toISOString());
