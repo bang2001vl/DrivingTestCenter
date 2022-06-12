@@ -66,7 +66,7 @@ export const AccountManagerCreate: FC<IProps & Partial<BasicEditSectionProps>> =
         username: yup.string().required("Tên người dùng không được để trống!"),
         password: yup.string().required('Mật khẩu không được để trống!'),
         birthday: yup.string().required('Ngày sinh không được để trống!'),
-        gender: yup.number().positive().required('Giới tính không được để trống!'),
+        gender: yup.number().required('Giới tính không được để trống!'),
         roleId: yup.number().positive().required('Vai trò không được để trống!'),
         email: yup.string().email().required('Email không được để trống!'),
         phoneNumber: yup.string().required('Số điện thoại không được để trống!'),
