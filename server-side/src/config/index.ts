@@ -17,7 +17,7 @@ const appConfig = {
     smtp_user: process.env.SMTP_USER,
     smtp_pwd: process.env.SMTP_PWD,
 
-    domain: process.env.DOMAIN || "thunderv-2.southeastasia.cloudapp.azure.com",
+    domain: process.env.DOMAIN || "thunderv.southeastasia.cloudapp.azure.com",
     publicFolder: process.env.PUBLIC_FOLDER_PATH ? resolve(process.env.PUBLIC_FOLDER_PATH) : resolve(__dirname,"..","..","public"),
     resourceFolder: process.env.RESOURCE_FOLDER_PATH ? resolve(process.env.RESOURCE_FOLDER_PATH) : resolve(__dirname,"..","..","resources"),
 
