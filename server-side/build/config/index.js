@@ -18,7 +18,7 @@ const appConfig = {
     port_socketio: process.env.PORT_SOCKET_IO || 5002,
     smtp_user: process.env.SMTP_USER,
     smtp_pwd: process.env.SMTP_PWD,
-    domain: process.env.DOMAIN || "thunderv-2.southeastasia.cloudapp.azure.com",
+    domain: process.env.DOMAIN || "thunderv.southeastasia.cloudapp.azure.com",
     publicFolder: process.env.PUBLIC_FOLDER_PATH ? (0, path_1.resolve)(process.env.PUBLIC_FOLDER_PATH) : (0, path_1.resolve)(__dirname, "..", "..", "public"),
     resourceFolder: process.env.RESOURCE_FOLDER_PATH ? (0, path_1.resolve)(process.env.RESOURCE_FOLDER_PATH) : (0, path_1.resolve)(__dirname, "..", "..", "resources"),
     tokenDuration: 5 * 60 * 60 * 1000, // 5 hours
